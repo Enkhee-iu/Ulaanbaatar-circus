@@ -101,13 +101,17 @@ function Index() {
 
           <div className="relative md:col-span-5">
             <div className="relative aspect-[4/5] w-full overflow-hidden bg-foreground">
-              <img
-                src={heroImg}
-                alt="Aerial silks performer under a single spotlight"
-                width={1920}
-                height={1280}
+              <video
+                src={heroVideo.url}
+                poster={heroImg}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
                 className="h-full w-full object-cover"
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-background">
                 <div>
                   <p className="font-display text-xs uppercase tracking-[0.3em]">
