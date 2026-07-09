@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
 import heroImg from "@/assets/hero.jpg";
+import heroVideo from "@/assets/hero.mp4.asset.json";
 import brandAcrobatics from "@/assets/brand-acrobatics.jpg";
 import brandTheatrics from "@/assets/brand-theatrics.jpg";
 import brandIllusions from "@/assets/brand-illusions.jpg";
