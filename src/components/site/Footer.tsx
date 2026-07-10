@@ -2,14 +2,14 @@ import { Link } from "@tanstack/react-router";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-foreground/15 bg-foreground text-background">
+    <footer className="mt-24 border-t border-crimson/30 bg-burgundy text-background">
       <div className="mx-auto max-w-[1440px] px-6 py-16 md:px-10">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <h2 className="font-display text-6xl leading-[0.9] md:text-8xl">
               The show
               <br />
-              never sleeps.
+              <span className="text-gold">never sleeps.</span>
             </h2>
             <p className="mt-6 max-w-md text-sm leading-relaxed text-background/70">
               UB Circus — Ulaanbaatar-based show production house creating live
@@ -19,7 +19,7 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-background/50">
+            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-gold">
               Contact
             </p>
             <ul className="space-y-2 text-sm text-background/85">
@@ -39,7 +39,7 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-background/50">
+            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-gold">
               Explore
             </p>
             <ul className="space-y-2 text-sm">
@@ -51,7 +51,7 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-background/50">
+            <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-gold">
               Follow
             </p>
             <ul className="space-y-2 text-sm">

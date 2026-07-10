@@ -39,16 +39,22 @@
   --color-ring: var(--ring);
   --color-ink: var(--ink);
   --color-paper: var(--paper);
+  --color-crimson: var(--crimson);
+  --color-gold: var(--gold);
+  --color-burgundy: var(--burgundy);
 }
 
 :root {
   --radius: 0.125rem;
 
-  /* Paper & Ink palette */
-  --paper: oklch(0.965 0.006 85);            /* #f5f3ee */
-  --paper-2: oklch(0.925 0.008 82);          /* #e8e4dd */
+  /* Warm circus editorial palette */
+  --paper: oklch(0.955 0.018 86);
+  --paper-2: oklch(0.91 0.022 82);
   --ink: oklch(0.12 0 0);                    /* #0d0d0d */
   --ink-2: oklch(0.28 0 0);                  /* #2d2d2d */
+  --crimson: oklch(0.39 0.16 27);
+  --burgundy: oklch(0.25 0.09 24);
+  --gold: oklch(0.74 0.13 78);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -64,7 +70,7 @@
   --secondary-foreground: var(--ink);
   --muted: var(--paper-2);
   --muted-foreground: var(--ink-2);
-  --accent: var(--ink-2);
+  --accent: var(--crimson);
   --accent-foreground: var(--paper);
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: var(--paper);
@@ -118,6 +124,21 @@
 
 @utility rise-in {
   animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@utility paper-grid {
+  background-image:
+    linear-gradient(oklch(0.39 0.16 27 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.39 0.16 27 / 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+@utility accent-shadow {
+  box-shadow: 6px 6px 0 0 var(--color-gold);
+}
+
+@utility gold-rule {
+  background-color: var(--color-gold);
 }
 
 @layer base {

@@ -3,7 +3,6 @@ import { PageShell } from "@/components/site/PageShell";
 import heroImg from "@/assets/hero.jpg";
 import heroVideo from "@/assets/hero.mp4.asset.json";
 import brandAcrobatics from "@/assets/brand-acrobatics.jpg";
-import brandTheatrics from "@/assets/brand-theatrics.jpg";
 import brandIllusions from "@/assets/brand-illusions.jpg";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +23,7 @@ const BRANDS = [
     name: "Theatrics & Clown",
     tag: "The story on stage",
     copy: "Character-driven physical theatre, roaming performers, and tightly-scripted show acts for stages, streets and after-parties.",
-    image: brandTheatrics,
+    image: heroImg,
     tags: ["Physical Theatre", "Roaming Acts", "MC & Host", "Stage Shows"],
   },
   {
@@ -48,22 +47,37 @@ const MARQUEE = [
   "Since 2014",
 ];
 
+const PROOF_POINTS = [
+  "Gala openings",
+  "Touring stages",
+  "Camera-ready acts",
+  "Private commissions",
+] as const;
+
 function Index() {
   return (
     <PageShell>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-foreground/15">
+      <section className="paper-grid relative overflow-hidden border-b border-foreground/15">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 border-b border-foreground/10 bg-gradient-to-b from-background to-transparent" />
         <div className="mx-auto grid max-w-[1440px] gap-10 px-6 pb-16 pt-10 md:grid-cols-12 md:px-10 md:pb-24 md:pt-16">
           <div className="md:col-span-7 md:pr-6">
-            <p className="font-display text-xs uppercase tracking-[0.4em] text-muted-foreground">
-              Vol. 011 — The Ulaanbaatar Circus Journal
-            </p>
-            <h1 className="mt-6 font-display text-[15vw] leading-[0.85] md:text-[9vw]">
+            <div className="flex flex-wrap items-center gap-3 border-y border-foreground/15 py-3 font-display text-xs uppercase tracking-[0.32em] text-muted-foreground">
+              <span>Vol. 011</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+              <span>The Ulaanbaatar Circus Journal</span>
+            </div>
+            <h1 className="mt-7 max-w-4xl font-display text-7xl leading-[0.82] sm:text-8xl md:text-9xl lg:text-[10.5rem]">
               A circus
               <br />
-              for the <em className="not-italic underline decoration-[3px] underline-offset-[10px]">bold</em>.
+              for the{" "}
+              <em className="relative inline-block not-italic">
+                bold
+                <span className="absolute -bottom-2 left-0 h-1.5 w-full bg-crimson" />
+              </em>
+              .
             </h1>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-foreground/80">
+            <p className="mt-8 max-w-2xl border-l-2 border-crimson pl-5 text-lg leading-relaxed text-foreground/80 md:text-xl">
               UB Circus produces live shows, brand events, and cinematic projects
               across Mongolia. Editorial in style, physical in execution — built
               for audiences that expect more than a spectacle.
@@ -71,36 +85,45 @@ function Index() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-3 bg-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-background transition-transform hover:-translate-y-0.5"
+                className="accent-shadow inline-flex items-center gap-3 bg-crimson px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-background transition-transform hover:-translate-y-0.5 hover:bg-burgundy"
               >
                 Book a show →
               </Link>
               <Link
                 to="/shows"
-                className="inline-flex items-center gap-3 border border-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] transition-colors hover:bg-foreground hover:text-background"
+                className="inline-flex items-center gap-3 border border-crimson bg-background/70 px-6 py-4 font-display text-base uppercase tracking-[0.2em] transition-colors hover:bg-crimson hover:text-background"
               >
                 See the programme
               </Link>
             </div>
 
-            <dl className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-foreground/20 pt-6">
+            <dl className="mt-14 grid max-w-2xl grid-cols-3 gap-0 border border-foreground/20 bg-background/60">
               <div>
-                <dt className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Since</dt>
-                <dd className="font-display text-3xl">2014</dd>
+                <dt className="border-b border-foreground/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">Since</dt>
+                <dd className="px-4 py-4 font-display text-4xl">2014</dd>
+              </div>
+              <div className="border-x border-foreground/15">
+                <dt className="border-b border-foreground/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">Shows</dt>
+                <dd className="px-4 py-4 font-display text-4xl">420+</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Shows</dt>
-                <dd className="font-display text-3xl">420+</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Artists</dt>
-                <dd className="font-display text-3xl">38</dd>
+                <dt className="border-b border-foreground/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">Artists</dt>
+                <dd className="px-4 py-4 font-display text-4xl">38</dd>
               </div>
             </dl>
+
+            <div className="mt-8 grid max-w-2xl grid-cols-2 gap-px bg-foreground/15 text-xs uppercase tracking-[0.18em] text-foreground/65 md:grid-cols-4">
+              {PROOF_POINTS.map((point) => (
+                <span key={point} className="bg-background/80 px-3 py-3">
+                  {point}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="relative md:col-span-5">
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-foreground">
+            <div className="absolute -right-4 -top-4 hidden h-full w-full border border-gold md:block" />
+            <div className="relative aspect-[4/5] w-full overflow-hidden border border-foreground bg-foreground">
               <video
                 src={heroVideo.url}
                 poster={heroImg}
@@ -109,9 +132,12 @@ function Index() {
                 loop
                 playsInline
                 preload="metadata"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover saturate-[0.9]"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
+              <div className="absolute left-5 top-5 border border-gold bg-crimson/80 px-3 py-2 font-display text-xs uppercase tracking-[0.25em] text-background backdrop-blur-sm">
+                Hero Studio
+              </div>
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-background">
                 <div>
                   <p className="font-display text-xs uppercase tracking-[0.3em]">
@@ -132,12 +158,12 @@ function Index() {
         </div>
 
         {/* Marquee */}
-        <div className="overflow-hidden border-t border-foreground/15 bg-foreground py-4 text-background">
+        <div className="overflow-hidden border-t border-crimson/30 bg-burgundy py-4 text-background">
           <div className="marquee-track whitespace-nowrap font-display text-3xl uppercase tracking-[0.15em] md:text-4xl">
             {[...MARQUEE, ...MARQUEE].map((w, i) => (
               <span key={i} className="mx-8 inline-flex items-center gap-8">
                 {w}
-                <span className="h-1 w-1 rounded-full bg-background/60" />
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" />
               </span>
             ))}
           </div>
@@ -169,23 +195,28 @@ function Index() {
             {BRANDS.map((b, i) => (
               <article
                 key={b.num}
-                className={`grid gap-8 md:grid-cols-12 md:gap-12 ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
+                className={`grid gap-8 border-t border-foreground/15 pt-10 md:grid-cols-12 md:gap-12 ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
               >
                 <div className="md:col-span-6">
-                  <div className="aspect-[4/5] w-full overflow-hidden bg-foreground">
+                  <div className="group relative aspect-[4/5] w-full overflow-hidden border border-foreground/20 bg-foreground">
                     <img
                       src={b.image}
                       alt={b.name}
                       width={1200}
                       height={1500}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                     />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent opacity-80" />
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between border-t border-background/50 pt-3 font-display text-xs uppercase tracking-[0.24em] text-background">
+                      <span>{b.name}</span>
+                      <span>{b.num}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-col justify-center md:col-span-6">
                   <div className="flex items-baseline gap-4">
-                    <span className="font-display text-6xl text-foreground/25">{b.num}</span>
+                    <span className="font-display text-7xl text-foreground/20 md:text-8xl">{b.num}</span>
                     <span className="rule-line flex-1" />
                     <span className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
                       {b.tag}
@@ -201,7 +232,7 @@ function Index() {
                     {b.tags.map((t) => (
                       <li
                         key={t}
-                        className="border border-foreground/40 px-3 py-1 font-display text-xs uppercase tracking-[0.2em]"
+                        className="border border-crimson/40 bg-crimson/5 px-3 py-1 font-display text-xs uppercase tracking-[0.2em] text-crimson"
                       >
                         {t}
                       </li>
@@ -223,7 +254,7 @@ function Index() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="border-b border-foreground/15">
+      <section className="border-b border-foreground/15 bg-burgundy text-background">
         <div className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-8 px-6 py-20 md:flex-row md:items-center md:px-10">
           <h2 className="font-display text-5xl leading-[0.9] md:text-7xl">
             Have a stage.
@@ -233,13 +264,13 @@ function Index() {
           <div className="flex flex-wrap gap-4">
             <Link
               to="/events"
-              className="inline-flex items-center border border-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] hover:bg-foreground hover:text-background"
+              className="inline-flex items-center border border-gold px-6 py-4 font-display text-base uppercase tracking-[0.2em] transition-colors hover:bg-background hover:text-foreground"
             >
               Upcoming events
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center bg-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-background"
+              className="inline-flex items-center bg-gold px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-foreground transition-transform hover:-translate-y-0.5"
             >
               Start a project →
             </Link>
@@ -249,3 +280,4 @@ function Index() {
     </PageShell>
   );
 }
+

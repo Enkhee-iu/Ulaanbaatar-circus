@@ -14,8 +14,8 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-foreground/15 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-5 md:px-10">
         <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-display text-3xl leading-none tracking-wide">UB Circus</span>
-          <span className="hidden text-[10px] uppercase tracking-[0.3em] text-muted-foreground md:inline">
+          <span className="font-display text-3xl leading-none tracking-wide text-crimson">UB Circus</span>
+          <span className="hidden border-l border-gold pl-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground md:inline">
             Est. Ulaanbaatar
           </span>
         </Link>
@@ -25,8 +25,8 @@ export function Header() {
             <Link
               key={n.to}
               to={n.to}
-              className="font-display text-lg uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground underline underline-offset-[6px]" }}
+              className="font-display text-lg uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:text-crimson"
+              activeProps={{ className: "text-crimson underline decoration-gold underline-offset-[6px]" }}
             >
               {n.label}
             </Link>
@@ -35,7 +35,7 @@ export function Header() {
 
         <Link
           to="/contact"
-          className="hidden items-center gap-2 border border-foreground px-4 py-2 font-display text-sm uppercase tracking-[0.2em] transition-colors hover:bg-foreground hover:text-background md:inline-flex"
+          className="hidden items-center gap-2 border border-crimson bg-crimson px-4 py-2 font-display text-sm uppercase tracking-[0.2em] text-background transition-colors hover:bg-burgundy md:inline-flex"
         >
           Book a Show →
         </Link>
@@ -68,7 +68,7 @@ export function Header() {
             <Link
               to="/contact"
               onClick={() => setOpen(false)}
-              className="mt-2 inline-flex w-fit items-center gap-2 border border-foreground px-4 py-2 font-display text-sm uppercase tracking-[0.2em]"
+              className="mt-2 inline-flex w-fit items-center gap-2 border border-crimson bg-crimson px-4 py-2 font-display text-sm uppercase tracking-[0.2em] text-background"
             >
               Book a Show →
             </Link>
