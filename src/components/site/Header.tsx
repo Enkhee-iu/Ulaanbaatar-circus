@@ -1,79 +1,101 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useLanguage } from "@/components/site/Language";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { ArrowUpRight, Asterisk, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+import { useSiteContent } from "./SiteContent";
+import { LanguageSwitcher } from "./Language";
 
 const NAV = [
   { to: "/shows", label: "Shows" },
   { to: "/events", label: "Events" },
-  { to: "/projects", label: "Projects" },
+  { to: "/projects", label: "Our work" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
-export function Header() {
-  const [open, setOpen] = useState(false);
+export function Brand() {
+  const { t } = useLanguage();
+  const { settings } = useSiteContent();
   return (
-    <header className="sticky top-0 z-40 border-b border-foreground/15 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-5 md:px-10">
-        <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-display text-3xl leading-none tracking-wide text-crimson">UB Circus</span>
-          <span className="hidden border-l border-gold pl-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground md:inline">
-            Est. Ulaanbaatar
-          </span>
-        </Link>
+    <Link to="/" className="brand" aria-label={t("UB Circus home")}>
+      <span className="brand-symbol">
+        <Asterisk size={27} strokeWidth={2.4} />
+      </span>
+      <span>{settings.brandName}</span>
+    </Link>
+  );
+}
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {NAV.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              className="font-display text-lg uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:text-crimson"
-              activeProps={{ className: "text-crimson underline decoration-gold underline-offset-[6px]" }}
-            >
-              {n.label}
+export function Header() {
+  const { t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+  return (
+    <header className="site-header">
+      <div className="container header-inner">
+        <Brand />
+        <nav className="desktop-nav" aria-label={t("Main navigation")}>
+          {NAV.map((item) => (
+            <Link key={item.to} to={item.to} activeProps={{ className: "nav-active" }}>
+              {t(item.label)}
             </Link>
           ))}
         </nav>
-
-        <Link
-          to="/contact"
-          className="hidden items-center gap-2 border border-crimson bg-crimson px-4 py-2 font-display text-sm uppercase tracking-[0.2em] text-background transition-colors hover:bg-burgundy md:inline-flex"
-        >
-          Book a Show →
+        <LanguageSwitcher />
+        <Link to="/contact" className="button button-lime header-booking">
+          {t("Let’s make a show ")}
+          <ArrowUpRight size={17} />
         </Link>
-
         <button
+          ref={menuButton}
+          className="icon-button mobile-toggle"
           type="button"
-          aria-label="Toggle menu"
-          onClick={() => setOpen((o) => !o)}
-          className="md:hidden"
+          aria-label={t(open ? "Close navigation" : "Open navigation")}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+          onClick={() => setOpen(!open)}
         >
-          <span className="font-display text-lg uppercase tracking-[0.2em]">
-            {open ? "Close" : "Menu"}
-          </span>
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-
       {open && (
-        <div className="border-t border-foreground/15 md:hidden">
-          <nav className="mx-auto flex max-w-[1440px] flex-col gap-4 px-6 py-6">
-            {NAV.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                onClick={() => setOpen(false)}
-                className="font-display text-2xl uppercase tracking-[0.15em]"
-              >
-                {n.label}
-              </Link>
-            ))}
+        <nav
+          id="mobile-navigation"
+          className="mobile-nav container"
+          aria-label={t("Mobile navigation")}
+        >
+          {NAV.map((item, i) => (
             <Link
-              to="/contact"
+              key={item.to}
+              to={item.to}
               onClick={() => setOpen(false)}
-              className="mt-2 inline-flex w-fit items-center gap-2 border border-crimson bg-crimson px-4 py-2 font-display text-sm uppercase tracking-[0.2em] text-background"
+              activeProps={{ className: "nav-active" }}
             >
-              Book a Show →
+              <span className="nav-number">0{i + 1}</span>
+              {t(item.label)}
+              <ArrowUpRight size={22} />
             </Link>
-          </nav>
-        </div>
+          ))}
+          <Link to="/contact" onClick={() => setOpen(false)} className="button button-lime">
+            {t("Let’s make a show ")}
+            <ArrowUpRight size={18} />
+          </Link>
+        </nav>
       )}
     </header>
   );

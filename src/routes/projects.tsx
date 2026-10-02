@@ -1,149 +1,104 @@
+import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
-import brandAcrobatics from "@/assets/brand-acrobatics.jpg";
-import brandIllusions from "@/assets/brand-illusions.jpg";
-import hero from "@/assets/hero.jpg";
+import { BookingCTA, FilterBar, PageIntro } from "@/components/site/Sections";
+import { useSiteContent } from "@/components/site/SiteContent";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Projects - UB Circus" },
-      { name: "description", content: "Selected productions, brand collaborations and film work." },
-      { property: "og:title", content: "Projects - UB Circus" },
-      { property: "og:description", content: "Selected productions and collaborations." },
+      { title: "Selected work — UB Circus" },
+      {
+        name: "description",
+        content:
+          "Live experiences, brand collaborations and film productions brought to life by UB Circus.",
+      },
     ],
   }),
   component: ProjectsPage,
 });
-
-const PROJECTS = [
-  {
-    title: "Weightless",
-    subtitle: "Aerial Film",
-    client: "MNB / Film Series",
-    year: "2025",
-    img: hero,
-    scope: "Direction / aerial casting / safety rigging",
-  },
-  {
-    title: "Gobi Wool",
-    subtitle: "Runway Reveal",
-    client: "Gobi Cashmere",
-    year: "2025",
-    img: hero,
-    scope: "Reveal moment / movement design / show call",
-  },
-  {
-    title: "Ink & Smoke",
-    subtitle: "Stage Design",
-    client: "UB Circus Hall",
-    year: "2024",
-    img: brandIllusions,
-    scope: "Illusion design / lighting / close-up camera",
-  },
-  {
-    title: "Nomad Nights",
-    subtitle: "Tour",
-    client: "MNP / Tour Ops",
-    year: "2024",
-    img: brandAcrobatics,
-    scope: "Touring package / public square adaptation",
-  },
-] as const;
+const CATEGORIES = ["All work", "Film", "Brand", "Stage"] as const;
 
 function ProjectsPage() {
-  const lead = PROJECTS[0];
-  const rest = PROJECTS.slice(1);
-
+  const { t } = useLanguage();
+  const { projects: PROJECTS } = useSiteContent();
+  const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("All work");
+  const projects = PROJECTS.filter(
+    (project) => category === "All work" || project.category === category,
+  );
   return (
     <PageShell>
-      <section className="paper-grid border-b border-foreground/15">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-6 pb-16 pt-16 md:grid-cols-12 md:px-10 md:pb-24 md:pt-24">
-          <div className="md:col-span-7">
-            <div className="border-y border-foreground/15 py-3 font-display text-xs uppercase tracking-[0.32em] text-muted-foreground">
-              Portfolio / Selected work
-            </div>
-            <h1 className="mt-7 font-display text-7xl leading-[0.82] sm:text-8xl md:text-9xl">
-              Projects with
-              <br />
-              a pulse.
-            </h1>
-          </div>
-          <div className="flex flex-col justify-end md:col-span-5">
-            <p className="max-w-xl border-l-2 border-foreground pl-5 text-lg leading-relaxed text-foreground/80">
-              Selected productions, brand collaborations and camera-facing
-              circus work built from concept through stage management.
-            </p>
-          </div>
+      <PageIntro
+        eyebrow={t("Selected work")}
+        title={
+          <>
+            {t("Ideas that")}
+            <br />
+            <span className="accent-text">{t("take the stage.")}</span>
+          </>
+        }
+        description={t(
+          "We bring creative direction, extraordinary performers and thoughtful production together. Here’s what that looks like.",
+        )}
+      />
+      <section className="container catalogue-section">
+        <div className="catalogue-toolbar">
+          <FilterBar
+            options={CATEGORIES}
+            selected={category}
+            onChange={setCategory}
+            label={t("Filter projects by discipline")}
+          />
+          <span className="results-count" aria-live="polite">
+            {projects.length} {t(projects.length === 1 ? "project" : "projects")}
+          </span>
         </div>
-      </section>
-
-      <section>
-        <div className="mx-auto max-w-[1440px] px-6 py-16 md:px-10 md:py-24">
-          <article className="grid border border-foreground md:grid-cols-12">
-            <div className="relative aspect-[4/3] overflow-hidden bg-foreground md:col-span-7 md:aspect-auto">
-              <img src={lead.img} alt={lead.title} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/45 via-transparent to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 flex justify-between border-t border-background/60 pt-3 font-display text-xs uppercase tracking-[0.24em] text-background">
-                <span>Featured case</span>
-                <span>{lead.year}</span>
-              </div>
-            </div>
-            <div className="flex flex-col justify-between p-6 md:col-span-5 md:p-10">
-              <div>
-                <p className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  {lead.client}
-                </p>
-                <h2 className="mt-4 font-display text-6xl leading-none md:text-8xl">
-                  {lead.title}
-                </h2>
-                <p className="mt-2 font-display text-3xl leading-none text-foreground/45">
-                  {lead.subtitle}
-                </p>
-                <p className="mt-8 text-base leading-relaxed text-foreground/75">{lead.scope}</p>
-              </div>
+        <div className="project-grid">
+          {projects.length === 0 && (
+            <p className="results-count">
+              {t("New work is on its way. Get in touch to discuss your project.")}
+            </p>
+          )}
+          {projects.map((project) => (
+            <article className="project-card" key={project.title}>
               <Link
                 to="/contact"
-                className="mt-10 inline-flex w-fit bg-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-background"
+                search={{ show: project.title }}
+                className="project-image-link"
+                aria-label={"Discuss a project like " + project.title}
               >
-                Build similar
-              </Link>
-            </div>
-          </article>
-
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
-            {rest.map((project, index) => (
-              <article key={project.title} className="group">
-                <div className="relative aspect-[4/5] overflow-hidden border border-foreground/20 bg-foreground">
+                <div className="work-image">
                   <img
-                    src={project.img}
-                    alt={project.title}
+                    src={project.image}
+                    alt={project.title + " — " + project.type}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    width={1200}
+                    height={800}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/55 via-transparent to-transparent" />
-                  <div className="absolute left-4 top-4 bg-background px-3 py-2 font-display text-xs uppercase tracking-[0.24em]">
-                    0{index + 2}
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4 text-background">
-                    <p className="font-display text-xs uppercase tracking-[0.24em] text-background/70">
-                      {project.client}
-                    </p>
-                    <h3 className="mt-2 font-display text-5xl leading-none">{project.title}</h3>
-                    <p className="font-display text-2xl leading-none text-background/70">
-                      {project.subtitle}
-                    </p>
-                  </div>
+                  <span className="image-tag">{project.type}</span>
+                  <span className="card-arrow">
+                    <ArrowUpRight size={23} />
+                  </span>
                 </div>
-                <div className="mt-4 flex items-start justify-between gap-4 border-t border-foreground/20 pt-4">
-                  <p className="text-sm leading-relaxed text-foreground/70">{project.scope}</p>
-                  <span className="font-display text-2xl text-foreground/40">{project.year}</span>
-                </div>
-              </article>
-            ))}
-          </div>
+              </Link>
+              <div className="project-meta">
+                <span>{project.client}</span>
+                <span>{project.year}</span>
+              </div>
+              <h2>{project.title}</h2>
+              <p>{project.description}</p>
+              <div className="project-tags">
+                {project.scope.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
       </section>
+      <BookingCTA />
     </PageShell>
   );
 }

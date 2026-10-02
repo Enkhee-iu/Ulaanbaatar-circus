@@ -1,12 +1,17 @@
+import { useLanguage } from "@/components/site/Language";
 import type { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
 export function PageShell({ children }: { children: ReactNode }) {
+  const { t } = useLanguage();
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div id="top" className="site-shell">
+      <a href="#main-content" className="skip-link">
+        {t("Skip to content")}
+      </a>
       <Header />
-      <main className="flex-1">{children}</main>
+      <main id="main-content">{children}</main>
       <Footer />
     </div>
   );

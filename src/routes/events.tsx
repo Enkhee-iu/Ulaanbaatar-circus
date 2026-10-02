@@ -1,164 +1,131 @@
+import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowUpRight, CalendarDays, Clock3, MapPin } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
+import { BookingCTA, FilterBar, PageIntro } from "@/components/site/Sections";
+import { useSiteContent } from "@/components/site/SiteContent";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events - UB Circus" },
-      { name: "description", content: "Upcoming and past events produced by UB Circus." },
-      { property: "og:title", content: "Events - UB Circus" },
-      { property: "og:description", content: "Upcoming and past events produced by UB Circus." },
+      { title: "Events & dates — UB Circus" },
+      {
+        name: "description",
+        content:
+          "Explore the UB Circus season calendar, public performances and private productions.",
+      },
     ],
   }),
   component: EventsPage,
 });
-
-const EVENTS = [
-  {
-    d: "12",
-    m: "MAR",
-    title: "Weightless - Opening Night",
-    venue: "State Opera, Ulaanbaatar",
-    type: "Public",
-    time: "19:30",
-    status: "Tickets open",
-  },
-  {
-    d: "27",
-    m: "APR",
-    title: "The Paper Circus",
-    venue: "Corporate Palace",
-    type: "Family",
-    time: "14:00",
-    status: "Matinee",
-  },
-  {
-    d: "18",
-    m: "MAY",
-    title: "Gobi Wool Reveal",
-    venue: "Hunnu Mall Rooftop",
-    type: "Private",
-    time: "20:00",
-    status: "Invite only",
-  },
-  {
-    d: "09",
-    m: "JUN",
-    title: "Ink & Smoke Premiere",
-    venue: "UB Circus Hall",
-    type: "Public",
-    time: "19:00",
-    status: "Announced",
-  },
-  {
-    d: "24",
-    m: "AUG",
-    title: "Nomad Nights - Erdenet",
-    venue: "Central Square",
-    type: "Touring",
-    time: "18:30",
-    status: "Tour stop",
-  },
-] as const;
-
-const STATS = [
-  ["05", "Season dates"],
-  ["03", "Public shows"],
-  ["02", "Tour cities"],
-] as const;
+const CATEGORIES = ["All events", "Public", "Family", "Private", "Touring"] as const;
 
 function EventsPage() {
+  const { t, language } = useLanguage();
+  const { events: EVENTS } = useSiteContent();
+  const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("All events");
+  const events = EVENTS.filter((event) => category === "All events" || event.category === category);
   return (
     <PageShell>
-      <section className="paper-grid border-b border-foreground/15">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-6 pb-16 pt-16 md:grid-cols-12 md:px-10 md:pb-24 md:pt-24">
-          <div className="md:col-span-8">
-            <div className="border-y border-foreground/15 py-3 font-display text-xs uppercase tracking-[0.32em] text-muted-foreground">
-              Calendar / 2026
-            </div>
-            <h1 className="mt-7 font-display text-7xl leading-[0.82] sm:text-8xl md:text-9xl">
-              Nights worth
-              <br />
-              marking.
-            </h1>
-            <p className="mt-8 max-w-2xl border-l-2 border-foreground pl-5 text-lg leading-relaxed text-foreground/80">
-              Public premieres, touring dates and private productions from the
-              UB Circus season calendar.
-            </p>
-          </div>
-          <div className="grid gap-px bg-foreground/15 md:col-span-4">
-            {STATS.map(([value, label]) => (
-              <div key={label} className="bg-background/80 p-5">
-                <div className="font-display text-5xl leading-none">{value}</div>
-                <div className="mt-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                  {label}
-                </div>
-              </div>
-            ))}
-          </div>
+      <PageIntro
+        eyebrow={t("The season calendar")}
+        title={
+          <>
+            {t("Good nights.")}
+            <br />
+            <span className="accent-text">{t("Great memories.")}</span>
+          </>
+        }
+        description={t(
+          "From opening nights to open-air stages. Explore the places and moments that make up our season.",
+        )}
+      >
+        <div className="intro-note">
+          <CalendarDays size={18} />
+          {t("Performances & dates")}
         </div>
-      </section>
-
-      <section>
-        <div className="mx-auto max-w-[1440px] px-6 py-14 md:px-10 md:py-20">
-          <ul className="border-t border-foreground">
-            {EVENTS.map((event) => (
-              <li
-                key={`${event.m}-${event.d}-${event.title}`}
-                className="group grid gap-5 border-b border-foreground/20 py-7 transition-colors hover:bg-foreground hover:px-5 hover:text-background md:grid-cols-12 md:items-center"
-              >
-                <div className="flex items-end gap-3 md:col-span-2">
-                  <span className="font-display text-7xl leading-none">{event.d}</span>
-                  <span className="pb-2 font-display text-xs uppercase tracking-[0.3em] text-muted-foreground group-hover:text-background/60">
-                    {event.m}
+      </PageIntro>
+      <section className="container catalogue-section">
+        <div className="catalogue-toolbar">
+          <FilterBar
+            options={CATEGORIES}
+            selected={category}
+            onChange={setCategory}
+            label={t("Filter events by type")}
+          />
+          <span className="results-count" aria-live="polite">
+            {events.length} {t(events.length === 1 ? "event" : "events")}
+          </span>
+        </div>
+        <div className="event-list">
+          {events.length === 0 && (
+            <p className="results-count">
+              {t("No events in this category yet. Contact us for the next dates.")}
+            </p>
+          )}
+          {events.map((event) => (
+            <article className="event-row" key={event.id}>
+              <time dateTime={event.date} className="event-date">
+                <span>
+                  {new Date(event.date + "T00:00:00Z").toLocaleDateString(
+                    language === "mn" ? "mn-MN" : "en",
+                    {
+                      month: "short",
+                      timeZone: "UTC",
+                    },
+                  )}
+                </span>
+                <strong>{event.date.slice(8)}</strong>
+                <small>{event.date.slice(0, 4)}</small>
+              </time>
+              <div className="event-detail">
+                <span className="event-category">
+                  {t(event.category)}
+                  <span className="past-badge">
+                    {event.date <
+                    new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Ulaanbaatar" })
+                      ? t("Past event")
+                      : t("Upcoming")}
                   </span>
-                </div>
-                <div className="md:col-span-5">
-                  <h2 className="font-display text-3xl leading-none md:text-5xl">{event.title}</h2>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-background/60">
+                </span>
+                <h2>{event.title}</h2>
+                <div className="event-meta">
+                  <span>
+                    <MapPin size={14} />
                     {event.venue}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2 md:col-span-3">
-                  <span className="border border-foreground/40 px-3 py-1 font-display text-xs uppercase tracking-[0.2em] group-hover:border-background/50">
-                    {event.type}
                   </span>
-                  <span className="border border-foreground/40 px-3 py-1 font-display text-xs uppercase tracking-[0.2em] group-hover:border-background/50">
+                  <span>
+                    <Clock3 size={14} />
                     {event.time}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-4 md:col-span-2 md:justify-end">
-                  <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground group-hover:text-background/60">
-                    {event.status}
-                  </span>
-                  <Link
-                    to="/contact"
-                    className="font-display text-xs uppercase tracking-[0.25em] underline underline-offset-4"
-                  >
-                    RSVP
-                  </Link>
-                </div>
-              </li>
-            ))}
-          </ul>
+              </div>
+              <Link
+                to="/contact"
+                search={{ show: event.title }}
+                className="event-enquiry"
+                aria-label={"Enquire about " + event.title}
+              >
+                {t("Enquire about this show")}
+                <ArrowUpRight size={20} />
+              </Link>
+            </article>
+          ))}
         </div>
-      </section>
-
-      <section className="border-y border-foreground/15 bg-foreground text-background">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-14 md:flex-row md:items-center md:justify-between md:px-10">
-          <h2 className="font-display text-5xl leading-none md:text-7xl">
-            Need a date
-            <br />
-            for your venue?
-          </h2>
-          <Link
-            to="/contact"
-            className="inline-flex w-fit bg-background px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-foreground"
-          >
-            Start booking
+        <div className="calendar-note">
+          <CalendarDays size={22} />
+          <div>
+            <h3>{t("Looking for the next date?")}</h3>
+            <p>{t("Get in touch for new performances, availability or a show at your venue.")}</p>
+          </div>
+          <Link to="/contact" className="button button-outline">
+            {t("Talk to the team")}
+            <ArrowUpRight size={17} />
           </Link>
         </div>
       </section>
+      <BookingCTA />
     </PageShell>
   );
 }

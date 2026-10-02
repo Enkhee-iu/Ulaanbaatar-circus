@@ -6,9 +6,14 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { getPublicContent } from "../lib/content";
+import { SiteContentProvider } from "../components/site/SiteContent";
+import { LanguageProvider } from "../components/site/Language";
+import adminCss from "../admin.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -34,7 +39,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -44,9 +49,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="font-display text-3xl uppercase tracking-[0.15em]">
-          This page didn't load
-        </h1>
+        <h1 className="font-display text-3xl uppercase tracking-[0.15em]">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong. Try again or head back home.
         </p>
@@ -73,6 +76,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: () => getPublicContent(),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -87,19 +91,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "UB Circus — Live Shows, Events & Productions" },
       {
         property: "og:description",
-        content: "Ulaanbaatar's editorial circus & event production house.",
+        content: "Extraordinary circus, live shows and experiences. Made in Ulaanbaatar.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: adminCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
       },
     ],
   }),
@@ -111,7 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="mn">
       <head>
         <HeadContent />
       </head>
@@ -125,10 +130,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const content = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <LanguageProvider>
+        <SiteContentProvider initialContent={content}>
+          <Outlet />
+        </SiteContentProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

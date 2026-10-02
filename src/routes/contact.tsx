@@ -1,191 +1,294 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageShell } from "@/components/site/PageShell";
+import { useLanguage } from "@/components/site/Language";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
+import type { FormEvent } from "react";
+import { PageShell } from "@/components/site/PageShell";
+import { PageIntro } from "@/components/site/Sections";
 
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>): { show?: string } => ({
+    show: typeof search.show === "string" ? search.show : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "Contact - UB Circus" },
-      { name: "description", content: "Book a show, collaborate, or say hello to UB Circus." },
-      { property: "og:title", content: "Contact - UB Circus" },
-      { property: "og:description", content: "Book a show or collaborate with UB Circus." },
+      { title: "Let’s create — UB Circus" },
+      {
+        name: "description",
+        content:
+          "Start a conversation about your next show, brand event or creative production with UB Circus.",
+      },
     ],
   }),
   component: ContactPage,
 });
+import { useSiteContent } from "@/components/site/SiteContent";
 
 const EVENT_TYPES = ["Gala", "Festival", "Brand launch", "Private event", "Film / media"] as const;
-const BUDGETS = ["Under $5k", "$5k - $15k", "$15k - $40k", "$40k+"] as const;
-const PROCESS = [
-  { step: "01", title: "Brief", copy: "Share the venue, date, audience and the feeling you want in the room." },
-  { step: "02", title: "Shape", copy: "We suggest acts, duration, technical notes and a production direction." },
-  { step: "03", title: "Stage", copy: "Artists, rehearsal, lighting cues and show management arrive as one package." },
-] as const;
+const BUDGETS = ["Not sure yet", "Under $5k", "$5k–$15k", "$15k–$40k", "$40k+"] as const;
 
 function ContactPage() {
-  const [sent, setSent] = useState(false);
-  const [eventType, setEventType] = useState<(typeof EVENT_TYPES)[number]>("Gala");
-  const [budget, setBudget] = useState<(typeof BUDGETS)[number]>("$5k - $15k");
+  const { t } = useLanguage();
+  const { settings } = useSiteContent();
+  const { show } = Route.useSearch();
+  const [eventType, setEventType] = useState<string>("Gala");
+  const [budget, setBudget] = useState<string>("Not sure yet");
+  const [draft, setDraft] = useState<string | null>(null);
+
+  function prepareDraft(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const body = [
+      t("Hello UB Circus,"),
+      "",
+      String(data.get("brief")),
+      "",
+      ...(show ? [t("Interested in:") + " " + show] : []),
+      t("Name:") + " " + data.get("name"),
+      t("Email:") + " " + data.get("email"),
+      t("Company / venue:") + " " + (data.get("company") || t("Not specified")),
+      t("Event date:") + " " + (data.get("date") || t("Flexible")),
+      t("City:") + " " + (data.get("city") || t("Not specified")),
+      t("Audience:") + " " + (data.get("audience") || t("Not specified")),
+      t("Event type:") + " " + t(eventType),
+      t("Budget:") + " " + t(budget),
+    ].join("\n");
+    setDraft(
+      "mailto:" +
+        settings.email +
+        "?subject=" +
+        encodeURIComponent(show ? t("Show enquiry:") + " " + show : t("Let’s create a show")) +
+        "&body=" +
+        encodeURIComponent(body),
+    );
+  }
 
   return (
     <PageShell>
-      <section className="paper-grid border-b border-foreground/15">
-        <div className="mx-auto grid max-w-[1440px] gap-12 px-6 pb-20 pt-16 md:grid-cols-12 md:px-10 md:pb-28 md:pt-24">
-          <div className="md:col-span-5">
-            <div className="border-y border-foreground/15 py-3 font-display text-xs uppercase tracking-[0.32em] text-muted-foreground">
-              Booking office / Ulaanbaatar
-            </div>
-            <h1 className="mt-7 font-display text-7xl leading-[0.82] sm:text-8xl md:text-9xl">
-              Build the
+      <PageIntro
+        eyebrow={t("Good things start here")}
+        title={
+          <>
+            {t("Your idea.")}
+            <br />
+            <span className="accent-text">{t("Our next act.")}</span>
+          </>
+        }
+        description={t(
+          "A big vision or a small spark — we’d love to hear it. Tell us a little about your event and let’s see what’s possible.",
+        )}
+      />
+      <section className="container contact-layout">
+        <aside className="contact-aside">
+          <div className="contact-panel">
+            <span className="eyebrow">{t("Let’s talk")}</span>
+            <h2>
+              {t("Real people.")}
               <br />
-              next act.
-            </h1>
-            <p className="mt-8 max-w-lg border-l-2 border-foreground pl-5 text-lg leading-relaxed text-foreground/80">
-              Send a compact brief and we will come back with a show shape,
-              production notes and availability within two working days.
+              {t("Fresh possibilities.")}
+            </h2>
+            <p>
+              {t(
+                "We’ll help you find the right performers, production and feeling for your audience.",
+              )}
             </p>
-
-            <div className="mt-10 grid gap-px bg-foreground/15">
-              <ContactTile label="Email" value="hello@ubcircus.mn" href="mailto:hello@ubcircus.mn" />
-              <ContactTile label="Phone" value="+976 9900 0000" href="tel:+97699000000" />
-              <ContactTile label="Studio" value="Peace Ave 42, Sukhbaatar, UB" />
-            </div>
-
-            <div className="mt-10 border border-foreground/20 bg-background/70 p-5">
-              <p className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                Fast track
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/75">
-                For events inside 14 days, include stage dimensions, call time,
-                ceiling height and whether aerial rigging is possible.
-              </p>
+            <a href={"mailto:" + settings.email} className="contact-detail">
+              <span className="contact-detail-icon">
+                <Mail size={19} />
+              </span>
+              <span>
+                <small>{t("Email us")}</small>
+                {settings.email}
+              </span>
+              <ArrowUpRight size={18} />
+            </a>
+            <a href={"tel:" + settings.phone.replace(/\s/g, "")} className="contact-detail">
+              <span className="contact-detail-icon">
+                <Phone size={19} />
+              </span>
+              <span>
+                <small>{t("Give us a call")}</small>
+                {settings.phone}
+              </span>
+              <ArrowUpRight size={18} />
+            </a>
+            <div className="contact-detail">
+              <span className="contact-detail-icon">
+                <MapPin size={19} />
+              </span>
+              <span>
+                <small>{t("Find the studio")}</small>
+                <span style={{ whiteSpace: "pre-line" }}>{settings.address}</span>
+              </span>
             </div>
           </div>
-
-          <div className="md:col-span-7">
-            {sent ? (
-              <div className="border border-foreground bg-foreground p-8 text-background md:p-10">
-                <p className="font-display text-xs uppercase tracking-[0.3em] text-background/60">
-                  Message received
-                </p>
-                <h2 className="mt-4 font-display text-6xl leading-none">Thank you.</h2>
-                <p className="mt-5 max-w-md text-base leading-relaxed text-background/75">
-                  Your brief is staged. We will reply within two working days with
-                  the first shape for the production.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setSent(false)}
-                  className="mt-8 border border-background/70 px-5 py-3 font-display text-sm uppercase tracking-[0.2em] transition-colors hover:bg-background hover:text-foreground"
-                >
-                  Send another brief
-                </button>
+          <div className="contact-process">
+            <span className="eyebrow">{t("From spark to spotlight")}</span>
+            {[
+              ["01", "Tell us the idea", "Your date, venue, audience and what you have in mind."],
+              [
+                "02",
+                "Shape it together",
+                "We suggest the acts, creative direction and production.",
+              ],
+              ["03", "Make it happen", "The artists, rehearsals and final show, brought together."],
+            ].map(([number, title, text]) => (
+              <div key={number}>
+                <span>{number}</span>
+                <div>
+                  <h3>{t(title)}</h3>
+                  <p>{t(text)}</p>
+                </div>
               </div>
-            ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSent(true);
-                }}
-                className="border border-foreground bg-background/80"
-              >
-                <div className="border-b border-foreground px-6 py-5 md:px-8">
-                  <p className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                    Production brief
-                  </p>
-                  <h2 className="mt-2 font-display text-4xl leading-none">Tell us what to build.</h2>
-                </div>
-
-                <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
-                  <Field label="Name" name="name" required />
-                  <Field label="Email" name="email" type="email" required />
-                  <Field label="Company / Venue" name="company" />
-                  <Field label="Event date" name="date" type="date" />
-                  <Field label="City" name="city" />
-                  <Field label="Audience size" name="audience" type="number" min="1" />
-                </div>
-
-                <div className="grid gap-6 border-t border-foreground/15 p-6 md:grid-cols-2 md:p-8">
-                  <SegmentedField
-                    label="Event type"
-                    options={EVENT_TYPES}
-                    value={eventType}
-                    onChange={setEventType}
-                  />
-                  <SegmentedField
-                    label="Budget range"
-                    options={BUDGETS}
-                    value={budget}
-                    onChange={setBudget}
-                  />
-                </div>
-
-                <div className="border-t border-foreground/15 p-6 md:p-8">
-                  <label className="block font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                    What should the audience feel?
-                  </label>
-                  <textarea
-                    name="brief"
-                    required
-                    rows={6}
-                    placeholder="Aerial opener, roaming performers, reveal moment, full evening production..."
-                    className="mt-3 w-full resize-none border border-foreground/30 bg-transparent p-4 text-base outline-none transition-colors placeholder:text-foreground/35 focus:border-foreground"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-4 border-t border-foreground p-6 md:flex-row md:items-center md:justify-between md:p-8">
-                  <p className="max-w-sm text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    We reply with availability, show direction and next production steps.
-                  </p>
-                  <button
-                    type="submit"
-                    className="inline-flex w-fit items-center gap-3 bg-foreground px-6 py-4 font-display text-base uppercase tracking-[0.2em] text-background shadow-[6px_6px_0_0_oklch(0.12_0_0_/_0.18)] transition-transform hover:-translate-y-0.5"
-                  >
-                    Send brief &rarr;
-                  </button>
-                </div>
-              </form>
+            ))}
+          </div>
+        </aside>
+        <div className="enquiry-panel">
+          {draft && (
+            <div className="draft-ready" tabIndex={-1} ref={(node) => node?.focus()}>
+              <span className="draft-check">
+                <CheckCircle2 size={38} />
+              </span>
+              <span className="eyebrow">{t("One last step")}</span>
+              <h2>
+                {t("Your brief")}
+                <br />
+                {t("is ready.")}
+              </h2>
+              <p>
+                {t(
+                  "Open the draft in your email app, review it, then send it to our team. Your request hasn’t been sent yet.",
+                )}
+              </p>
+              <a href={draft} className="button button-lime">
+                {t("Open email draft")}
+                <ArrowUpRight size={18} />
+              </a>
+              <p className="draft-help">
+                {t("No email app? Email us directly at")}{" "}
+                <a href={"mailto:" + settings.email}>{settings.email}</a>.
+              </p>
+              <button className="text-link" type="button" onClick={() => setDraft(null)}>
+                <ArrowLeft size={16} />
+                {t("Back to the form")}
+              </button>
+            </div>
+          )}
+          <form hidden={Boolean(draft)} onSubmit={prepareDraft}>
+            <div className="form-heading">
+              <span className="eyebrow">{t("A little about your event")}</span>
+              <h2>{t("Let’s build the brief.")}</h2>
+              <p>{t("Fields marked * are required.")}</p>
+            </div>
+            {show && (
+              <div className="selected-show">
+                <Check size={16} />
+                {t("Interested in: ")}
+                <strong>{show}</strong>
+                <Link to="/contact" search={{ show: undefined }}>
+                  {t("Clear")}
+                </Link>
+              </div>
             )}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-foreground/15">
-        <div className="mx-auto grid max-w-[1440px] gap-px bg-foreground/15 px-6 py-16 md:grid-cols-3 md:px-10 md:py-24">
-          {PROCESS.map((item) => (
-            <article key={item.step} className="bg-background p-6 md:p-8">
-              <div className="flex items-baseline justify-between border-b border-foreground/15 pb-4">
-                <span className="font-display text-5xl text-foreground/20">{item.step}</span>
-                <span className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  Process
-                </span>
+            <div className="form-grid">
+              <Field
+                label={t("Your name")}
+                name="name"
+                placeholder={t("Your full name")}
+                autoComplete="name"
+                required
+              />
+              <Field
+                label={t("Email address")}
+                name="email"
+                type="email"
+                placeholder={t("you@company.com")}
+                autoComplete="email"
+                required
+              />
+              <Field
+                label={t("Company or venue")}
+                name="company"
+                placeholder={t("Company / venue name")}
+                autoComplete="organization"
+              />
+              <Field label={t("Event date")} name="date" type="date" />
+              <Field
+                label={t("City")}
+                name="city"
+                placeholder={t("Ulaanbaatar, or further afield")}
+                autoComplete="address-level2"
+              />
+              <Field
+                label={t("Audience size")}
+                name="audience"
+                type="number"
+                placeholder={t("Approximate guests")}
+                min="1"
+              />
+            </div>
+            <fieldset className="form-fieldset">
+              <legend>{t("What are you planning?")}</legend>
+              <div className="choice-group">
+                {EVENT_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    aria-pressed={eventType === type}
+                    className={"choice-chip" + (eventType === type ? " selected" : "")}
+                    onClick={() => setEventType(type)}
+                  >
+                    {t(type)}
+                  </button>
+                ))}
               </div>
-              <h3 className="mt-6 font-display text-4xl leading-none">{item.title}</h3>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/70">{item.copy}</p>
-            </article>
-          ))}
+            </fieldset>
+            <div className="form-field">
+              <label htmlFor="budget">
+                {t("Budget range ")}
+                <span>{t("(optional)")}</span>
+              </label>
+              <select
+                id="budget"
+                name="budget"
+                value={budget}
+                onChange={(event) => setBudget(event.target.value)}
+              >
+                {BUDGETS.map((item) => (
+                  <option key={item} value={item}>
+                    {t(item)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-field">
+              <label htmlFor="brief">
+                {t("What do you have in mind? ")}
+                <span>*</span>
+              </label>
+              <textarea
+                id="brief"
+                name="brief"
+                required
+                rows={5}
+                maxLength={2000}
+                defaultValue={show ? t("I’m interested in") + " " + show + ". " : ""}
+                placeholder={t(
+                  "The feeling, the occasion, the big idea. Tell us what you’re imagining.",
+                )}
+              />
+            </div>
+            <div className="form-bottom">
+              <p>{t("We’ll prepare an email draft for you to review and send.")}</p>
+              <button type="submit" className="button button-lime">
+                {t("Prepare my enquiry")}
+                <ArrowUpRight size={18} />
+              </button>
+            </div>
+          </form>
         </div>
       </section>
     </PageShell>
-  );
-}
-
-function ContactTile({ label, value, href }: { label: string; value: string; href?: string }) {
-  const content = (
-    <div className="flex items-baseline justify-between gap-4 bg-background/80 px-4 py-4">
-      <span className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        {label}
-      </span>
-      <span className="text-right font-display text-xl leading-none">{value}</span>
-    </div>
-  );
-
-  return href ? (
-    <a href={href} className="transition-colors hover:bg-foreground hover:text-background">
-      {content}
-    </a>
-  ) : (
-    content
   );
 }
 
@@ -193,63 +296,36 @@ function Field({
   label,
   name,
   type = "text",
+  placeholder,
+  autoComplete,
   required,
   min,
 }: {
   label: string;
   name: string;
   type?: string;
+  placeholder?: string;
+  autoComplete?: string;
   required?: boolean;
   min?: string;
 }) {
+  const { t } = useLanguage();
   return (
-    <div>
-      <label className="block font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        {label}
+    <div className="form-field">
+      <label htmlFor={name}>
+        {t(label)}
+        {required && <span> *</span>}
       </label>
       <input
+        id={name}
         name={name}
         type={type}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
         required={required}
         min={min}
-        className="mt-3 w-full border-b border-foreground bg-transparent py-2 text-base outline-none transition-colors focus:border-b-2"
+        maxLength={type === "text" || type === "email" ? 150 : undefined}
       />
-    </div>
-  );
-}
-
-function SegmentedField<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: readonly T[];
-  value: T;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div>
-      <p className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        {label}
-      </p>
-      <div className="mt-3 grid gap-px bg-foreground/20">
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => onChange(option)}
-            className={`px-4 py-3 text-left font-display text-sm uppercase tracking-[0.18em] transition-colors ${
-              value === option
-                ? "bg-foreground text-background"
-                : "bg-background text-foreground hover:bg-foreground/10"
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
