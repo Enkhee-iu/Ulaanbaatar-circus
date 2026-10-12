@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { getPublicContent } from "../lib/content";
+import { DEFAULT_CONTENT } from "../lib/content-schema";
 import { SiteContentProvider } from "../components/site/SiteContent";
 import { LanguageProvider } from "../components/site/Language";
 import adminCss from "../admin.css?url";
@@ -76,7 +77,8 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  loader: () => getPublicContent(),
+  loader: ({ location }) =>
+    location.pathname.replace(/\/$/, "") === "/admin" ? DEFAULT_CONTENT : getPublicContent(),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -104,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap",
       },
     ],
   }),
@@ -116,7 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="mn">
+    <html lang="mn" className="dark" data-theme="dark">
       <head>
         <HeadContent />
       </head>

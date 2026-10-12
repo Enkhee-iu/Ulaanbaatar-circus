@@ -1,123 +1,96 @@
+import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight, Asterisk, Play, X } from "lucide-react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { ArrowUpRight, Asterisk } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/site/PageShell";
 import { BookingCTA, SectionHeading, ShowCard } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
-
-import heroVideo from "@/assets/hero.mp4.asset.json";
+import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
+import { HeroPlaybackButton } from "@/components/site/HeroPlaybackButton";
 
 export const Route = createFileRoute("/")({ component: HomePage });
 
 function HomePage() {
   const { t } = useLanguage();
   const { shows: SHOWS, projects: PROJECTS, settings } = useSiteContent();
-  const hero = settings.heroImage;
   const aerial = settings.aboutImage;
-  const [filmError, setFilmError] = useState(false);
+  const youtubeId = youtubeVideoId(settings.heroVideoUrl || "");
   return (
     <PageShell>
-      <section className="container hero-wrap" aria-label={t("Welcome to UB Circus")}>
-        <div className="hero">
-          <img
-            className="hero-image"
-            src={hero}
-            alt={t("An aerial artist on red silks under warm theatrical spotlights")}
-            width={1536}
-            height={1024}
-            fetchPriority="high"
-          />
-          <div className="hero-shade" />
-          <div className="hero-content">
-            <span className="hero-eyebrow">
-              <span className="status-dot" /> {settings.heroEyebrow}
-            </span>
-            <h1>
-              {settings.heroTitle}
-              <br />
-              <span>{settings.heroAccent}</span>
-              <Asterisk className="hero-star" size={66} strokeWidth={1.5} />
-            </h1>
-            <p style={{ whiteSpace: "pre-line" }}>{settings.heroDescription}</p>
-            <div className="hero-actions">
-              <Link to="/shows" className="button button-lime">
-                {t("Explore our shows")}
-                <ArrowUpRight size={19} />
-              </Link>
-              <Link to="/contact" className="button button-glass">
-                {t("Create with us")}
-                <ArrowUpRight size={18} />
-              </Link>
-            </div>
-          </div>
-          <div className="hero-bottom">
-            <a href="#discover" className="hero-discover">
-              <span className="icon-circle">
-                <ArrowDown size={18} />
-              </span>{" "}
-              {t("A little wonder awaits")}
-            </a>
-            <Dialog.Root
-              onOpenChange={(open) => {
-                if (open) setFilmError(false);
-              }}
-            >
-              <Dialog.Trigger asChild>
-                <button className="film-trigger" type="button">
-                  <span className="play-circle">
-                    <Play size={17} fill="currentColor" />
-                  </span>
-                  <span>
-                    {t("Step into our world")}
-                    <small>{t("Watch the film")}</small>
-                  </span>
-                </button>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className="film-overlay" />
-                <Dialog.Content className="film-dialog">
-                  <div className="film-dialog-heading">
-                    <Dialog.Title>{t("A glimpse of the extraordinary.")}</Dialog.Title>
-                    <Dialog.Close className="icon-button" aria-label={t("Close film")}>
-                      <X size={24} />
-                    </Dialog.Close>
-                  </div>
-                  <Dialog.Description className="sr-only">
-                    {t("Watch a UB Circus aerial performance film.")}
-                  </Dialog.Description>
-                  {filmError ? (
-                    <div className="film-unavailable">
-                      <img src={hero} alt={t("UB Circus aerial silk performance")} />
-                      <p>{t("The film is currently unavailable.")}</p>
-                      <Dialog.Close asChild>
-                        <Link to="/shows" className="text-link">
-                          {t("Explore the shows")}
-                          <ArrowUpRight size={18} />
-                        </Link>
-                      </Dialog.Close>
-                    </div>
-                  ) : (
-                    <video
-                      src={heroVideo.url}
-                      poster={hero}
-                      controls
-                      autoPlay
-                      playsInline
-                      onError={() => setFilmError(true)}
-                    />
-                  )}
-                  <span className="film-caption">
-                    {t("UB Circus · A new perspective on live performance")}
-                  </span>
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
-          </div>
-          <span className="hero-image-label">{t("THE ART OF FEELING SOMETHING.")}</span>
+      <section className="hero-video-stage" aria-label={t("Welcome to UB Circus")}>
+        <h1 className="sr-only">UB Circus — {t("Shows & experiences")}</h1>
+        {youtubeId ? (
+          <YouTubeHero key={youtubeId} videoId={youtubeId} />
+        ) : (
+          settings.heroVideoUrl && (
+            <HeroBackgroundVideo key={settings.heroVideoUrl} src={settings.heroVideoUrl} />
+          )
+        )}
+        <div className="hero-video-shade" aria-hidden="true" />
+        <div className="hero-video-actions">
+          <Link to="/shows" className="button hero-video-primary">
+            {t("Explore our shows")}
+            <ArrowUpRight size={19} />
+          </Link>
+          <Link to="/contact" className="button hero-video-secondary">
+            {t("Create with us")}
+            <ArrowUpRight size={19} />
+          </Link>
         </div>
       </section>
+
+      <section className="container welcome-section" aria-labelledby="welcome-heading">
+        <div className="welcome-copy">
+          <h2 id="welcome-heading">
+            {settings.heroTitle} <span>{settings.heroAccent}</span>
+          </h2>
+          <p>{settings.heroDescription}</p>
+        </div>
+        <div className="welcome-portrait">
+          <SmartImage
+            src={aerial}
+            alt={t("Acrobats performing a dramatic act together")}
+            width={800}
+            height={800}
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      <section className="container section-space">
+        <SectionHeading
+          eyebrow={t("The spotlight is yours")}
+          title={
+            <>
+              {t("Not just a show.")}
+              <br />
+              <span className="muted-heading">{t("A whole new feeling.")}</span>
+            </>
+          }
+          link={{ to: "/shows", label: "Discover all shows" }}
+        />
+        <div className="show-grid">
+          {SHOWS.slice(0, 3).map((show) => (
+            <ShowCard key={show.id} show={show} />
+          ))}
+        </div>
+      </section>
+
+      <nav
+        className="container discovery-bar"
+        aria-label={t("Find your next extraordinary moment")}
+      >
+        <span>{t("Find your next extraordinary moment")}</span>
+        <Link to="/shows">
+          {t("Discover shows")}
+          <ArrowUpRight size={18} />
+        </Link>
+        <Link to="/events">
+          {t("View upcoming events")}
+          <ArrowUpRight size={18} />
+        </Link>
+      </nav>
 
       <section
         id="discover"
@@ -146,28 +119,9 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="container section-space">
-        <SectionHeading
-          eyebrow={t("The spotlight is yours")}
-          title={
-            <>
-              {t("Not just a show.")}
-              <br />
-              <span className="muted-heading">{t("A whole new feeling.")}</span>
-            </>
-          }
-          link={{ to: "/shows", label: "Discover all shows" }}
-        />
-        <div className="show-grid">
-          {SHOWS.slice(0, 3).map((show) => (
-            <ShowCard key={show.id} show={show} />
-          ))}
-        </div>
-      </section>
-
       <section className="container experience-section">
         <div className="experience-image">
-          <img
+          <SmartImage
             src={aerial}
             alt={t("Acrobats performing a dramatic act together")}
             width={1200}
@@ -237,7 +191,7 @@ function HomePage() {
           {PROJECTS.slice(0, 2).map((project) => (
             <Link to="/projects" className="home-work-card" key={project.title}>
               <div className="work-image">
-                <img
+                <SmartImage
                   src={project.image}
                   alt={project.title + " production"}
                   loading="lazy"
@@ -261,5 +215,80 @@ function HomePage() {
       </section>
       <BookingCTA />
     </PageShell>
+  );
+}
+
+function HeroBackgroundVideo({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [hasFrame, setHasFrame] = useState(false);
+  const [ready, setReady] = useState(false);
+  const requestedPlayback = useRef<boolean | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = true;
+    const syncPlayback = () => {
+      if (
+        document.hidden ||
+        !visible ||
+        requestedPlayback.current === false ||
+        (motion.matches && requestedPlayback.current !== true)
+      )
+        video.pause();
+      else void video.play().catch(() => setPlaying(false));
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      syncPlayback();
+    });
+    observer.observe(video);
+    motion.addEventListener("change", syncPlayback);
+    document.addEventListener("visibilitychange", syncPlayback);
+    syncPlayback();
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener("change", syncPlayback);
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [failed]);
+  if (failed) return null;
+  return (
+    <>
+      <video
+        ref={videoRef}
+        className={"hero-background-video" + (hasFrame ? " is-playing" : "")}
+        src={src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        disablePictureInPicture
+        onCanPlay={() => setReady(true)}
+        onPlaying={() => {
+          setPlaying(true);
+          setHasFrame(true);
+        }}
+        onPause={() => setPlaying(false)}
+        onError={() => {
+          setFailed(true);
+          setPlaying(false);
+        }}
+      />
+      <HeroPlaybackButton
+        playing={playing}
+        disabled={!ready}
+        onClick={() => {
+          requestedPlayback.current = !playing;
+          if (playing) videoRef.current?.pause();
+          else void videoRef.current?.play().catch(() => setPlaying(false));
+        }}
+      />
+    </>
   );
 }

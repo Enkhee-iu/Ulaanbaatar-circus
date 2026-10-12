@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-05",
+  "store": {
+    "passed": 13,
+    "checks": [
+      "Create request and persist exact fields",
+      "Exact retry does not duplicate request",
+      "Invalid email rejected",
+      "Invalid date rejected",
+      "Status and notes persist",
+      "Stale request update rejected",
+      "Anonymous request listing returns 401",
+      "Cross-origin admin write returns 403",
+      "Non-local admin request returns 403",
+      "Authenticated admin can list requests",
+      "Published content excludes drafts",
+      "Stale content update rejected",
+      "Logout invalidates session"
+    ],
+    "idempotencyObservation": {
+      "returnedSameReceipt": true,
+      "storedOldBrief": true
+    },
+    "dataDirectory": "Isolated .review/isolated-data; real user data untouched"
+  },
+  "http": {
+    "passed": 10,
+    "checks": [
+      "Production homepage returns 200",
+      "Published show detail returns 200",
+      "Unknown show returns 404",
+      "Anonymous admin content returns 401",
+      "Public request POST returns 201",
+      "Identical HTTP retry returns same receipt",
+      "Authenticated admin sees request",
+      "Admin saves status and notes",
+      "Concurrent stale update returns 409",
+      "Wrong-origin public request returns 403"
+    ],
+    "observations": {
+      "headerOnlyImageAccepted": true,
+      "faviconStatus": 404,
+      "unknownVideoStatus": 404
+    }
+  },
+  "additional": {
+    "corruptContent": {
+      "homepageStatus": 500,
+      "adminStatus": 500
+    },
+    "galleryAfterRemoval": {
+      "counter": "3 / 1",
+      "imageSource": null
+    },
+    "longBrandAt320px": {
+      "brandRight": 482.953125,
+      "controlsRight": 594.953125,
+      "menuRight": 630.953125
+    },
+    "themeReload": {
+      "initial": "dark",
+      "afterHydration": "light"
+    },
+    "lint": {
+      "formattingErrors": 4600,
+      "reactRefreshWarnings": 9,
+      "hookDependencyWarnings": 1
+    },
+    "typeScript": "passed",
+    "localBuild": "passed"
+  }
+}

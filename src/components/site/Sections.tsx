@@ -1,3 +1,4 @@
+import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Asterisk } from "lucide-react";
@@ -67,9 +68,9 @@ export function SectionHeading({
 export function ShowCard({ show }: { show: Show }) {
   const { t } = useLanguage();
   return (
-    <Link to="/contact" search={{ show: show.title }} className="show-card">
+    <Link to="/shows/$showId" params={{ showId: show.id }} className="show-card">
       <div className="show-card-image">
-        <img
+        <SmartImage
           src={show.image}
           alt={show.title + " — " + t("Circus performance")}
           loading="lazy"

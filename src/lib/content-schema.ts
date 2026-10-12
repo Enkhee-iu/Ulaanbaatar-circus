@@ -24,6 +24,16 @@ export const showSchema = z.object({
   tags,
   descriptionMn: z.string().trim().max(1600).optional(),
   tagsMn: tags.optional(),
+  details: z.string().trim().max(6000).optional(),
+  detailsMn: z.string().trim().max(6000).optional(),
+  gallery: z.array(imageSchema).max(8).optional(),
+  videoUrl: z
+    .string()
+    .max(2000)
+    .url()
+    .refine((value) => value.startsWith("https://"), "HTTPS видео холбоос оруулна уу.")
+    .or(z.literal(""))
+    .optional(),
 });
 export const projectSchema = z.object({
   ...base,
@@ -59,6 +69,13 @@ export const settingsSchema = z.object({
   heroTitle: text(70),
   heroAccent: text(70),
   heroDescription: text(500),
+  heroVideoUrl: z
+    .string()
+    .max(2000)
+    .url()
+    .refine((value) => value.startsWith("https://"), "HTTPS видео холбоос оруулна уу.")
+    .or(z.literal(""))
+    .optional(),
   heroImage: imageSchema,
   aboutImage: imageSchema,
   email: z.string().email().max(150),

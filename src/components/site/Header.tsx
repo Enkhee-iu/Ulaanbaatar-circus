@@ -21,7 +21,9 @@ export function Brand() {
       <span className="brand-symbol">
         <Asterisk size={27} strokeWidth={2.4} />
       </span>
-      <span>{settings.brandName}</span>
+      <span className="brand-name" title={settings.brandName}>
+        {settings.brandName}
+      </span>
     </Link>
   );
 }
@@ -48,7 +50,6 @@ export function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Brand />
         <nav className="desktop-nav" aria-label={t("Main navigation")}>
           {NAV.map((item) => (
             <Link key={item.to} to={item.to} activeProps={{ className: "nav-active" }}>
@@ -56,11 +57,16 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <LanguageSwitcher />
-        <Link to="/contact" className="button button-lime header-booking">
-          {t("Let’s make a show ")}
-          <ArrowUpRight size={17} />
-        </Link>
+        <Brand />
+        <div className="header-actions">
+          <div className="header-controls">
+            <LanguageSwitcher />
+          </div>
+          <Link to="/contact" className="button button-lime header-booking">
+            {t("Let’s make a show ")}
+            <ArrowUpRight size={17} />
+          </Link>
+        </div>
         <button
           ref={menuButton}
           className="icon-button mobile-toggle"

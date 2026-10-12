@@ -9,39 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as ProjectsRouteImport } from './routes/projects'
-import { Route as ShowsRouteImport } from './routes/shows'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ApiAdminSplatRouteImport } from './routes/api.admin.$'
+import { Route as ShowsRouteImport } from './routes/shows'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShowsShowIdRouteImport } from './routes/shows_.$showId'
+import { Route as ApiEnquiriesRouteImport } from './routes/api.enquiries'
 import { Route as ApiMediaIdRouteImport } from './routes/api.media.$id'
+import { Route as ApiAdminSplatRouteImport } from './routes/api.admin.$'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsRoute = ProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShowsRoute = ShowsRouteImport.update({
@@ -49,19 +31,49 @@ const ShowsRoute = ShowsRouteImport.update({
   path: '/shows',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAdminSplatRoute = ApiAdminSplatRouteImport.update({
-  id: '/api/admin/$',
-  path: '/api/admin/$',
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowsShowIdRoute = ShowsShowIdRouteImport.update({
+  id: '/shows_/$showId',
+  path: '/shows/$showId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEnquiriesRoute = ApiEnquiriesRouteImport.update({
+  id: '/api/enquiries',
+  path: '/api/enquiries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMediaIdRoute = ApiMediaIdRouteImport.update({
   id: '/api/media/$id',
   path: '/api/media/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminSplatRoute = ApiAdminSplatRouteImport.update({
+  id: '/api/admin/$',
+  path: '/api/admin/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -73,6 +85,8 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/enquiries': typeof ApiEnquiriesRoute
+  '/shows/$showId': typeof ShowsShowIdRoute
   '/api/admin/$': typeof ApiAdminSplatRoute
   '/api/media/$id': typeof ApiMediaIdRoute
 }
@@ -84,6 +98,8 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/enquiries': typeof ApiEnquiriesRoute
+  '/shows/$showId': typeof ShowsShowIdRoute
   '/api/admin/$': typeof ApiAdminSplatRoute
   '/api/media/$id': typeof ApiMediaIdRoute
 }
@@ -96,6 +112,8 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/enquiries': typeof ApiEnquiriesRoute
+  '/shows_/$showId': typeof ShowsShowIdRoute
   '/api/admin/$': typeof ApiAdminSplatRoute
   '/api/media/$id': typeof ApiMediaIdRoute
 }
@@ -109,6 +127,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
+    | '/api/enquiries'
+    | '/shows/$showId'
     | '/api/admin/$'
     | '/api/media/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +140,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
+    | '/api/enquiries'
+    | '/shows/$showId'
     | '/api/admin/$'
     | '/api/media/$id'
   id:
@@ -131,6 +153,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
+    | '/api/enquiries'
+    | '/shows_/$showId'
     | '/api/admin/$'
     | '/api/media/$id'
   fileRoutesById: FileRoutesById
@@ -143,45 +167,19 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ShowsRoute: typeof ShowsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiEnquiriesRoute: typeof ApiEnquiriesRoute
+  ShowsShowIdRoute: typeof ShowsShowIdRoute
   ApiAdminSplatRoute: typeof ApiAdminSplatRoute
   ApiMediaIdRoute: typeof ApiMediaIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects': {
-      id: '/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shows': {
@@ -191,18 +189,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShowsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin/$': {
-      id: '/api/admin/$'
-      path: '/api/admin/$'
-      fullPath: '/api/admin/$'
-      preLoaderRoute: typeof ApiAdminSplatRouteImport
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shows_/$showId': {
+      id: '/shows_/$showId'
+      path: '/shows/$showId'
+      fullPath: '/shows/$showId'
+      preLoaderRoute: typeof ShowsShowIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/enquiries': {
+      id: '/api/enquiries'
+      path: '/api/enquiries'
+      fullPath: '/api/enquiries'
+      preLoaderRoute: typeof ApiEnquiriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/media/$id': {
@@ -210,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/api/media/$id'
       fullPath: '/api/media/$id'
       preLoaderRoute: typeof ApiMediaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/$': {
+      id: '/api/admin/$'
+      path: '/api/admin/$'
+      fullPath: '/api/admin/$'
+      preLoaderRoute: typeof ApiAdminSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -223,6 +263,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ShowsRoute: ShowsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiEnquiriesRoute: ApiEnquiriesRoute,
+  ShowsShowIdRoute: ShowsShowIdRoute,
   ApiAdminSplatRoute: ApiAdminSplatRoute,
   ApiMediaIdRoute: ApiMediaIdRoute,
 }

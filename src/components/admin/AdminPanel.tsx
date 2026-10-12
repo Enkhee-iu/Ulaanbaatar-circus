@@ -1,5 +1,17 @@
+import { useBlocker } from "@tanstack/react-router";
+import {
+  confirmLeave,
+  hasUnsaved,
+  hasUploads,
+  useDirtyEditor,
+  useUploadPending,
+  uploadStarted,
+  uploadFinished,
+} from "./work-guard";
+import { Spinner } from "@/components/site/Loading";
+import { SmartImage } from "@/components/site/Loading";
 import { useEffect, useState, type FormEvent } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   ArrowDown,
@@ -29,32 +41,47 @@ import {
   type SiteContent,
 } from "@/lib/content-schema";
 import { BUILTIN_IMAGES, imageSrc } from "@/lib/site-images";
+import { EnquiriesPanel } from "./EnquiriesPanel";
 
 type Auth = { configured: boolean; authenticated: boolean; email?: string };
-type Section = "overview" | CollectionName | "media" | "settings";
+type Section = "overview" | CollectionName | "media" | "settings" | "enquiries";
 const SECTIONS = [
   { id: "overview", label: "Хяналтын самбар", icon: LayoutDashboard },
+  { id: "enquiries", label: "Захиалгын хүсэлт", icon: CalendarDays },
   { id: "shows", label: "Тоглолтууд", icon: Sparkles },
   { id: "events", label: "Эвентүүд", icon: CalendarDays },
   { id: "projects", label: "Төслүүд", icon: Film },
   { id: "media", label: "Зургийн сан", icon: ImagePlus },
   { id: "settings", label: "Тохиргоо", icon: Settings },
 ] as const;
-export async function adminApi<T>(action: string, method = "GET", body?: unknown): Promise<T> {
-  const response = await fetch("/api/admin/" + action, {
-    method,
-    credentials: "same-origin",
-    headers:
-      body instanceof FormData
-        ? undefined
-        : body === undefined
+async function adminApi<T>(action: string, method = "GET", body?: unknown): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
+  try {
+    const response = await fetch("/api/admin/" + action, {
+      signal: controller.signal,
+      method,
+      credentials: "same-origin",
+      headers:
+        body instanceof FormData
           ? undefined
-          : { "Content-Type": "application/json" },
-    body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || "Хүсэлтийг гүйцэтгэж чадсангүй.");
-  return data as T;
+          : body === undefined
+            ? undefined
+            : { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
+    });
+    const data = await response.json().catch(() => {
+      throw new Error("Серверээс хариу авч чадсангүй. Дахин оролдоно уу.");
+    });
+    if (!response.ok) throw new Error(data.error || "Хүсэлтийг гүйцэтгэж чадсангүй.");
+    return data as T;
+  } catch (error) {
+    if (controller.signal.aborted)
+      throw new Error("Хүсэлт удаж байна. Холболтоо шалгаад дахин оролдоно уу.");
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 const message = (error: unknown) =>
   error instanceof Error ? error.message : "Алдаа гарлаа. Дахин оролдоно уу.";
@@ -67,13 +94,30 @@ export function AdminPanel() {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const queryClient = useQueryClient();
+  useBlocker({
+    shouldBlockFn: () => !confirmLeave(),
+    enableBeforeUnload: () => hasUnsaved() || hasUploads(),
+  });
+  const [health, setHealth] = useState<{ damaged: boolean; backupAvailable: boolean } | null>(null);
 
   async function load() {
     setError("");
     try {
       const status = await adminApi<Auth>("status");
       setAuth(status);
-      if (status.authenticated) setContent(await adminApi<SiteContent>("content"));
+      if (status.authenticated) {
+        const result = await adminApi<{ damaged: boolean; backupAvailable: boolean }>(
+          "content-health",
+        );
+        setHealth(result);
+        if (!result.damaged) setContent(await adminApi<SiteContent>("content"));
+        else {
+          setContent(null);
+          setError(
+            "Контентийн файл гэмтсэн байна. Эх файлыг хадгалж үлдээн нөөц хуулбарыг сэргээх боломжтой.",
+          );
+        }
+      }
     } catch (e) {
       setError(message(e));
     }
@@ -82,6 +126,7 @@ export function AdminPanel() {
     void load();
   }, []);
   async function save(next: SiteContent) {
+    if (busy || hasUploads()) return;
     setBusy(true);
     setNotice("");
     setError("");
@@ -100,10 +145,13 @@ export function AdminPanel() {
     }
   }
   async function logout() {
+    if (!confirmLeave()) return;
+    if (busy) return;
     setBusy(true);
     try {
       await adminApi("logout", "POST");
       setContent(null);
+      queryClient.removeQueries({ queryKey: ["admin-enquiries"] });
       setAuth({ configured: true, authenticated: false });
     } catch (e) {
       setError(message(e));
@@ -114,9 +162,43 @@ export function AdminPanel() {
   if (!auth || (auth.authenticated && !content))
     return (
       <div className="ad-root ad-loading">
-        <Asterisk size={36} />
+        {!error && (
+          <div className="ad-loading-skeleton" role="status" aria-label="Удирдлагыг ачаалж байна">
+            <div className="skeleton skeleton-header" />
+            <div className="skeleton skeleton-hero" />
+            <div className="skeleton-grid">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="skeleton skeleton-card" />
+              ))}
+            </div>
+          </div>
+        )}
         <p>{error || "Удирдлагыг нээж байна…"}</p>
         {error && <button onClick={() => void load()}>Дахин оролдох</button>}
+        {health?.damaged &&
+          (health.backupAvailable ? (
+            <button
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  await adminApi("content-recover", "POST");
+                  await load();
+                } catch (e) {
+                  setError(message(e));
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              Нөөц хуулбарыг сэргээх
+            </button>
+          ) : (
+            <p>
+              Нөөц хуулбар олдсонгүй. .ubcircus/data/content.json файлыг гараар сэргээх
+              шаардлагатай.
+            </p>
+          ))}
       </div>
     );
   if (!auth.authenticated) return <AuthScreen configured={auth.configured} onSuccess={load} />;
@@ -137,6 +219,7 @@ export function AdminPanel() {
               aria-current={section === id ? "page" : undefined}
               className={section === id ? "active" : ""}
               onClick={() => {
+                if (id !== section && !confirmLeave()) return;
                 setSection(id);
                 setError("");
                 setNotice("");
@@ -173,15 +256,27 @@ export function AdminPanel() {
               title="Гарах"
               aria-label="Гарах"
             >
-              <LogOut size={18} />
+              {busy ? <Spinner /> : <LogOut size={18} />}
             </button>
           </div>
         </header>
-        <main className="ad-main">
+        <main className="ad-main" aria-busy={busy}>
+          {busy && (
+            <div className="ad-save-progress" role="status">
+              <Spinner />
+              Ажиллаж байна…
+            </div>
+          )}
           {error && (
             <div className="ad-alert" role="alert">
               {error}
-              <button onClick={() => void load()}>Мэдээллийг шинэчлэх</button>
+              <button
+                onClick={() => {
+                  if (confirmLeave()) void load();
+                }}
+              >
+                Мэдээллийг шинэчлэх
+              </button>
             </div>
           )}
           {notice && (
@@ -191,6 +286,7 @@ export function AdminPanel() {
             </div>
           )}
           {section === "overview" && <Overview content={content} open={setSection} />}
+          {section === "enquiries" && <EnquiriesPanel api={adminApi} />}
           {(section === "shows" || section === "events" || section === "projects") && (
             <Collection key={section} name={section} content={content} save={save} busy={busy} />
           )}
@@ -215,6 +311,7 @@ function AuthScreen({
   const [busy, setBusy] = useState(false);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (busy) return;
     const data = new FormData(e.currentTarget);
     setError("");
     if (!configured && data.get("password") !== data.get("confirm")) {
@@ -290,10 +387,10 @@ function AuthScreen({
                 type="password"
                 autoComplete={configured ? "current-password" : "new-password"}
                 required
-                minLength={12}
+                minLength={8}
                 maxLength={200}
               />
-              {!configured && <small>Хамгийн багадаа 12 тэмдэгт.</small>}
+              {!configured && <small>Хамгийн багадаа 8 тэмдэгт.</small>}
             </label>
             {!configured && (
               <label className="ad-field">
@@ -303,7 +400,7 @@ function AuthScreen({
                   type="password"
                   autoComplete="new-password"
                   required
-                  minLength={12}
+                  minLength={8}
                   maxLength={200}
                 />
               </label>
@@ -314,6 +411,7 @@ function AuthScreen({
               </p>
             )}
             <button className="ad-button ad-primary" disabled={busy}>
+              {busy && <Spinner />}
               {busy ? "Түр хүлээнэ үү…" : configured ? "Нэвтрэх" : "Админ үүсгэх"}
               <ArrowUpRight size={18} />
             </button>
@@ -362,13 +460,14 @@ function Overview({ content, open }: { content: SiteContent; open: (s: Section) 
         </a>
       </Heading>
       <div className="ad-stats">
-        {collections.map((key, i) => {
+        {collections.map((key) => {
           const items = content[key];
-          const Icon = SECTIONS[i + 1].icon;
+          const section = SECTIONS.find((item) => item.id === key)!;
+          const Icon = section.icon;
           return (
             <button key={key} onClick={() => open(key)} className="ad-stat">
               <span>
-                {SECTIONS[i + 1].label}
+                {section.label}
                 <Icon size={20} />
               </span>
               <strong>{items.length.toString().padStart(2, "0")}</strong>
@@ -580,7 +679,7 @@ function Collection({
             return (
               <div className="ad-item" key={item.id}>
                 {"image" in item ? (
-                  <img src={imageSrc(item.image)} alt={item.title} />
+                  <SmartImage src={imageSrc(item.image)} alt={item.title} />
                 ) : (
                   <div className="ad-date">
                     <strong>{item.date.slice(8)}</strong>
@@ -653,7 +752,7 @@ function Collection({
       <Dialog.Root
         open={!!editing}
         onOpenChange={(open) => {
-          if (!open && !busy) setEditing(null);
+          if (!open && !busy && confirmLeave()) setEditing(null);
         }}
       >
         <Dialog.Portal>
@@ -728,6 +827,7 @@ function Collection({
                   }
                 }}
               >
+                {busy && <Spinner />}
                 {busy ? "Устгаж байна…" : "Устгах"}
               </button>
             </div>
@@ -751,9 +851,13 @@ function ItemEditor({
   error: string;
   onSave: (item: ContentItem) => Promise<void>;
 }) {
+  const dirty = useDirtyEditor();
+  const uploading = useUploadPending();
   const [image, setImage] = useState("image" in item ? item.image : "");
+  const [gallery, setGallery] = useState("duration" in item ? item.gallery || [] : []);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (hasUploads()) return;
     const f = new FormData(e.currentTarget);
     const next = {
       ...item,
@@ -782,6 +886,10 @@ function ItemEditor({
                 .map((x) => x.trim())
                 .filter(Boolean),
               duration: String(f.get("duration")),
+              details: String(f.get("details") || ""),
+              detailsMn: String(f.get("detailsMn") || ""),
+              videoUrl: String(f.get("videoUrl") || "").trim(),
+              gallery,
               tags: String(f.get("tags"))
                 .split(",")
                 .map((x) => x.trim())
@@ -808,151 +916,203 @@ function ItemEditor({
     await onSave(value as ContentItem);
   }
   return (
-    <form onSubmit={submit} className="ad-edit-form">
-      <div className="ad-form-grid">
-        <Field label="Нэр (English)" name="title" value={item.title} max={150} wide />
-        <label className="ad-field">
-          Ангилал
-          <select name="category" defaultValue={item.category}>
-            {CONFIG[name].categories.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-        <label className="ad-field">
-          Төлөв
-          <select name="status" defaultValue={item.status}>
-            <option value="draft">Ноорог</option>
-            <option value="published">Нийтлэх</option>
-          </select>
-        </label>
-        {"date" in item && (
-          <>
-            <Field label="Огноо" name="date" value={item.date} type="date" />
-            <Field label="Цаг" name="time" value={item.time} type="time" />
-            <Field label="Байршил" name="venue" value={item.venue} max={200} wide />
-          </>
-        )}
-        {"duration" in item && (
-          <>
-            <Field label="Үргэлжлэх хугацаа" name="duration" value={item.duration} max={30} />
-            <Field
-              label="Шошго (таслалаар тусгаарлах)"
-              name="tags"
-              value={item.tags.join(", ")}
-              max={730}
-              required={false}
-            />
-          </>
-        )}
-        {"client" in item && (
-          <>
-            <Field label="Төрөл" name="type" value={item.type} max={100} />
-            <Field label="Он" name="year" value={item.year} max={4} pattern="[0-9]{4}" />
-            <Field label="Харилцагч" name="client" value={item.client} max={150} />
-            <Field
-              label="Хамрах хүрээ (таслалаар)"
-              name="scope"
-              value={item.scope.join(", ")}
-              max={730}
-              required={false}
-            />
-          </>
-        )}
-        {"description" in item && (
-          <label className="ad-field ad-wide">
-            Тайлбар (English)
-            <textarea
-              name="description"
-              defaultValue={item.description}
-              rows={4}
-              required
-              maxLength={1600}
-            />
-          </label>
-        )}
-      </div>
-      <details className="ad-translations" open={Boolean(item.titleMn)}>
-        <summary>Монгол хэлний хувилбар</summary>
-        <p className="ad-muted">
-          Монгол хувилбарыг энд бичээрэй. Хоосон талбарт суурь орчуулга, эсвэл Англи текст
-          харагдана.
-        </p>
+    <form onSubmit={submit} onChange={dirty.mark} className="ad-edit-form">
+      <fieldset className="ad-editor-fields" disabled={busy || uploading}>
         <div className="ad-form-grid">
-          <Field
-            label="Нэр (Монгол)"
-            name="titleMn"
-            value={item.titleMn || ""}
-            max={150}
-            required={false}
-            wide
-          />
+          <Field label="Нэр (English)" name="title" value={item.title} max={150} wide />
+          <label className="ad-field">
+            Ангилал
+            <select name="category" defaultValue={item.category}>
+              {CONFIG[name].categories.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+          <label className="ad-field">
+            Төлөв
+            <select name="status" defaultValue={item.status}>
+              <option value="draft">Ноорог</option>
+              <option value="published">Нийтлэх</option>
+            </select>
+          </label>
+          {"date" in item && (
+            <>
+              <Field label="Огноо" name="date" value={item.date} type="date" />
+              <Field label="Цаг" name="time" value={item.time} type="time" />
+              <Field label="Байршил" name="venue" value={item.venue} max={200} wide />
+            </>
+          )}
+          {"duration" in item && (
+            <>
+              <Field label="Үргэлжлэх хугацаа" name="duration" value={item.duration} max={30} />
+              <Field
+                label="Видео холбоос (HTTPS · MP4/WebM файл)"
+                name="videoUrl"
+                value={item.videoUrl || ""}
+                max={2000}
+                required={false}
+                wide
+              />
+              <label className="ad-field ad-wide">
+                Дэлгэрэнгүй танилцуулга (English)
+                <textarea
+                  name="details"
+                  defaultValue={item.details || ""}
+                  rows={6}
+                  maxLength={6000}
+                />
+                <small>
+                  Хоосон бол үндсэн тайлбарыг ашиглана. Хоосон мөрөөр догол мөрүүдийг тусгаарлана.
+                </small>
+              </label>
+              <Field
+                label="Шошго (таслалаар тусгаарлах)"
+                name="tags"
+                value={item.tags.join(", ")}
+                max={730}
+                required={false}
+              />
+            </>
+          )}
+          {"client" in item && (
+            <>
+              <Field label="Төрөл" name="type" value={item.type} max={100} />
+              <Field label="Он" name="year" value={item.year} max={4} pattern="[0-9]{4}" />
+              <Field label="Харилцагч" name="client" value={item.client} max={150} />
+              <Field
+                label="Хамрах хүрээ (таслалаар)"
+                name="scope"
+                value={item.scope.join(", ")}
+                max={730}
+                required={false}
+              />
+            </>
+          )}
           {"description" in item && (
             <label className="ad-field ad-wide">
-              Тайлбар (Монгол)
+              Тайлбар (English)
               <textarea
-                name="descriptionMn"
-                defaultValue={item.descriptionMn || ""}
+                name="description"
+                defaultValue={item.description}
                 rows={4}
+                required
                 maxLength={1600}
               />
             </label>
           )}
-          {"venue" in item && (
-            <Field
-              label="Байршил (Монгол)"
-              name="venueMn"
-              value={item.venueMn || ""}
-              max={200}
-              required={false}
-              wide
-            />
-          )}
-          {"tags" in item && (
-            <Field
-              label="Шошго (Монгол, таслалаар)"
-              name="tagsMn"
-              value={item.tagsMn?.join(", ") || ""}
-              max={730}
-              required={false}
-              wide
-            />
-          )}
-          {"type" in item && (
-            <Field
-              label="Төрөл (Монгол)"
-              name="typeMn"
-              value={item.typeMn || ""}
-              max={100}
-              required={false}
-            />
-          )}
-          {"scope" in item && (
-            <Field
-              label="Хамрах хүрээ (Монгол, таслалаар)"
-              name="scopeMn"
-              value={item.scopeMn?.join(", ") || ""}
-              max={730}
-              required={false}
-            />
-          )}
         </div>
-      </details>
-      {"image" in item && <ImagePicker value={image} onChange={setImage} />}
-      {error && (
-        <p className="ad-alert" role="alert">
-          {error}
-        </p>
-      )}
-      <div className="ad-form-actions">
-        <Dialog.Close className="ad-button" disabled={busy}>
-          Болих
-        </Dialog.Close>
-        <button className="ad-button ad-primary" disabled={busy}>
-          {busy ? "Хадгалж байна…" : "Хадгалах"}
-          <Check size={17} />
-        </button>
-      </div>
+        <details className="ad-translations" open={Boolean(item.titleMn)}>
+          <summary>Монгол хэлний хувилбар</summary>
+          <p className="ad-muted">
+            Монгол хувилбарыг энд бичээрэй. Хоосон талбарт суурь орчуулга, эсвэл Англи текст
+            харагдана.
+          </p>
+          <div className="ad-form-grid">
+            <Field
+              label="Нэр (Монгол)"
+              name="titleMn"
+              value={item.titleMn || ""}
+              max={150}
+              required={false}
+              wide
+            />
+            {"description" in item && (
+              <label className="ad-field ad-wide">
+                Тайлбар (Монгол)
+                <textarea
+                  name="descriptionMn"
+                  defaultValue={item.descriptionMn || ""}
+                  rows={4}
+                  maxLength={1600}
+                />
+              </label>
+            )}
+            {"venue" in item && (
+              <Field
+                label="Байршил (Монгол)"
+                name="venueMn"
+                value={item.venueMn || ""}
+                max={200}
+                required={false}
+                wide
+              />
+            )}
+            {"tags" in item && (
+              <label className="ad-field ad-wide">
+                Дэлгэрэнгүй танилцуулга (Монгол)
+                <textarea
+                  name="detailsMn"
+                  defaultValue={item.detailsMn || ""}
+                  rows={6}
+                  maxLength={6000}
+                />
+              </label>
+            )}
+            {"tags" in item && (
+              <Field
+                label="Шошго (Монгол, таслалаар)"
+                name="tagsMn"
+                value={item.tagsMn?.join(", ") || ""}
+                max={730}
+                required={false}
+                wide
+              />
+            )}
+            {"type" in item && (
+              <Field
+                label="Төрөл (Монгол)"
+                name="typeMn"
+                value={item.typeMn || ""}
+                max={100}
+                required={false}
+              />
+            )}
+            {"scope" in item && (
+              <Field
+                label="Хамрах хүрээ (Монгол, таслалаар)"
+                name="scopeMn"
+                value={item.scopeMn?.join(", ") || ""}
+                max={730}
+                required={false}
+              />
+            )}
+          </div>
+        </details>
+        {"image" in item && (
+          <ImagePicker
+            value={image}
+            onChange={(src) => {
+              dirty.mark();
+              setImage(src);
+            }}
+          />
+        )}
+        {"duration" in item && (
+          <GalleryPicker
+            value={gallery}
+            onChange={(value) => {
+              dirty.mark();
+              setGallery(value);
+            }}
+            disabled={busy || uploading}
+          />
+        )}
+        {error && (
+          <p className="ad-alert" role="alert">
+            {error}
+          </p>
+        )}
+        <div className="ad-form-actions">
+          <Dialog.Close className="ad-button" disabled={busy || uploading}>
+            Болих
+          </Dialog.Close>
+          <button className="ad-button ad-primary" disabled={busy || uploading}>
+            {busy && <Spinner />}
+            {busy ? "Хадгалж байна…" : "Хадгалах"}
+            <Check size={17} />
+          </button>
+        </div>
+      </fieldset>
     </form>
   );
 }
@@ -991,34 +1151,47 @@ function Field({
 }
 
 function useMedia() {
-  const [media, setMedia] = useState<MediaItem[]>([]);
-  const [error, setError] = useState("");
+  const queryClient = useQueryClient();
+  const [uploadError, setUploadError] = useState("");
   const [uploading, setUploading] = useState(false);
-  useEffect(() => {
-    adminApi<MediaItem[]>("media")
-      .then(setMedia)
-      .catch((e) => setError(message(e)));
-  }, []);
+  const query = useQuery({
+    queryKey: ["admin-media"],
+    queryFn: () => adminApi<MediaItem[]>("media"),
+    staleTime: 10_000,
+  });
   async function upload(file: File) {
-    setError("");
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Зураг 5 MB-аас бага байх ёстой.");
+    if (uploading) return;
+    setUploadError("");
+    if (!file.size || file.size > 5 * 1024 * 1024) {
+      setUploadError("Зураг 5 MB-аас бага байх ёстой.");
       return;
     }
     setUploading(true);
+    uploadStarted();
     try {
       const form = new FormData();
       form.set("file", file);
       const item = await adminApi<MediaItem>("media", "POST", form);
-      setMedia((old) => [item, ...old]);
+      queryClient.setQueryData<MediaItem[]>(["admin-media"], (old) => [item, ...(old || [])]);
       return item;
     } catch (e) {
-      setError(message(e));
+      setUploadError(message(e));
     } finally {
       setUploading(false);
+      uploadFinished();
     }
   }
-  return { media, error, uploading, upload };
+  return {
+    media: query.data || [],
+    error: uploadError || (query.error ? message(query.error) : ""),
+    uploading,
+    loading: query.isPending,
+    retry: () => {
+      setUploadError("");
+      return query.refetch();
+    },
+    upload,
+  };
 }
 function ImagePicker({
   value,
@@ -1029,12 +1202,13 @@ function ImagePicker({
   onChange: (s: string) => void;
   label?: string;
 }) {
-  const { media, error, uploading, upload } = useMedia();
+  const { media, error, uploading, loading, retry, upload } = useMedia();
   const all = [...BUILTIN_IMAGES, ...media];
   return (
-    <fieldset className="ad-image-picker">
+    <fieldset className="ad-image-picker" disabled={uploading}>
       <legend>{label}</legend>
-      <div className="ad-image-options">
+      <div className="ad-image-options" aria-busy={loading}>
+        {loading && [1, 2, 3].map((i) => <div key={i} className="skeleton ad-media-placeholder" />)}
         {all.map((i) => (
           <button
             key={i.id}
@@ -1044,7 +1218,7 @@ function ImagePicker({
             title={i.name}
             onClick={() => onChange(i.id.startsWith("builtin:") ? i.id : i.src)}
           >
-            <img src={i.src} alt={i.name} />
+            <SmartImage src={i.src} alt={i.name} />
             {(value === i.id || value === i.src) && (
               <span>
                 <Check size={15} />
@@ -1054,6 +1228,7 @@ function ImagePicker({
         ))}
       </div>
       <label className="ad-upload">
+        {uploading && <Spinner />}
         {uploading ? "Оруулж байна…" : "+ Зураг оруулах"}
         <input
           type="file"
@@ -1072,14 +1247,131 @@ function ImagePicker({
       <small>JPG, PNG, WebP · 5 MB хүртэл</small>
       {error && (
         <p className="ad-alert" role="alert">
+          {error}{" "}
+          <button type="button" className="ad-media-retry" onClick={() => void retry()}>
+            Дахин оролдох
+          </button>
+        </p>
+      )}
+    </fieldset>
+  );
+}
+function GalleryPicker({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string[];
+  onChange: React.Dispatch<React.SetStateAction<string[]>>;
+  disabled: boolean;
+}) {
+  const { media, error, uploading, loading, retry, upload } = useMedia();
+  const all = [...BUILTIN_IMAGES, ...media];
+  function add(src: string) {
+    onChange((current) =>
+      !current.includes(src) && current.length < 8 ? [...current, src] : current,
+    );
+  }
+  function move(index: number, offset: number) {
+    const next = [...value];
+    [next[index], next[index + offset]] = [next[index + offset], next[index]];
+    onChange(next);
+  }
+  return (
+    <fieldset className="ad-image-picker" disabled={disabled || uploading}>
+      <legend>Тоглолтын галерей · {value.length}/8</legend>
+      <small>Үндсэн зураг автоматаар орно. Нэмэлт зургуудаа сонгоод дарааллыг тохируулна уу.</small>
+      <div className="ad-gallery-selected">
+        {value.map((src, index) => (
+          <div key={src}>
+            <SmartImage src={imageSrc(src)} alt={`Галерейн зураг ${index + 1}`} />
+            <div>
+              <button
+                type="button"
+                className="ad-icon"
+                aria-label={`Зураг ${index + 1} дээш`}
+                disabled={index === 0}
+                onClick={() => move(index, -1)}
+              >
+                <ArrowUp size={15} />
+              </button>
+              <button
+                type="button"
+                className="ad-icon"
+                aria-label={`Зураг ${index + 1} доош`}
+                disabled={index === value.length - 1}
+                onClick={() => move(index, 1)}
+              >
+                <ArrowDown size={15} />
+              </button>
+              <button
+                type="button"
+                className="ad-icon"
+                aria-label={`Зураг ${index + 1} галерейгээс хасах`}
+                onClick={() => onChange(value.filter((item) => item !== src))}
+              >
+                <X size={15} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="ad-image-options" aria-busy={loading}>
+        {all.map((item) => {
+          const src = item.id.startsWith("builtin:") ? item.id : item.src;
+          const selected = value.includes(src);
+          return (
+            <button
+              key={item.id}
+              type="button"
+              title={item.name}
+              aria-label={item.name}
+              aria-pressed={selected}
+              className={selected ? "selected" : ""}
+              disabled={!selected && value.length >= 8}
+              onClick={() =>
+                selected ? onChange(value.filter((entry) => entry !== src)) : add(src)
+              }
+            >
+              <SmartImage src={item.src} alt={item.name} />
+              {selected && (
+                <span>
+                  <Check size={15} />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <label className="ad-upload">
+        {uploading ? "Оруулж байна…" : "+ Галерейн зураг оруулах"}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          disabled={uploading || value.length >= 8}
+          onChange={async (event) => {
+            const file = event.target.files?.[0];
+            if (file) {
+              const result = await upload(file);
+              if (result) add(result.src);
+            }
+            event.target.value = "";
+          }}
+        />
+      </label>
+      {error && (
+        <p className="ad-alert" role="alert">
           {error}
+          <button type="button" onClick={() => void retry()}>
+            Дахин оролдох
+          </button>
         </p>
       )}
     </fieldset>
   );
 }
 function MediaLibrary() {
-  const { media, error, uploading, upload } = useMedia();
+  const { media, error, uploading, loading, retry, upload } = useMedia();
   return (
     <>
       <Heading
@@ -1089,6 +1381,7 @@ function MediaLibrary() {
       >
         <label className="ad-button ad-primary ad-upload">
           <Plus size={18} />
+          {uploading && <Spinner />}
           {uploading ? "Оруулж байна…" : "Зураг оруулах"}
           <input
             type="file"
@@ -1104,16 +1397,20 @@ function MediaLibrary() {
       </Heading>
       {error && (
         <p className="ad-alert" role="alert">
-          {error}
+          {error}{" "}
+          <button type="button" className="ad-media-retry" onClick={() => void retry()}>
+            Дахин оролдох
+          </button>
         </p>
       )}
       <p className="ad-muted">
         JPG, PNG, WebP · нэг зураг 5 MB хүртэл. Оруулсан зургаа засварлах дэлгэцээс сонгоно.
       </p>
-      <div className="ad-media-grid">
+      <div className="ad-media-grid" aria-busy={loading}>
+        {loading && [1, 2, 3].map((i) => <div key={i} className="skeleton ad-media-placeholder" />)}
         {[...media, ...BUILTIN_IMAGES].map((item) => (
           <article className="ad-card ad-media-card" key={item.id}>
-            <img src={item.src} alt={item.name} />
+            <SmartImage src={item.src} alt={item.name} />
             <div>
               <h2>{item.name}</h2>
               <small>
@@ -1157,17 +1454,26 @@ function SettingsEditor({
   save: (c: SiteContent) => Promise<void>;
   busy: boolean;
 }) {
+  const dirty = useDirtyEditor();
+  const uploading = useUploadPending();
   const [hero, setHero] = useState(content.settings.heroImage);
   const [about, setAbout] = useState(content.settings.aboutImage);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (hasUploads()) return;
     const data = new FormData(e.currentTarget);
-    const settings = { ...content.settings, heroImage: hero, aboutImage: about };
+    const settings = {
+      ...content.settings,
+      heroImage: hero,
+      aboutImage: about,
+      heroVideoUrl: String(data.get("heroVideoUrl") || ""),
+    };
     for (const key of [...SETTINGS_FIELDS.map((x) => x[0]), "heroDescription", "address"] as const)
       settings[key] = String(data.get(key));
     for (const [key] of MONGOLIAN_SETTINGS) settings[key] = String(data.get(key) || "");
     try {
       await save({ ...content, settings });
+      dirty.clean();
     } catch {
       /* parent displays error */
     }
@@ -1179,73 +1485,99 @@ function SettingsEditor({
         title="Таны сайтын мэдээлэл"
         description="Нүүр хуудас болон холбоо барих мэдээллээ эндээс шинэчлээрэй."
       />
-      <form className="ad-card ad-settings-form" onSubmit={submit}>
-        <h2>Ерөнхий мэдээлэл</h2>
-        <div className="ad-form-grid">
-          {SETTINGS_FIELDS.map(([key, label]) => (
-            <Field
-              key={key}
-              label={label}
-              name={key}
-              value={content.settings[key]}
-              type={key === "email" ? "email" : "text"}
-              max={key === "since" ? 4 : key.startsWith("stats") ? 20 : 150}
-            />
-          ))}
-          <label className="ad-field ad-wide">
-            Нүүр хуудасны тайлбар
-            <textarea
-              name="heroDescription"
-              defaultValue={content.settings.heroDescription}
-              rows={3}
-              maxLength={500}
-              required
-            />
-          </label>
-          <label className="ad-field ad-wide">
-            Хаяг
-            <textarea
-              name="address"
-              defaultValue={content.settings.address}
-              rows={2}
-              maxLength={300}
-              required
-            />
-          </label>
-        </div>
-        <details className="ad-translations" open>
-          <summary>Монгол хэлний хувилбар</summary>
-          <p className="ad-muted">
-            Дээрх гарчиг, тайлбар, хаяг нь English хувилбар. Монгол хувилбарыг доор бичнэ үү.
-          </p>
+      <form className="ad-card ad-settings-form" onSubmit={submit} onChange={dirty.mark}>
+        <fieldset className="ad-editor-fields" disabled={busy || uploading}>
+          <h2>Ерөнхий мэдээлэл</h2>
+          <Field
+            label="Нүүр хуудасны видео · YouTube эсвэл HTTPS MP4/WebM холбоос"
+            name="heroVideoUrl"
+            value={content.settings.heroVideoUrl || ""}
+            type="url"
+            required={false}
+            max={2000}
+          />
           <div className="ad-form-grid">
-            {MONGOLIAN_SETTINGS.map(([key, label, max]) => (
-              <label key={key} className="ad-field ad-wide">
-                {label}
-                <textarea
-                  name={key}
-                  defaultValue={content.settings[key] || ""}
-                  rows={key === "heroDescriptionMn" ? 3 : 2}
-                  maxLength={max}
-                />
-              </label>
+            {SETTINGS_FIELDS.map(([key, label]) => (
+              <Field
+                key={key}
+                label={label}
+                name={key}
+                value={content.settings[key]}
+                type={key === "email" ? "email" : "text"}
+                max={key === "since" ? 4 : key.startsWith("stats") ? 20 : 150}
+              />
             ))}
+            <label className="ad-field ad-wide">
+              Нүүр хуудасны тайлбар
+              <textarea
+                name="heroDescription"
+                defaultValue={content.settings.heroDescription}
+                rows={3}
+                maxLength={500}
+                required
+              />
+            </label>
+            <label className="ad-field ad-wide">
+              Хаяг
+              <textarea
+                name="address"
+                defaultValue={content.settings.address}
+                rows={2}
+                maxLength={300}
+                required
+              />
+            </label>
           </div>
-        </details>
-        <ImagePicker label="Нүүр хуудасны зураг" value={hero} onChange={setHero} />
-        <ImagePicker label="Танилцуулгын зураг" value={about} onChange={setAbout} />
-        <div className="ad-form-actions">
-          <button className="ad-button ad-primary" disabled={busy}>
-            {busy ? "Хадгалж байна…" : "Өөрчлөлт хадгалах"}
-            <Check size={17} />
-          </button>
-        </div>
+          <details className="ad-translations" open>
+            <summary>Монгол хэлний хувилбар</summary>
+            <p className="ad-muted">
+              Дээрх гарчиг, тайлбар, хаяг нь English хувилбар. Монгол хувилбарыг доор бичнэ үү.
+            </p>
+            <div className="ad-form-grid">
+              {MONGOLIAN_SETTINGS.map(([key, label, max]) => (
+                <label key={key} className="ad-field ad-wide">
+                  {label}
+                  <textarea
+                    name={key}
+                    defaultValue={content.settings[key] || ""}
+                    rows={key === "heroDescriptionMn" ? 3 : 2}
+                    maxLength={max}
+                  />
+                </label>
+              ))}
+            </div>
+          </details>
+          <ImagePicker
+            label="Нүүр хуудасны зураг"
+            value={hero}
+            onChange={(src) => {
+              dirty.mark();
+              setHero(src);
+            }}
+          />
+          <ImagePicker
+            label="Танилцуулгын зураг"
+            value={about}
+            onChange={(src) => {
+              dirty.mark();
+              setAbout(src);
+            }}
+          />
+          <div className="ad-form-actions">
+            <button className="ad-button ad-primary" disabled={busy || uploading}>
+              {busy && <Spinner />}
+              {busy ? "Хадгалж байна…" : "Өөрчлөлт хадгалах"}
+              <Check size={17} />
+            </button>
+          </div>
+        </fieldset>
       </form>
       <PasswordForm />
     </>
   );
 }
 function PasswordForm() {
+  const dirty = useDirtyEditor();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -1266,6 +1598,7 @@ function PasswordForm() {
         newPassword: data.get("newPassword"),
       });
       form.reset();
+      dirty.clean();
       setSuccess(true);
     } catch (e) {
       setError(message(e));
@@ -1274,7 +1607,7 @@ function PasswordForm() {
     }
   }
   return (
-    <form className="ad-card ad-settings-form" onSubmit={submit}>
+    <form className="ad-card ad-settings-form" onSubmit={submit} onChange={dirty.mark}>
       <h2>Нууц үг өөрчлөх</h2>
       <p className="ad-muted">Бусад нэвтэрсэн сессүүд гарна.</p>
       <div className="ad-form-grid">
@@ -1295,7 +1628,7 @@ function PasswordForm() {
             name="newPassword"
             autoComplete="new-password"
             required
-            minLength={12}
+            minLength={8}
             maxLength={200}
           />
         </label>
@@ -1306,7 +1639,7 @@ function PasswordForm() {
             name="confirm"
             autoComplete="new-password"
             required
-            minLength={12}
+            minLength={8}
             maxLength={200}
           />
         </label>
@@ -1323,6 +1656,7 @@ function PasswordForm() {
       )}
       <div className="ad-form-actions">
         <button className="ad-button" disabled={busy}>
+          {busy && <Spinner />}
           {busy ? "Шинэчилж байна…" : "Нууц үг шинэчлэх"}
         </button>
       </div>

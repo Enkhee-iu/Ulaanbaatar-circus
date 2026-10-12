@@ -12,15 +12,19 @@ import {
   requireSameOrigin,
   saveContent,
   uploadImage,
+  listEnquiries,
+  updateEnquiry,
+  contentHealth,
+  recoverContent,
 } from "./admin-store.server";
 
 const credentials = z.object({
   email: z.string().trim().toLowerCase().email().max(150),
-  password: z.string().min(12, "Нууц үг хамгийн багадаа 12 тэмдэгт байна.").max(200),
+  password: z.string().min(8, "Нууц үг хамгийн багадаа 8 тэмдэгт байна.").max(200),
 });
 const passwords = z.object({
   currentPassword: z.string().min(1).max(200),
-  newPassword: z.string().min(12, "Шинэ нууц үг хамгийн багадаа 12 тэмдэгт байна.").max(200),
+  newPassword: z.string().min(8, "Шинэ нууц үг хамгийн багадаа 8 тэмдэгт байна.").max(200),
 });
 function json(body: unknown, status = 200, headers: Record<string, string> = {}) {
   return Response.json(body, {
@@ -58,6 +62,11 @@ export async function handleAdminRequest(request: Request) {
       });
     }
     await requireAdmin(request);
+    if (action === "content-health" && method === "GET") return json(await contentHealth());
+    if (action === "content-recover" && method === "POST") return json(await recoverContent());
+    if (action === "enquiries" && method === "GET") return json(await listEnquiries());
+    if (action === "enquiries" && method === "PUT")
+      return json(await updateEnquiry(await readBody(request)));
     if (action === "content" && method === "GET") return json(await readContent());
     if (action === "content" && method === "PUT")
       return json(await saveContent(await readBody(request)));

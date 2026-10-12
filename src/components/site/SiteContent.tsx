@@ -8,6 +8,11 @@ import { imageSrc } from "@/lib/site-images";
 import { useLanguage } from "./Language";
 
 const ContentContext = createContext<SiteContent>(DEFAULT_CONTENT);
+const ContentStatusContext = createContext({
+  refreshing: false,
+  error: false,
+  retry: async () => {},
+});
 export function SiteContentProvider({
   initialContent,
   children,
@@ -16,12 +21,18 @@ export function SiteContentProvider({
   children: ReactNode;
 }) {
   const { language, t } = useLanguage();
-  const { data = initialContent } = useQuery({
+  const {
+    data = initialContent,
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["site-content"],
     queryFn: () => getPublicContent(),
     initialData: initialContent,
     staleTime: 10_000,
     refetchOnWindowFocus: true,
+    refetchInterval: 15_000,
   });
   const content = useMemo(
     () => ({
@@ -54,6 +65,8 @@ export function SiteContentProvider({
       shows: data.shows.map((show) => ({
         ...show,
         image: imageSrc(show.image),
+        gallery: show.gallery?.map(imageSrc),
+        details: language === "mn" && show.detailsMn ? show.detailsMn : t(show.details || ""),
         title: language === "mn" && show.titleMn ? show.titleMn : t(show.title),
         description:
           language === "mn" && show.descriptionMn ? show.descriptionMn : t(show.description),
@@ -81,7 +94,22 @@ export function SiteContentProvider({
     }),
     [data, language, t],
   );
-  return <ContentContext.Provider value={content}>{children}</ContentContext.Provider>;
+  return (
+    <ContentStatusContext.Provider
+      value={{
+        refreshing: isFetching,
+        error: isError,
+        retry: async () => {
+          await refetch();
+        },
+      }}
+    >
+      <ContentContext.Provider value={content}>{children}</ContentContext.Provider>
+    </ContentStatusContext.Provider>
+  );
+}
+export function useContentStatus() {
+  return useContext(ContentStatusContext);
 }
 export function useSiteContent() {
   return useContext(ContentContext);

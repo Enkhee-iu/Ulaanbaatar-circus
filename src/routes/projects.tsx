@@ -1,3 +1,4 @@
+import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -70,7 +71,7 @@ function ProjectsPage() {
                 aria-label={"Discuss a project like " + project.title}
               >
                 <div className="work-image">
-                  <img
+                  <SmartImage
                     src={project.image}
                     alt={project.title + " — " + project.type}
                     loading="lazy"

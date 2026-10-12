@@ -9,6 +9,8 @@ import {
 } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { translate } from "@/lib/translations";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Check, ChevronDown } from "lucide-react";
 
 type Language = "mn" | "en";
 type LocaleContext = {
@@ -63,33 +65,51 @@ export function useLanguage() {
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
+  const label = language === "mn" ? "Хэл сонгох: Монгол" : "Select language: English";
   return (
-    <div
-      className="language-switcher"
-      role="group"
-      aria-label={language === "mn" ? "Сайтын хэл" : "Site language"}
-    >
-      <button
-        type="button"
-        lang="mn"
-        title="Монгол хэл"
-        aria-label="Монгол хэл"
-        aria-pressed={language === "mn"}
-        onClick={() => setLanguage("mn")}
-      >
-        MN
-      </button>
-      <span aria-hidden="true" />
-      <button
-        type="button"
-        lang="en"
-        title="English"
-        aria-label="English"
-        aria-pressed={language === "en"}
-        onClick={() => setLanguage("en")}
-      >
-        EN
-      </button>
-    </div>
+    <DropdownMenu.Root modal={false}>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className="language-dropdown-trigger"
+          aria-label={label}
+          title={label}
+        >
+          {language === "mn" ? "MN" : "EN"}
+          <ChevronDown size={14} aria-hidden="true" />
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          className="language-dropdown-menu"
+          align="end"
+          sideOffset={10}
+          collisionPadding={16}
+          aria-label={language === "mn" ? "Сайтын хэл" : "Site language"}
+        >
+          <DropdownMenu.RadioGroup
+            value={language}
+            onValueChange={(value) => {
+              if (value === "mn" || value === "en") setLanguage(value);
+            }}
+          >
+            <DropdownMenu.RadioItem value="mn" className="language-dropdown-item">
+              <DropdownMenu.ItemIndicator className="language-dropdown-check">
+                <Check size={16} />
+              </DropdownMenu.ItemIndicator>
+              <span lang="mn">Монгол</span>
+              <small>MN</small>
+            </DropdownMenu.RadioItem>
+            <DropdownMenu.RadioItem value="en" className="language-dropdown-item">
+              <DropdownMenu.ItemIndicator className="language-dropdown-check">
+                <Check size={16} />
+              </DropdownMenu.ItemIndicator>
+              <span lang="en">English</span>
+              <small>EN</small>
+            </DropdownMenu.RadioItem>
+          </DropdownMenu.RadioGroup>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }

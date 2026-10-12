@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-05",
+  "storeChecks": [
+    "Same payload retries reuse receipt",
+    "Changed payload returns 409 and preserves original",
+    "New submission ID accepts explicitly changed request",
+    "Last valid backup survives corrupt main JSON",
+    "Recovery preserves damaged file and restores content",
+    "Stale revision rejects overwrite",
+    "Header-only and truncated images rejected",
+    "Complete PNG JPEG WebP decode and upload",
+    "Optional hero video accepts HTTPS and rejects HTTP"
+  ],
+  "httpChecks": [
+    "Identical request retry returns same receipt",
+    "Changed request returns 409",
+    "Header-only PNG upload returns 400",
+    "Corrupt content public page returns 200 from backup",
+    "Corrupt content admin page returns 200 independently"
+  ],
+  "browserChecks": [
+    "Overview labels match shows/events/projects counts",
+    "Unsaved enquiry note retained when request switch cancelled",
+    "Enquiry note saves and save button becomes disabled",
+    "Corrupt content recovery screen opens and restores dashboard",
+    "320px long-brand header fits viewport without horizontal overflow",
+    "Removed active gallery image closes lightbox after polling",
+    "Live 5173 home renders without unavailable video CTA and no captured console errors"
+  ],
+  "validation": [
+    "TypeScript --noEmit passed",
+    "Targeted ESLint passed with 0 errors / 0 warnings",
+    "Local production build passed"
+  ]
+}

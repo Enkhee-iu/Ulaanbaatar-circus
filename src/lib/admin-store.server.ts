@@ -1,8 +1,10 @@
 import { readFile, writeFile, mkdir, rename, readdir, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { randomBytes, createHash, scrypt, timingSafeEqual } from "node:crypto";
+import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from "node:crypto";
 import { contentSchema, DEFAULT_CONTENT } from "./content-schema";
 import type { MediaItem, SiteContent } from "./content-schema";
+import { enquiryInputSchema, enquiryUpdateSchema, type Enquiry } from "./enquiry-schema";
+import sharp from "sharp";
 
 export class AdminError extends Error {
   constructor(
@@ -176,10 +178,120 @@ export async function changePassword(
   });
 }
 export async function readContent(): Promise<SiteContent> {
-  return contentSchema.parse(await readJson("content.json", DEFAULT_CONTENT));
+  try {
+    const content = contentSchema.parse(await readJson("content.json", DEFAULT_CONTENT));
+    try {
+      await stat(join(storageDir(), "content.backup.json"));
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      await writeJson("content.backup.json", content);
+    }
+    return content;
+  } catch {
+    throw new AdminError(503, "Контентийн файл гэмтсэн байна. Нөөц хуулбарыг сэргээнэ үү.");
+  }
+}
+export async function contentHealth() {
+  try {
+    await readContent();
+    return { damaged: false, backupAvailable: false };
+  } catch {
+    try {
+      contentSchema.parse(await readJson("content.backup.json", null));
+      return { damaged: true, backupAvailable: true };
+    } catch {
+      return { damaged: true, backupAvailable: false };
+    }
+  }
+}
+export async function recoverContent() {
+  return serial("content", async () => {
+    const backup = contentSchema.parse(await readJson("content.backup.json", null));
+    // Preserve the damaged file for manual recovery before replacing it.
+    const damaged = await readFile(join(storageDir(), "content.json"));
+    await writeFile(join(storageDir(), `content.damaged.${Date.now()}.json`), damaged, {
+      mode: 0o600,
+    });
+    await writeJson("content.json", backup);
+    return backup;
+  });
+}
+export async function listEnquiries(): Promise<Enquiry[]> {
+  return readJson<Enquiry[]>("enquiries.json", []);
+}
+const enquiryAttempts = new Map<string, { count: number; start: number }>();
+export async function createEnquiry(input: unknown) {
+  const data = enquiryInputSchema.parse(input);
+  return serial("enquiries", async () => {
+    const enquiries = await listEnquiries();
+    const existing = enquiries.find((item) => item.submissionId === data.submissionId);
+    if (existing) {
+      const fingerprint = (value: unknown) =>
+        tokenHash(JSON.stringify(enquiryInputSchema.parse(value)));
+      if (fingerprint(existing) !== fingerprint(data))
+        throw new AdminError(
+          409,
+          "Энэ хүсэлт өмнөх агуулгаараа хадгалагдсан. Өөрчилсөн агуулгыг шинэ хүсэлтээр илгээнэ үү.",
+        );
+      return { id: existing.id };
+    }
+    const now = Date.now();
+    const attempt = enquiryAttempts.get("local");
+    if (attempt && now - attempt.start < 15 * 60 * 1000 && attempt.count >= 10)
+      throw new AdminError(429, "Олон хүсэлт илгээсэн байна. 15 минутын дараа дахин оролдоно уу.");
+    const timestamp = new Date(now).toISOString();
+    const entry: Enquiry = {
+      ...data,
+      id: randomUUID(),
+      status: "new",
+      notes: "",
+      revision: 0,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+    await writeJson("enquiries.json", [entry, ...enquiries]);
+    enquiryAttempts.set(
+      "local",
+      attempt && now - attempt.start < 15 * 60 * 1000
+        ? { ...attempt, count: attempt.count + 1 }
+        : { count: 1, start: now },
+    );
+    return { id: entry.id };
+  });
+}
+export async function updateEnquiry(input: unknown) {
+  const update = enquiryUpdateSchema.parse(input);
+  return serial("enquiries", async () => {
+    const enquiries = await listEnquiries();
+    const index = enquiries.findIndex((item) => item.id === update.id);
+    if (index < 0) throw new AdminError(404, "Хүсэлт олдсонгүй.");
+    if (enquiries[index].revision !== update.revision)
+      throw new AdminError(
+        409,
+        "Хүсэлт өөр цонхноос өөрчлөгдсөн байна. Шинэчлээд дахин оролдоно уу.",
+      );
+    enquiries[index] = {
+      ...enquiries[index],
+      status: update.status,
+      notes: update.notes,
+      revision: update.revision + 1,
+      updatedAt: new Date().toISOString(),
+    };
+    await writeJson("enquiries.json", enquiries);
+    return enquiries[index];
+  });
 }
 export async function readPublishedContent(): Promise<SiteContent> {
-  const content = await readContent();
+  let content: SiteContent;
+  try {
+    content = await readContent();
+  } catch {
+    try {
+      content = contentSchema.parse(await readJson("content.backup.json", null));
+    } catch {
+      throw new AdminError(503, "Контентыг сэргээх шаардлагатай. Admin хэсгийг нээнэ үү.");
+    }
+  }
   return {
     ...content,
     shows: content.shows.filter((item) => item.status === "published"),
@@ -201,6 +313,7 @@ export async function saveContent(input: unknown) {
       revision: current.revision + 1,
       updatedAt: new Date().toISOString(),
     };
+    await writeJson("content.backup.json", saved);
     await writeJson("content.json", saved);
     return saved;
   });
@@ -231,6 +344,23 @@ export async function uploadImage(file: File): Promise<MediaItem> {
     throw new AdminError(400, "Зургийн хэмжээ 5 MB-аас бага байх ёстой.");
   const bytes = new Uint8Array(await file.arrayBuffer());
   const extension = imageType(bytes);
+  try {
+    const decoder = sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 });
+    const metadata = await decoder.metadata();
+    if (
+      !metadata.width ||
+      !metadata.height ||
+      (metadata.pages ?? 1) > 1 ||
+      !["jpeg", "png", "webp"].includes(metadata.format ?? "")
+    )
+      throw new Error("Invalid image");
+    await decoder.raw().toBuffer();
+  } catch {
+    throw new AdminError(
+      400,
+      "Зураг гэмтсэн эсвэл хэт том байна. Бүрэн JPG, PNG, WebP зураг сонгоно уу.",
+    );
+  }
   const id = crypto.randomUUID() + "." + extension;
   const directory = join(storageDir(), "media");
   await mkdir(directory, { recursive: true });
