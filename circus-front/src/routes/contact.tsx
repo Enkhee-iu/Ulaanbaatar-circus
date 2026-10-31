@@ -6,6 +6,7 @@ import type { FormEvent } from "react";
 import { PageShell } from "@/components/site/PageShell";
 import { PageIntro } from "@/components/site/Sections";
 import { Spinner } from "@/components/site/Loading";
+import { apiUrl } from "@/lib/content";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>): { show?: string } => ({
@@ -50,7 +51,7 @@ function ContactPage() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000);
     try {
-      const response = await fetch("/api/enquiries", {
+      const response = await fetch(apiUrl("/api/enquiries"), {
         method: "POST",
         signal: controller.signal,
         headers: { "Content-Type": "application/json" },

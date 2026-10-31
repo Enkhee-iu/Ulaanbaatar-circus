@@ -1,15 +1,31 @@
 import express from "express";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
-import { AdminError, authStatus, changePassword, contentHealth, createEnquiry, listEnquiries, listImages, login, logout, readContent, readImage, readPublishedContent, recoverContent, requireAdmin, requireLocal, requireSameOrigin, saveContent, updateEnquiry, uploadImage } from "./services/admin-store.js";
+import { AdminError, authStatus, changePassword, contentHealth, createEnquiry, listEnquiries, listImages, login, logout, readContent, readImage, readPublishedContent, recoverContent, requireAdmin, requireSameOrigin, saveContent, updateEnquiry, uploadImage } from "./services/admin-store.js";
 import { initializeDatabase } from "./db.js";
 
 const app = express();
 app.disable("x-powered-by");
-app.set("trust proxy", "loopback");
+app.set("trust proxy", 1);
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Cache-Control", "no-store");
+  next();
+});
+app.use((req, res, next) => {
+  const origin = req.get("Origin");
+  const allowedOrigins = (process.env.ADMIN_FRONTEND_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.vary("Origin");
+  }
+  if (req.method === "OPTIONS") return res.sendStatus(origin && allowedOrigins.includes(origin) ? 204 : 403);
   next();
 });
 app.use("/api", express.raw({ type: () => true, limit: "6mb" }));
@@ -34,13 +50,13 @@ async function body(req) {
   if (text.length > 1024 * 1024) throw new AdminError(413, "Хүсэлтийн хэмжээ хэтэрсэн.");
   try { return JSON.parse(text); } catch { throw new AdminError(400, "Хүсэлтийн бүтэц буруу байна."); }
 }
+app.get("/", (_req, res) => res.json({ service: "UB Circus API", status: "ok" }));
 app.get("/api/content", async (_req, res) => {
   try { res.json(await readPublishedContent()); } catch (error) { sendError(res, error); }
 });
 app.post("/api/enquiries", async (req, res) => {
   try {
     const request = toWebRequest(req);
-    requireLocal(request);
     requireSameOrigin(request);
     if (!req.is("application/json")) throw new AdminError(415, "JSON хүсэлт шаардлагатай.");
     if (req.body.length > 16000) throw new AdminError(413, "Хүсэлтийн хэмжээ хэтэрсэн.");
@@ -61,7 +77,6 @@ app.get("/api/media/:id", async (req, res) => {
 app.all("/api/admin/*path", async (req, res) => {
   try {
     const request = toWebRequest(req);
-    requireLocal(request);
     const action = Array.isArray(req.params.path) ? req.params.path.join("/") : req.params.path;
     if (req.method !== "GET") requireSameOrigin(request);
     if (action === "status" && req.method === "GET") return res.json(await authStatus(request));
@@ -74,7 +89,7 @@ app.all("/api/admin/*path", async (req, res) => {
     }
     if (action === "logout" && req.method === "POST") {
       await logout(request);
-      res.setHeader("Set-Cookie", "ub_admin=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0");
+      res.setHeader("Set-Cookie", `ub_admin=; HttpOnly; SameSite=${req.secure ? "None; Secure" : "Strict"}; Path=/; Max-Age=0`);
       return res.json({ ok: true });
     }
     await requireAdmin(request);
@@ -116,6 +131,6 @@ app.all("/api/admin/*path", async (req, res) => {
 app.use((error, _req, res, _next) => sendError(res, error));
 
 const port = Number(process.env.PORT || 8787);
-const host = process.env.HOST || "127.0.0.1";
+const host = process.env.HOST || "0.0.0.0";
 await initializeDatabase();
 app.listen(port, host, () => console.log(`UB Circus API listening on http://${host}:${port} (PostgreSQL)`));

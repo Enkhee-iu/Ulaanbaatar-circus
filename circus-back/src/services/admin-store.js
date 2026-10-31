@@ -123,8 +123,7 @@ export async function login(request, email, password, setup = false, setupCode =
             email: user.email,
             cookie: "ub_admin=" +
                 token +
-                "; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800" +
-                (new URL(request.url).protocol === "https:" ? "; Secure" : ""),
+                `; HttpOnly; SameSite=${new URL(request.url).protocol === "https:" ? "None; Secure" : "Strict"}; Path=/; Max-Age=28800`,
         };
     });
 }

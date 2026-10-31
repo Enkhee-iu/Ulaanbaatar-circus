@@ -41,6 +41,7 @@ import {
 } from "@/lib/content-types";
 import { BUILTIN_IMAGES, imageSrc } from "@/lib/site-images";
 import { EnquiriesPanel } from "./EnquiriesPanel";
+import { apiUrl } from "@/lib/content";
 
 type Auth = { configured: boolean; authenticated: boolean; email?: string };
 type Section = "overview" | CollectionName | "media" | "settings" | "hero-video" | "enquiries";
@@ -58,10 +59,10 @@ async function adminApi<T>(action: string, method = "GET", body?: unknown): Prom
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30_000);
   try {
-    const response = await fetch("/api/admin/" + action, {
+    const response = await fetch(apiUrl("/api/admin/" + action), {
       signal: controller.signal,
       method,
-      credentials: "same-origin",
+      credentials: "include",
       headers:
         body instanceof FormData
           ? undefined
