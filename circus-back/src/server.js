@@ -1,7 +1,7 @@
 import express from "express";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
-import { AdminError, authStatus, changePassword, contentHealth, createEnquiry, listEnquiries, listImages, login, logout, readContent, readImage, readPublishedContent, recoverContent, requireAdmin, requireSameOrigin, saveContent, updateEnquiry, uploadImage } from "./services/admin-store.js";
+import { AdminError, authStatus, changePassword, contentHealth, createEnquiry, deleteImage, listEnquiries, listImages, login, logout, readContent, readImage, readPublishedContent, recoverContent, requireAdmin, requireSameOrigin, saveContent, updateEnquiry, uploadImage } from "./services/admin-store.js";
 import { initializeDatabase } from "./db.js";
 
 const app = express();
@@ -21,7 +21,7 @@ app.use((req, res, next) => {
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.vary("Origin");
   }
@@ -100,6 +100,8 @@ app.all("/api/admin/*path", async (req, res) => {
     if (action === "content" && req.method === "GET") return res.json(await readContent());
     if (action === "content" && req.method === "PUT") return res.json(await saveContent(await body(req)));
     if (action === "media" && req.method === "GET") return res.json(await listImages());
+    const mediaDelete = action.match(/^media\/([a-f0-9-]+\.(?:jpg|png|webp))$/);
+    if (mediaDelete && req.method === "DELETE") return res.json(await deleteImage(mediaDelete[1]));
     if (action === "media" && req.method === "POST") {
     if (!req.is("multipart/form-data")) throw new AdminError(415, "Зураг оруулна уу.");
       const boundary = req.headers["content-type"].match(/boundary=(?:"([^"]+)"|([^;]+))/)?.slice(1).find(Boolean);

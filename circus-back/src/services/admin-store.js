@@ -327,3 +327,24 @@ export async function readImage(id) {
     if (!rows[0]) throw new AdminError(404, "Image not found.");
     return { bytes: rows[0].bytes, type: rows[0].content_type };
 }
+function contentUsesImage(value, id) {
+    if (typeof value === "string")
+        return value === id || value.includes(`/api/media/${id}`);
+    if (Array.isArray(value))
+        return value.some(item => contentUsesImage(item, id));
+    if (value && typeof value === "object")
+        return Object.values(value).some(item => contentUsesImage(item, id));
+    return false;
+}
+export async function deleteImage(id) {
+    if (!mediaName.test(id)) throw new AdminError(404, "Image not found.");
+    return serial("content", async () => {
+        const content = await readContent();
+        const backup = await readJson("content.backup.json", null);
+        if (contentUsesImage(content, id) || contentUsesImage(backup, id))
+            throw new AdminError(409, "This image is in use. Replace it in site content before deleting.");
+        const result = await pool.query("DELETE FROM circus_media WHERE id=$1", [id]);
+        if (!result.rowCount) throw new AdminError(404, "Image not found.");
+        return { ok: true };
+    });
+}

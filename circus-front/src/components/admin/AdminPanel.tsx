@@ -1171,6 +1171,7 @@ function useMedia() {
   const queryClient = useQueryClient();
   const [uploadError, setUploadError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState("");
   const query = useQuery({
     queryKey: ["admin-media"],
     queryFn: () => adminApi<MediaItem[]>("media"),
@@ -1198,16 +1199,33 @@ function useMedia() {
       uploadFinished();
     }
   }
+  async function deleteMedia(id: string) {
+    if (deletingId || !window.confirm("Delete this uploaded image permanently?")) return;
+    setUploadError("");
+    setDeletingId(id);
+    try {
+      await adminApi<{ ok: true }>(`media/${id}`, "DELETE");
+      queryClient.setQueryData<MediaItem[]>(["admin-media"], (old) =>
+        (old || []).filter((item) => item.id !== id),
+      );
+    } catch (e) {
+      setUploadError(message(e));
+    } finally {
+      setDeletingId("");
+    }
+  }
   return {
     media: query.data || [],
     error: uploadError || (query.error ? message(query.error) : ""),
     uploading,
+    deletingId,
     loading: query.isPending,
     retry: () => {
       setUploadError("");
       return query.refetch();
     },
     upload,
+    deleteMedia,
   };
 }
 function ImagePicker({
@@ -1388,7 +1406,7 @@ function GalleryPicker({
   );
 }
 function MediaLibrary() {
-  const { media, error, uploading, loading, retry, upload } = useMedia();
+  const { media, error, uploading, deletingId, loading, retry, upload, deleteMedia } = useMedia();
   return (
     <>
       <Heading
@@ -1435,6 +1453,18 @@ function MediaLibrary() {
                   ? Math.ceil(Number(item.size) / 1024) + " KB · Оруулсан зураг"
                   : "Суурь зураг · AI illustration"}
               </small>
+              {"size" in item && (
+                <button
+                  type="button"
+                  className="ad-button ad-delete"
+                  disabled={Boolean(deletingId)}
+                  aria-label={`Delete ${item.name}`}
+                  onClick={() => void deleteMedia(item.id)}
+                >
+                  {deletingId === item.id ? <Spinner size={14} /> : <Trash2 size={14} />}
+                  {deletingId === item.id ? "Deleting…" : "Delete"}
+                </button>
+              )}
             </div>
           </article>
         ))}
