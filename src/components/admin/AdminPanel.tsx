@@ -34,17 +34,16 @@ import {
   X,
 } from "lucide-react";
 import {
-  contentSchema,
   type CollectionName,
   type ContentItem,
   type MediaItem,
   type SiteContent,
-} from "@/lib/content-schema";
+} from "@/lib/content-types";
 import { BUILTIN_IMAGES, imageSrc } from "@/lib/site-images";
 import { EnquiriesPanel } from "./EnquiriesPanel";
 
 type Auth = { configured: boolean; authenticated: boolean; email?: string };
-type Section = "overview" | CollectionName | "media" | "settings" | "enquiries";
+type Section = "overview" | CollectionName | "media" | "settings" | "hero-video" | "enquiries";
 const SECTIONS = [
   { id: "overview", label: "Хяналтын самбар", icon: LayoutDashboard },
   { id: "enquiries", label: "Захиалгын хүсэлт", icon: CalendarDays },
@@ -52,6 +51,7 @@ const SECTIONS = [
   { id: "events", label: "Эвентүүд", icon: CalendarDays },
   { id: "projects", label: "Төслүүд", icon: Film },
   { id: "media", label: "Зургийн сан", icon: ImagePlus },
+  { id: "hero-video", label: "Hero видео", icon: Film },
   { id: "settings", label: "Тохиргоо", icon: Settings },
 ] as const;
 async function adminApi<T>(action: string, method = "GET", body?: unknown): Promise<T> {
@@ -131,9 +131,7 @@ export function AdminPanel() {
     setNotice("");
     setError("");
     try {
-      const parsed = contentSchema.safeParse(next);
-      if (!parsed.success) throw new Error(parsed.error.issues[0].message);
-      const saved = await adminApi<SiteContent>("content", "PUT", parsed.data);
+      const saved = await adminApi<SiteContent>("content", "PUT", next);
       setContent(saved);
       await queryClient.invalidateQueries({ queryKey: ["site-content"] });
       setNotice("Өөрчлөлт хадгалагдлаа.");
@@ -291,6 +289,9 @@ export function AdminPanel() {
             <Collection key={section} name={section} content={content} save={save} busy={busy} />
           )}
           {section === "media" && <MediaLibrary />}
+          {section === "hero-video" && (
+            <HeroVideoEditor key={content.revision} content={content} save={save} busy={busy} />
+          )}
           {section === "settings" && (
             <SettingsEditor key={content.revision} content={content} save={save} busy={busy} />
           )}
@@ -323,6 +324,7 @@ function AuthScreen({
       await adminApi(configured ? "login" : "setup", "POST", {
         email: data.get("email"),
         password: data.get("password"),
+        ...(configured ? {} : { setupCode: data.get("setupCode") }),
       });
       await onSuccess();
     } catch (err) {
@@ -392,6 +394,20 @@ function AuthScreen({
               />
               {!configured && <small>Хамгийн багадаа 8 тэмдэгт.</small>}
             </label>
+            {!configured && (
+              <label className="ad-field">
+                Анхны admin setup код
+                <input
+                  name="setupCode"
+                  type="password"
+                  autoComplete="one-time-code"
+                  required
+                  minLength={24}
+                  maxLength={300}
+                />
+                <small>Зөвхөн backend-ийн .env файл дахь ADMIN_SETUP_CODE-ийг ашиглана.</small>
+              </label>
+            )}
             {!configured && (
               <label className="ad-field">
                 Нууц үг давтах
@@ -1466,7 +1482,6 @@ function SettingsEditor({
       ...content.settings,
       heroImage: hero,
       aboutImage: about,
-      heroVideoUrl: String(data.get("heroVideoUrl") || ""),
     };
     for (const key of [...SETTINGS_FIELDS.map((x) => x[0]), "heroDescription", "address"] as const)
       settings[key] = String(data.get(key));
@@ -1488,14 +1503,6 @@ function SettingsEditor({
       <form className="ad-card ad-settings-form" onSubmit={submit} onChange={dirty.mark}>
         <fieldset className="ad-editor-fields" disabled={busy || uploading}>
           <h2>Ерөнхий мэдээлэл</h2>
-          <Field
-            label="Нүүр хуудасны видео · YouTube эсвэл HTTPS MP4/WebM холбоос"
-            name="heroVideoUrl"
-            value={content.settings.heroVideoUrl || ""}
-            type="url"
-            required={false}
-            max={2000}
-          />
           <div className="ad-form-grid">
             {SETTINGS_FIELDS.map(([key, label]) => (
               <Field
@@ -1576,6 +1583,69 @@ function SettingsEditor({
     </>
   );
 }
+
+function HeroVideoEditor({
+  content,
+  save,
+  busy,
+}: {
+  content: SiteContent;
+  save: (c: SiteContent) => Promise<void>;
+  busy: boolean;
+}) {
+  const dirty = useDirtyEditor();
+  const [error, setError] = useState("");
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    setError("");
+    try {
+      await save({
+        ...content,
+        settings: { ...content.settings, heroVideoUrl: String(data.get("heroVideoUrl") || "").trim() },
+      });
+      dirty.clean();
+    } catch (err) {
+      setError(message(err));
+    }
+  }
+  return (
+    <>
+      <Heading
+        eyebrow="HERO SECTION"
+        title="Нүүр хуудасны видео"
+        description="Нүүр хуудасны эхний хэсэгт харагдах видеоны холбоосыг эндээс солино."
+      />
+      <form className="ad-card ad-settings-form" onSubmit={submit} onChange={dirty.mark}>
+        <fieldset className="ad-editor-fields" disabled={busy}>
+          <h2>Hero видео</h2>
+          <p className="ad-muted">
+            YouTube линк эсвэл HTTPS MP4/WebM линк оруулна. Хоосон үлдээвэл видео унтарна.
+          </p>
+          <label className="ad-field ad-wide">
+            Видео URL
+            <input
+              name="heroVideoUrl"
+              type="url"
+              maxLength={2000}
+              defaultValue={content.settings.heroVideoUrl || ""}
+              placeholder="https://youtu.be/... эсвэл https://.../video.mp4"
+            />
+          </label>
+          {error && <p className="ad-alert" role="alert">{error}</p>}
+          <div className="ad-form-actions">
+            <button className="ad-button ad-primary" disabled={busy}>
+              {busy && <Spinner />}
+              {busy ? "Хадгалж байна…" : "Видео холбоос хадгалах"}
+              <Check size={17} />
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </>
+  );
+}
+
 function PasswordForm() {
   const dirty = useDirtyEditor();
   const [error, setError] = useState("");

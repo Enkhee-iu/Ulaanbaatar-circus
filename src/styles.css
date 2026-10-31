@@ -136,6 +136,19 @@
   color: #f2e7bb;
 }
 
+/* Keep the logo centered while letting both header sides reach the viewport edges. */
+.site-header .header-inner {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 48px;
+}
+@media (max-width: 900px) {
+  .site-header .header-inner {
+    padding-inline: 20px;
+  }
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -3547,7 +3560,7 @@ button:active:not(:disabled) {
   position: relative;
   isolation: isolate;
   width: 100%;
-  height: clamp(375px, calc((100svh - 80px) * 0.72), 700px);
+  height: clamp(450px, calc((100svh - 80px) * 0.864), 840px);
   overflow: hidden;
   background: #171310;
 }
@@ -3578,7 +3591,7 @@ button:active:not(:disabled) {
 .hero-video-actions {
   position: absolute;
   z-index: 3;
-  bottom: clamp(32px, 6vh, 64px);
+  bottom: 0;
   left: 24px;
   right: 24px;
   display: flex;
@@ -3588,9 +3601,9 @@ button:active:not(:disabled) {
   gap: 14px;
 }
 .hero-video-actions .button {
-  min-height: 54px;
+  min-height: 43.2px;
   min-width: 200px;
-  padding: 16px 26px;
+  padding: 12.8px 26px;
   font-size: 13px;
 }
 .hero-video-primary {
@@ -3614,9 +3627,9 @@ button:active:not(:disabled) {
 }
 @media (max-width: 700px) {
   .hero-video-stage {
-    height: calc((100svh - 72px) * 0.72);
-    min-height: 360px;
-    max-height: 650px;
+    height: calc((100svh - 72px) * 0.864);
+    min-height: 432px;
+    max-height: 780px;
   }
   .hero-background-video {
     object-position: 70% center;
@@ -3624,12 +3637,13 @@ button:active:not(:disabled) {
   .hero-video-actions {
     left: 20px;
     right: 20px;
-    bottom: 32px;
+    bottom: 0;
     gap: 12px;
   }
   .hero-video-actions .button {
     min-width: 0;
-    min-height: 50px;
+    min-height: 40px;
+    padding-block: 12.8px;
     padding-inline: 22px;
     font-size: 12px;
   }
@@ -3813,7 +3827,7 @@ button:active:not(:disabled) {
 }
 @media (max-width: 420px) {
   .hero-video-actions {
-    bottom: 84px;
+    bottom: 8px;
   }
 }
 /* Large public headings use the selected display face. */

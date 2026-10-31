@@ -77,7 +77,7 @@ export const MONGOLIAN: Record<string, string> = {
   "UB Circus home": "UB Circus нүүр хуудас",
   "Welcome to UB Circus": "UB Circus-т тавтай морил",
   "Skip to content": "Агуулга руу очих",
-  "Let’s make a show": "Тоглолтоо бүтээе",
+  "Let's make a show": "Тоглолтоо бүтээе",
   "Explore our shows": "Тоглолтууд үзэх",
   "Create with us": "Хамтдаа бүтээе",
   "Live from Ulaanbaatar. Made for the world.": "Улаанбаатараас дэлхийн тайзнаа.",

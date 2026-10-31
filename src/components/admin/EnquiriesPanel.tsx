@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail, RefreshCw, Search } from "lucide-react";
 import { Spinner } from "@/components/site/Loading";
-import { ENQUIRY_STATUSES, type Enquiry } from "@/lib/enquiry-schema";
+import { ENQUIRY_STATUSES, type Enquiry } from "@/lib/enquiry-types";
 import { translate } from "@/lib/translations";
 
 type Api = <T>(action: string, method?: string, body?: unknown) => Promise<T>;

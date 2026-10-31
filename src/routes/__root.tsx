@@ -11,7 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { getPublicContent } from "../lib/content";
-import { DEFAULT_CONTENT } from "../lib/content-schema";
+import { DEFAULT_CONTENT } from "../lib/content-types";
 import { SiteContentProvider } from "../components/site/SiteContent";
 import { LanguageProvider } from "../components/site/Language";
 import adminCss from "../admin.css?url";

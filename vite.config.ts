@@ -8,6 +8,13 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   nitro: process.env.UB_CIRCUS_LOCAL_BUILD === "1" ? { preset: "node-server" } : undefined,
+  vite: {
+    server: {
+      proxy: {
+        "/api": process.env.UB_CIRCUS_API_URL || "http://127.0.0.1:8787",
+      },
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

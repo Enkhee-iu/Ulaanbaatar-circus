@@ -1,5 +1,10 @@
-import { createServerFn } from "@tanstack/react-start";
-export const getPublicContent = createServerFn({ method: "GET" }).handler(async () => {
-  const { readPublishedContent } = await import("./admin-store.server");
-  return readPublishedContent();
-});
+import type { SiteContent } from "./content-types";
+
+const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+export async function getPublicContent(): Promise<SiteContent> {
+  // Browser requests use the Vite /api proxy; SSR must use an absolute backend URL.
+  const base = apiBase || (typeof window === "undefined" ? "http://127.0.0.1:8787" : "");
+  const response = await fetch(`${base}/api/content`, { credentials: "same-origin" });
+  if (!response.ok) throw new Error("Сайтын мэдээлэл ачаалж чадсангүй.");
+  return (await response.json()) as SiteContent;
+}

@@ -63,7 +63,7 @@ export function Header() {
             <LanguageSwitcher />
           </div>
           <Link to="/contact" className="button button-lime header-booking">
-            {t("Let’s make a show ")}
+            {t("Let's make a show")}
             <ArrowUpRight size={17} />
           </Link>
         </div>
@@ -98,7 +98,7 @@ export function Header() {
             </Link>
           ))}
           <Link to="/contact" onClick={() => setOpen(false)} className="button button-lime">
-            {t("Let’s make a show ")}
+            {t("Let's make a show")}
             <ArrowUpRight size={18} />
           </Link>
         </nav>

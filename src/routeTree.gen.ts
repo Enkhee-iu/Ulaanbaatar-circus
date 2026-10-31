@@ -17,9 +17,6 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShowsShowIdRouteImport } from './routes/shows_.$showId'
-import { Route as ApiEnquiriesRouteImport } from './routes/api.enquiries'
-import { Route as ApiMediaIdRouteImport } from './routes/api.media.$id'
-import { Route as ApiAdminSplatRouteImport } from './routes/api.admin.$'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -61,21 +58,6 @@ const ShowsShowIdRoute = ShowsShowIdRouteImport.update({
   path: '/shows/$showId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiEnquiriesRoute = ApiEnquiriesRouteImport.update({
-  id: '/api/enquiries',
-  path: '/api/enquiries',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiMediaIdRoute = ApiMediaIdRouteImport.update({
-  id: '/api/media/$id',
-  path: '/api/media/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAdminSplatRoute = ApiAdminSplatRouteImport.update({
-  id: '/api/admin/$',
-  path: '/api/admin/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,10 +67,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/enquiries': typeof ApiEnquiriesRoute
   '/shows/$showId': typeof ShowsShowIdRoute
-  '/api/admin/$': typeof ApiAdminSplatRoute
-  '/api/media/$id': typeof ApiMediaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,10 +77,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/enquiries': typeof ApiEnquiriesRoute
   '/shows/$showId': typeof ShowsShowIdRoute
-  '/api/admin/$': typeof ApiAdminSplatRoute
-  '/api/media/$id': typeof ApiMediaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,10 +88,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/shows': typeof ShowsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/enquiries': typeof ApiEnquiriesRoute
   '/shows_/$showId': typeof ShowsShowIdRoute
-  '/api/admin/$': typeof ApiAdminSplatRoute
-  '/api/media/$id': typeof ApiMediaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,10 +100,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
-    | '/api/enquiries'
     | '/shows/$showId'
-    | '/api/admin/$'
-    | '/api/media/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,10 +110,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
-    | '/api/enquiries'
     | '/shows/$showId'
-    | '/api/admin/$'
-    | '/api/media/$id'
   id:
     | '__root__'
     | '/'
@@ -153,10 +120,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shows'
     | '/sitemap.xml'
-    | '/api/enquiries'
     | '/shows_/$showId'
-    | '/api/admin/$'
-    | '/api/media/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,10 +131,7 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ShowsRoute: typeof ShowsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiEnquiriesRoute: typeof ApiEnquiriesRoute
   ShowsShowIdRoute: typeof ShowsShowIdRoute
-  ApiAdminSplatRoute: typeof ApiAdminSplatRoute
-  ApiMediaIdRoute: typeof ApiMediaIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -231,27 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShowsShowIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/enquiries': {
-      id: '/api/enquiries'
-      path: '/api/enquiries'
-      fullPath: '/api/enquiries'
-      preLoaderRoute: typeof ApiEnquiriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/media/$id': {
-      id: '/api/media/$id'
-      path: '/api/media/$id'
-      fullPath: '/api/media/$id'
-      preLoaderRoute: typeof ApiMediaIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/admin/$': {
-      id: '/api/admin/$'
-      path: '/api/admin/$'
-      fullPath: '/api/admin/$'
-      preLoaderRoute: typeof ApiAdminSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -263,10 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ShowsRoute: ShowsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiEnquiriesRoute: ApiEnquiriesRoute,
   ShowsShowIdRoute: ShowsShowIdRoute,
-  ApiAdminSplatRoute: ApiAdminSplatRoute,
-  ApiMediaIdRoute: ApiMediaIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

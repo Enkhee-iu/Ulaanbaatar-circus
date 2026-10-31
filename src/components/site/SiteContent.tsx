@@ -2,8 +2,8 @@ import { createContext, useContext, useMemo } from "react";
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicContent } from "@/lib/content";
-import { DEFAULT_CONTENT } from "@/lib/content-schema";
-import type { SiteContent } from "@/lib/content-schema";
+import { DEFAULT_CONTENT } from "@/lib/content-types";
+import type { SiteContent } from "@/lib/content-types";
 import { imageSrc } from "@/lib/site-images";
 import { useLanguage } from "./Language";
 

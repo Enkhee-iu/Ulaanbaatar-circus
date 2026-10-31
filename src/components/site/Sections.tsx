@@ -3,7 +3,7 @@ import { useLanguage } from "@/components/site/Language";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Asterisk } from "lucide-react";
 import type { ReactNode } from "react";
-import type { Show } from "@/lib/content-schema";
+import type { Show } from "@/lib/content-types";
 
 export function PageIntro({
   eyebrow,
