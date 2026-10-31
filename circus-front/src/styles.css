@@ -3921,6 +3921,12 @@ button:active:not(:disabled) {
   place-items: center;
   overflow: hidden;
   background: #050507;
+  opacity: 1;
+  transition: opacity 400ms ease;
+}
+.brand-loader[data-exiting="true"] {
+  opacity: 0;
+  pointer-events: none;
 }
 .brand-loader-art {
   width: min(62vw, 240px);
@@ -3948,6 +3954,9 @@ button:active:not(:disabled) {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .brand-loader {
+    transition: none;
+  }
   .brand-loader-ring {
     animation: none;
   }

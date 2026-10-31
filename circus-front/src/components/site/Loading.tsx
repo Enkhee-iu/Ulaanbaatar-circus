@@ -25,17 +25,26 @@ export function PageSkeleton() {
 }
 
 export function BrandLoading() {
-  const [visible, setVisible] = useState(true);
+  const [phase, setPhase] = useState<"showing" | "fading" | "hidden">("showing");
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setVisible(false), 2000);
-    return () => window.clearTimeout(timer);
+    const fadeTimer = window.setTimeout(() => setPhase("fading"), 2000);
+    const hideTimer = window.setTimeout(() => setPhase("hidden"), 2400);
+    return () => {
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(hideTimer);
+    };
   }, []);
 
-  if (!visible) return null;
+  if (phase === "hidden") return null;
 
   return (
-    <div className="brand-loader" role="status" aria-label="Улаанбаатар цирк ачаалж байна">
+    <div
+      className="brand-loader"
+      data-exiting={phase === "fading"}
+      role="status"
+      aria-label="Улаанбаатар цирк ачаалж байна"
+    >
       <span className="sr-only">Улаанбаатар цирк ачаалж байна…</span>
       <svg
         className="brand-loader-art"
