@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { useSiteContent } from "./SiteContent";
 import { LanguageSwitcher } from "./Language";
 
 const NAV = [
@@ -14,9 +15,13 @@ const NAV = [
 
 export function Brand() {
   const { t } = useLanguage();
+  const { settings } = useSiteContent();
   return (
     <Link to="/" className="brand" aria-label={t("UB Circus home")}>
       <img className="brand-logo" src="/ubcircus-logo.png" alt="Ulaanbaatar Circus — Be different" />
+      <span className="brand-name" title={settings.brandName}>
+        {settings.brandName}
+      </span>
     </Link>
   );
 }

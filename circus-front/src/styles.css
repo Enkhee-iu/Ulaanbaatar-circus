@@ -3895,21 +3895,33 @@ button:active:not(:disabled) {
 
 /* Center the supplied circus logo in the desktop header. */
 .header-inner .brand {
-  flex: 0 0 auto;
-  width: 50px;
+  display: inline-flex;
+  flex: 0 1 auto;
+  gap: 8px;
+  width: auto;
   height: 40px;
-  max-width: none;
+  max-width: min(32vw, 300px);
 }
 .brand-logo {
   display: block;
-  width: 100%;
+  flex: 0 0 50px;
+  width: 50px;
   height: 100%;
   object-fit: contain;
 }
+.brand-name {
+  min-width: 0;
+  overflow: hidden;
+  color: #f2e7bb;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 @media (max-width: 900px) {
   .header-inner .brand {
-    width: 50px;
-    height: 40px;
+    max-width: min(46vw, 240px);
   }
 }
 
