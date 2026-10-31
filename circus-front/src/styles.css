@@ -3912,3 +3912,43 @@ button:active:not(:disabled) {
     height: 40px;
   }
 }
+
+.brand-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #050507;
+}
+.brand-loader-art {
+  width: min(74vw, 560px);
+  height: auto;
+  overflow: visible;
+}
+.brand-loader-ring {
+  transform-origin: 250px 250px;
+  animation: brand-loader-spin 8s linear infinite;
+}
+.brand-loader-ulaanbaatar {
+  font-family: "Satisfy", "Pacifico", cursive;
+}
+.brand-loader-circus {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 900;
+}
+.brand-loader-tagline {
+  font-family: "Great Vibes", "Caveat", cursive;
+}
+@keyframes brand-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-loader-ring {
+    animation: none;
+  }
+}

@@ -14,6 +14,7 @@ import { getPublicContent } from "../lib/content";
 import { DEFAULT_CONTENT } from "../lib/content-types";
 import { SiteContentProvider } from "../components/site/SiteContent";
 import { LanguageProvider } from "../components/site/Language";
+import { BrandLoading } from "../components/site/Loading";
 import adminCss from "../admin.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -108,6 +109,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap",
       },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Pacifico&family=Playfair+Display:ital,wght@1,800&family=Satisfy&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -138,6 +143,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <SiteContentProvider initialContent={content}>
+          <BrandLoading />
           <Outlet />
         </SiteContentProvider>
       </LanguageProvider>
