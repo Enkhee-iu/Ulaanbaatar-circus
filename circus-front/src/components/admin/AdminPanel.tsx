@@ -1476,7 +1476,6 @@ function MediaLibrary() {
 const SETTINGS_FIELDS = [
   ["brandName", "Логоны нэр"],
   ["companyName", "Байгууллагын нэр"],
-  ["heroEyebrow", "Нүүр хуудасны жижиг гарчиг"],
   ["heroTitle", "Үндсэн гарчиг"],
   ["heroAccent", "Онцлох гарчиг"],
   ["email", "Холбоо барих имэйл"],
@@ -1486,7 +1485,6 @@ const SETTINGS_FIELDS = [
   ["since", "Үүсгэн байгуулагдсан он"],
 ] as const;
 const MONGOLIAN_SETTINGS = [
-  ["heroEyebrowMn", "Жижиг гарчиг (Монгол)", 140],
   ["heroTitleMn", "Үндсэн гарчиг (Монгол)", 70],
   ["heroAccentMn", "Онцлох гарчиг (Монгол)", 70],
   ["heroDescriptionMn", "Нүүр хуудасны тайлбар (Монгол)", 500],
@@ -1503,7 +1501,6 @@ function SettingsEditor({
 }) {
   const dirty = useDirtyEditor();
   const uploading = useUploadPending();
-  const [hero, setHero] = useState(content.settings.heroImage);
   const [about, setAbout] = useState(content.settings.aboutImage);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1585,14 +1582,6 @@ function SettingsEditor({
               ))}
             </div>
           </details>
-          <ImagePicker
-            label="Нүүр хуудасны зураг"
-            value={hero}
-            onChange={(src) => {
-              dirty.mark();
-              setHero(src);
-            }}
-          />
           <ImagePicker
             label="Танилцуулгын зураг"
             value={about}

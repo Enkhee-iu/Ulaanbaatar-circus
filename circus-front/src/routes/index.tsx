@@ -77,21 +77,6 @@ function HomePage() {
         </div>
       </section>
 
-      <nav
-        className="container discovery-bar"
-        aria-label={t("Find your next extraordinary moment")}
-      >
-        <span>{t("Find your next extraordinary moment")}</span>
-        <Link to="/shows">
-          {t("Discover shows")}
-          <ArrowUpRight size={18} />
-        </Link>
-        <Link to="/events">
-          {t("View upcoming events")}
-          <ArrowUpRight size={18} />
-        </Link>
-      </nav>
-
       <section
         id="discover"
         className="container stats-strip"
