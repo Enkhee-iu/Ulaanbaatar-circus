@@ -100,7 +100,7 @@ app.all("/api/admin/*path", async (req, res) => {
     if (action === "content" && req.method === "GET") return res.json(await readContent());
     if (action === "content" && req.method === "PUT") return res.json(await saveContent(await body(req)));
     if (action === "media" && req.method === "GET") return res.json(await listImages());
-    const mediaDelete = action.match(/^media\/([a-f0-9-]+\.(?:jpg|png|webp))$/);
+    const mediaDelete = action.match(/^media\/([a-f0-9-]+(?:\.(?:jpg|png|webp))?)$/);
     if (mediaDelete && req.method === "DELETE") return res.json(await deleteImage(mediaDelete[1]));
     if (action === "media" && req.method === "POST") {
     if (!req.is("multipart/form-data")) throw new AdminError(415, "Зураг оруулна уу.");

@@ -293,7 +293,51 @@ function imageType(data) {
         return "webp";
     throw new AdminError(400, "Ð—Ó©Ð²Ñ…Ó©Ð½ JPG, PNG, WebP Ð·ÑƒÑ€Ð°Ð³ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.");
 }
-const mediaName = /^[a-f0-9-]+\.(jpg|png|webp)$/;
+const mediaName = /^[a-f0-9-]+(?:\.(jpg|png|webp))?$/;
+function cloudinaryCredentials() {
+    const value = process.env.CLOUDINARY_URL;
+    if (!value) throw new AdminError(503, "Cloudinary is not configured on the backend.");
+    try {
+        const url = new URL(value);
+        if (url.protocol !== "cloudinary:" || !url.hostname || !url.username || !url.password)
+            throw new Error("Invalid Cloudinary URL");
+        const credential = (part) => decodeURIComponent(part).replace(/^<([^<>]+)>$/, "$1");
+        return {
+            cloudName: url.hostname,
+            apiKey: credential(url.username),
+            apiSecret: credential(url.password),
+        };
+    } catch {
+        throw new AdminError(503, "Cloudinary backend configuration is invalid.");
+    }
+}
+function cloudinarySignature(params, apiSecret) {
+    const value = Object.entries(params)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, entry]) => `${key}=${entry}`)
+        .join("&");
+    return createHash("sha1").update(value + apiSecret).digest("hex");
+}
+async function cloudinaryRequest(action, params, file) {
+    const { cloudName, apiKey, apiSecret } = cloudinaryCredentials();
+    const signed = { ...params, timestamp: Math.floor(Date.now() / 1000) };
+    const form = new FormData();
+    for (const [key, value] of Object.entries(signed)) form.append(key, String(value));
+    form.append("api_key", apiKey);
+    form.append("signature", cloudinarySignature(signed, apiSecret));
+    if (file) form.append("file", new Blob([file.bytes], { type: file.contentType }), file.name);
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/${action}`, {
+        method: "POST",
+        body: form,
+        signal: AbortSignal.timeout(30_000),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        const detail = typeof result?.error?.message === "string" ? result.error.message.slice(0, 180) : "";
+        throw new AdminError(502, `Cloudinary ${action} failed (${response.status})${detail ? `: ${detail}` : "."}`);
+    }
+    return result;
+}
 export async function uploadImage(file) {
     if (!file.size || file.size > 5 * 1024 * 1024)
         throw new AdminError(400, "Ð—ÑƒÑ€Ð³Ð¸Ð¹Ð½ Ñ…ÑÐ¼Ð¶ÑÑ 5 MB-Ð°Ð°Ñ Ð±Ð°Ð³Ð° Ð±Ð°Ð¹Ñ… Ñ‘ÑÑ‚Ð¾Ð¹.");
@@ -312,28 +356,42 @@ export async function uploadImage(file) {
     catch {
         throw new AdminError(400, "Ð—ÑƒÑ€Ð°Ð³ Ð³ÑÐ¼Ñ‚ÑÑÐ½ ÑÑÐ²ÑÐ» Ñ…ÑÑ‚ Ñ‚Ð¾Ð¼ Ð±Ð°Ð¹Ð½Ð°. Ð‘Ò¯Ñ€ÑÐ½ JPG, PNG, WebP Ð·ÑƒÑ€Ð°Ð³ ÑÐ¾Ð½Ð³Ð¾Ð½Ð¾ ÑƒÑƒ.");
     }
-    const id = crypto.randomUUID() + "." + extension;
-    const item = { id, name: file.name.slice(0, 150), src: "/api/media/" + id, size: file.size, createdAt: new Date().toISOString() };
-    await pool.query("INSERT INTO circus_media(id,name,content_type,bytes) VALUES ($1,$2,$3,$4)", [id, item.name, `image/${extension === "jpg" ? "jpeg" : extension}`, Buffer.from(bytes)]);
+    const id = randomUUID();
+    const contentType = `image/${extension === "jpg" ? "jpeg" : extension}`;
+    const itemName = file.name.slice(0, 150) || id;
+    const asset = await cloudinaryRequest("upload", { public_id: `ubcircus/${id}` }, {
+        bytes,
+        contentType,
+        name: itemName,
+    });
+    if (!asset.public_id || !asset.secure_url)
+        throw new AdminError(502, "Cloudinary returned an invalid upload result.");
+    const item = { id, name: itemName, src: asset.secure_url, size: Number(asset.bytes || file.size), createdAt: new Date().toISOString() };
+    try {
+        await pool.query("INSERT INTO circus_media(id,name,content_type,bytes,src,public_id) VALUES ($1,$2,$3,NULL,$4,$5)", [id, item.name, contentType, item.src, asset.public_id]);
+    } catch (error) {
+        await cloudinaryRequest("destroy", { public_id: asset.public_id }).catch(() => { });
+        throw error;
+    }
     return item;
 }
 export async function listImages() {
-    const { rows } = await pool.query("SELECT id,name,octet_length(bytes) AS size,created_at FROM circus_media ORDER BY created_at DESC");
-    return rows.map(row => ({ id: row.id, name: row.name, src: "/api/media/" + row.id, size: Number(row.size), createdAt: new Date(row.created_at).toISOString() }));
+    const { rows } = await pool.query("SELECT id,name,src,octet_length(bytes) AS size,created_at FROM circus_media ORDER BY created_at DESC");
+    return rows.map(row => ({ id: row.id, name: row.name, src: row.src || "/api/media/" + row.id, size: Number(row.size || 0), createdAt: new Date(row.created_at).toISOString() }));
 }
 export async function readImage(id) {
     if (!mediaName.test(id)) throw new AdminError(404, "Image not found.");
     const { rows } = await pool.query("SELECT bytes,content_type FROM circus_media WHERE id=$1", [id]);
-    if (!rows[0]) throw new AdminError(404, "Image not found.");
+    if (!rows[0]?.bytes) throw new AdminError(404, "Image not found.");
     return { bytes: rows[0].bytes, type: rows[0].content_type };
 }
-function contentUsesImage(value, id) {
+function contentUsesImage(value, id, src = "") {
     if (typeof value === "string")
-        return value === id || value.includes(`/api/media/${id}`);
+        return value === id || (src && value === src) || value.includes(`/api/media/${id}`);
     if (Array.isArray(value))
-        return value.some(item => contentUsesImage(item, id));
+        return value.some(item => contentUsesImage(item, id, src));
     if (value && typeof value === "object")
-        return Object.values(value).some(item => contentUsesImage(item, id));
+        return Object.values(value).some(item => contentUsesImage(item, id, src));
     return false;
 }
 export async function deleteImage(id) {
@@ -341,8 +399,11 @@ export async function deleteImage(id) {
     return serial("content", async () => {
         const content = await readContent();
         const backup = await readJson("content.backup.json", null);
-        if (contentUsesImage(content, id) || contentUsesImage(backup, id))
+        const { rows } = await pool.query("SELECT src,public_id FROM circus_media WHERE id=$1", [id]);
+        const media = rows[0];
+        if (contentUsesImage(content, id, media?.src) || contentUsesImage(backup, id, media?.src))
             throw new AdminError(409, "This image is in use. Replace it in site content before deleting.");
+        if (media?.public_id) await cloudinaryRequest("destroy", { public_id: media.public_id });
         const result = await pool.query("DELETE FROM circus_media WHERE id=$1", [id]);
         if (!result.rowCount) throw new AdminError(404, "Image not found.");
         return { ok: true };

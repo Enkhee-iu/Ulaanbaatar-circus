@@ -3,7 +3,7 @@ import { EVENTS, PROJECTS, SHOWS } from "../data/site-data.js";
 const text = (max) => z.string().trim().min(1, "Ð­Ð½Ñ Ñ‚Ð°Ð»Ð±Ð°Ñ€Ñ‹Ð³ Ð±Ó©Ð³Ð»Ó©Ð½Ó© Ò¯Ò¯.").max(max);
 export const imageSchema = z
     .string()
-    .regex(/^(builtin:(hero|acrobatics|theatre|illusions)|\/api\/media\/[a-f0-9-]+\.(jpg|png|webp))$/, "Ð—ÑƒÑ€Ð³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð³Ð°Ð°Ñ Ð·ÑƒÑ€Ð°Ð³ ÑÐ¾Ð½Ð³Ð¾Ð½Ð¾ ÑƒÑƒ.");
+    .regex(/^(builtin:(hero|acrobatics|theatre|illusions)|\/api\/media\/[a-f0-9-]+\.(jpg|png|webp)|https:\/\/res\.cloudinary\.com\/[a-zA-Z0-9_-]+\/image\/upload\/[a-zA-Z0-9_.,/-]+)$/, "Select an image from the media library.");
 const base = {
     id: text(100).regex(/^[a-zA-Z0-9-]+$/),
     status: z.enum(["published", "draft"]),

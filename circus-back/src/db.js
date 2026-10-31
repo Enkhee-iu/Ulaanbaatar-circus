@@ -16,9 +16,16 @@ export async function initializeDatabase() {
       id text PRIMARY KEY,
       name text NOT NULL,
       content_type text NOT NULL,
-      bytes bytea NOT NULL,
+      bytes bytea,
+      src text,
+      public_id text,
       created_at timestamptz NOT NULL DEFAULT now()
     );
+  `);
+  await pool.query(`
+    ALTER TABLE circus_media ALTER COLUMN bytes DROP NOT NULL;
+    ALTER TABLE circus_media ADD COLUMN IF NOT EXISTS src text;
+    ALTER TABLE circus_media ADD COLUMN IF NOT EXISTS public_id text;
   `);
   await pool.query(
     `INSERT INTO circus_state(key,value) VALUES ('content',$1::jsonb),('content.backup',$1::jsonb)
