@@ -3680,6 +3680,37 @@ button:active:not(:disabled) {
   color: var(--header-text);
   background: #35291b;
 }
+.site-header .desktop-nav a {
+  font-size: 16px;
+  transition:
+    color 180ms ease,
+    transform 180ms ease,
+    text-shadow 180ms ease;
+}
+.site-header .desktop-nav a::after {
+  right: 0;
+  bottom: 3px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+.site-header .desktop-nav a:hover,
+.site-header .desktop-nav a.nav-active {
+  color: #f0ce8b;
+}
+.site-header .desktop-nav a:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 0 12px #cc9c5738;
+}
+.site-header .desktop-nav a:hover::after,
+.site-header .desktop-nav a.nav-active::after {
+  transform: scaleX(1);
+}
 
 .language-dropdown-trigger {
   display: inline-flex;
