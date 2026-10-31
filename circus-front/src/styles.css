@@ -3912,8 +3912,8 @@ button:active:not(:disabled) {
 .brand-name {
   min-width: 0;
   overflow: hidden;
-  color: #f2e7bb;
-  font-size: 18px;
+  color: #cc9c57;
+  font-size: 20px;
   font-family: "Niconne", cursive;
   font-style: normal;
   font-weight: 400;
