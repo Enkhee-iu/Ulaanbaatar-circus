@@ -1,7 +1,7 @@
 import { useLanguage } from "@/components/site/Language";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowUpRight, Check, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { BookingCTA, FilterBar, PageIntro, ShowCard } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
@@ -73,19 +73,6 @@ function ShowsPage() {
               </div>
             </div>
           ))}
-        </div>
-        <div className="custom-show-note">
-          <span className="custom-show-icon">
-            <Sparkles size={25} />
-          </span>
-          <div>
-            <h3>{t("Your idea deserves its own show.")}</h3>
-            <p>{t("Every production can be adapted for your venue, audience and vision.")}</p>
-          </div>
-          <Link to="/contact" className="text-link">
-            {t("Build something together")}
-            <ArrowUpRight size={18} />
-          </Link>
         </div>
       </section>
       <BookingCTA />

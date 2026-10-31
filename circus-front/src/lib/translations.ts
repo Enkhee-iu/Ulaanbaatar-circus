@@ -140,10 +140,6 @@ export const MONGOLIAN: Record<string, string> = {
   "to discover": "тантай учрахад бэлэн",
   "No shows in this category yet. Get in touch for availability.":
     "Энэ ангилалд тоглолт хараахан алга. Дэлгэрэнгүй мэдээллийг биднээс аваарай.",
-  "Your idea deserves its own show.": "Таны санаанд зориулсан тоглолт.",
-  "Every production can be adapted for your venue, audience and vision.":
-    "Тоглолт бүрийг таны орчин, үзэгчид, хүсэлд нийцүүлэн өөрчилж болно.",
-  "Build something together": "Хамтдаа бүтээе",
   "The season calendar": "Тоглолтын хуваарь",
   "Good nights.": "Сайхан үдэш.",
   "Great memories.": "Мартагдашгүй дурсамж.",

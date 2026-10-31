@@ -1024,7 +1024,6 @@
 .show-tags svg {
   color: var(--lime);
 }
-.custom-show-note,
 .calendar-note {
   display: flex;
   align-items: center;
@@ -1035,29 +1034,16 @@
   border-radius: 16px;
   margin-top: 50px;
 }
-.custom-show-icon {
-  display: grid;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid #b9654830;
-  border-radius: 50%;
-  color: var(--lime);
-  flex-shrink: 0;
-}
-.custom-show-note h3,
 .calendar-note h3 {
   font-size: 17px;
   letter-spacing: -0.35px;
 }
-.custom-show-note p,
 .calendar-note p {
   font-size: 12px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 6px;
 }
-.custom-show-note .text-link,
 .calendar-note .button {
   margin-left: auto;
   flex-shrink: 0;
@@ -1566,12 +1552,6 @@ a.contact-detail:hover {
     font-size: 0;
     gap: 0;
   }
-  .custom-show-note {
-    flex-wrap: wrap;
-  }
-  .custom-show-note .text-link {
-    margin-left: 71px;
-  }
 }
 @media (max-width: 800px) {
   .header-inner {
@@ -2051,33 +2031,17 @@ a.contact-detail:hover {
   .catalogue-grid {
     row-gap: 35px;
   }
-  .custom-show-note,
   .calendar-note {
     padding: 22px;
     gap: 15px;
     margin-top: 36px;
     align-items: flex-start;
   }
-  .custom-show-note > div {
-    flex: 1;
-    min-width: 170px;
-  }
-  .custom-show-note h3,
   .calendar-note h3 {
     font-size: 15px;
   }
-  .custom-show-note p,
   .calendar-note p {
     font-size: 11px;
-  }
-  .custom-show-note .text-link {
-    margin-left: 0;
-    width: 100%;
-    margin-top: 5px;
-  }
-  .custom-show-icon {
-    width: 38px;
-    height: 38px;
   }
   .event-row {
     grid-template-columns: 60px 1fr;
@@ -2441,8 +2405,7 @@ button:active:not(:disabled) {
   background: #f0e7dc;
   border-top: 1px solid var(--border);
 }
-.contact-detail-icon,
-.custom-show-icon {
+.contact-detail-icon {
   background: #ead9c7;
   color: #a16c4c;
 }
@@ -2959,8 +2922,7 @@ button:active:not(:disabled) {
   background: #12110f;
 }
 .dark .past-badge,
-.dark .contact-detail-icon,
-.dark .custom-show-icon {
+.dark .contact-detail-icon {
   background: #342a20;
   color: #d7b78c;
   border-color: var(--border);
