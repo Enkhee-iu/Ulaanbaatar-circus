@@ -3896,8 +3896,8 @@ button:active:not(:disabled) {
 /* Center the supplied circus logo in the desktop header. */
 .header-inner .brand {
   flex: 0 0 auto;
-  width: 25px;
-  height: 20px;
+  width: 50px;
+  height: 40px;
   max-width: none;
 }
 .brand-logo {
@@ -3908,7 +3908,7 @@ button:active:not(:disabled) {
 }
 @media (max-width: 900px) {
   .header-inner .brand {
-    width: 25px;
-    height: 20px;
+    width: 50px;
+    height: 40px;
   }
 }
