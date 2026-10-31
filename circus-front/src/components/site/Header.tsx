@@ -1,9 +1,8 @@
 import { useLanguage } from "@/components/site/Language";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowUpRight, Asterisk, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { useSiteContent } from "./SiteContent";
 import { LanguageSwitcher } from "./Language";
 
 const NAV = [
@@ -15,15 +14,9 @@ const NAV = [
 
 export function Brand() {
   const { t } = useLanguage();
-  const { settings } = useSiteContent();
   return (
     <Link to="/" className="brand" aria-label={t("UB Circus home")}>
-      <span className="brand-symbol">
-        <Asterisk size={27} strokeWidth={2.4} />
-      </span>
-      <span className="brand-name" title={settings.brandName}>
-        {settings.brandName}
-      </span>
+      <img className="brand-logo" src="/ubcircus-logo.png" alt="Ulaanbaatar Circus — Be different" />
     </Link>
   );
 }
