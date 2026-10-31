@@ -3923,7 +3923,7 @@ button:active:not(:disabled) {
   background: #050507;
 }
 .brand-loader-art {
-  width: min(74vw, 560px);
+  width: min(62vw, 240px);
   height: auto;
   overflow: visible;
 }
