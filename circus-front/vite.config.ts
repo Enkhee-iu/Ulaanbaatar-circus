@@ -4,7 +4,9 @@
 //     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+// Import the package's ESM entry directly; its CommonJS main entry references
+// `module.exports`, which is unavailable in Vite's ESM config runner.
+import { defineConfig } from "@lovable.dev/vite-tanstack-config/dist/index.js";
 
 export default defineConfig({
   nitro: process.env.UB_CIRCUS_LOCAL_BUILD === "1" ? { preset: "node-server" } : undefined,

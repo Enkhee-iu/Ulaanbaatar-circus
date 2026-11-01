@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Asterisk } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/site/PageShell";
-import { BookingCTA, SectionHeading, ShowCard } from "@/components/site/Sections";
+import { SectionHeading } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
 import { HeroPlaybackButton } from "@/components/site/HeroPlaybackButton";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({ component: HomePage });
 
 function HomePage() {
   const { t } = useLanguage();
-  const { shows: SHOWS, projects: PROJECTS, settings } = useSiteContent();
+  const { shows: SHOWS, settings } = useSiteContent();
   const aerial = settings.aboutImage;
   const youtubeId = youtubeVideoId(settings.heroVideoUrl || "");
   return (
@@ -70,37 +70,31 @@ function HomePage() {
           }
           link={{ to: "/shows", label: "Discover all shows" }}
         />
-        <div className="show-grid">
-          {SHOWS.slice(0, 3).map((show) => (
-            <ShowCard key={show.id} show={show} />
+        <div className="home-show-bento">
+          {SHOWS.slice(0, 3).map((show, index) => (
+            <Link
+              key={show.id}
+              to="/shows/$showId"
+              params={{ showId: show.id }}
+              className={`home-show-bento-card${index === 0 ? " featured" : ""}`}
+            >
+              <SmartImage
+                src={show.image}
+                alt={`${show.title} — ${t("Circus performance")}`}
+                loading="lazy"
+                width={1200}
+                height={900}
+              />
+              <span className="home-show-bento-shade" />
+              <span className="home-show-bento-category">{t(show.category)}</span>
+              <span className="home-show-bento-arrow"><ArrowUpRight size={20} /></span>
+              <span className="home-show-bento-copy">
+                <span className="home-show-bento-meta">{show.duration}</span>
+                <strong>{show.title}</strong>
+                <span className="home-show-bento-description">{show.description}</span>
+              </span>
+            </Link>
           ))}
-        </div>
-      </section>
-
-      <section
-        id="discover"
-        className="container stats-strip"
-        aria-label={t("UB Circus in numbers")}
-      >
-        <div className="stats-intro">
-          <Asterisk size={30} />
-          <span>
-            {t("Small beginnings.")}
-            <br />
-            {t("Extraordinary possibilities.")}
-          </span>
-        </div>
-        <div>
-          <strong>{settings.statsShows}</strong>
-          <span>{t("Shows & experiences")}</span>
-        </div>
-        <div>
-          <strong>{settings.statsArtists}</strong>
-          <span>{t("Extraordinary artists")}</span>
-        </div>
-        <div>
-          <strong>{settings.since}</strong>
-          <span>{t("Where our story began")}</span>
         </div>
       </section>
 
@@ -156,49 +150,6 @@ function HomePage() {
           </div>
         </div>
       </section>
-
-      <section className="container section-space work-section">
-        <SectionHeading
-          eyebrow={t("Made to be remembered")}
-          title={
-            <>
-              {t("Big ideas.")}
-              <br />
-              <span className="muted-heading">{t("Brought to life.")}</span>
-            </>
-          }
-          description={t(
-            "A few of the worlds we’ve helped create. From first thought to final applause.",
-          )}
-          link={{ to: "/projects", label: "Explore our work" }}
-        />
-        <div className="home-work-grid">
-          {PROJECTS.slice(0, 2).map((project) => (
-            <Link to="/projects" className="home-work-card" key={project.title}>
-              <div className="work-image">
-                <SmartImage
-                  src={project.image}
-                  alt={project.title + " production"}
-                  loading="lazy"
-                  width={1200}
-                  height={800}
-                />
-                <span className="image-tag">{project.type}</span>
-                <span className="card-arrow">
-                  <ArrowUpRight size={23} />
-                </span>
-              </div>
-              <div className="work-card-heading">
-                <h3>{project.title}</h3>
-                <span>
-                  {project.client} · {project.year}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <BookingCTA />
     </PageShell>
   );
 }

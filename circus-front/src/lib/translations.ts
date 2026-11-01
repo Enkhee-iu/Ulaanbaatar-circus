@@ -66,6 +66,7 @@ export const MONGOLIAN: Record<string, string> = {
   "Let’s create a show": "Тоглолт хамтдаа бүтээе",
   "I’m interested in": "Миний сонирхож буй тоглолт:",
   "Circus performance": "Циркийн тоглолт",
+  "View show details": "Дэлгэрэнгүй үзэх",
   Shows: "Тоглолтууд",
   Events: "Эвентүүд",
   "Our work": "Төслүүд",

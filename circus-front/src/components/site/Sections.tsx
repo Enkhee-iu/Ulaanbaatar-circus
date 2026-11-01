@@ -91,6 +91,36 @@ export function ShowCard({ show }: { show: Show }) {
   );
 }
 
+export function ShowFeatureCard({ show }: { show: Show }) {
+  const { t } = useLanguage();
+  return (
+    <article className="show-feature-card">
+      <div className="show-feature-image">
+        <SmartImage
+          src={show.image}
+          alt={`${show.title} — ${t("Circus performance")}`}
+          loading="lazy"
+          width={1200}
+          height={900}
+        />
+        <span className="image-tag">{t(show.category)}</span>
+      </div>
+      <div className="show-feature-content">
+        <span className="show-feature-category">{t(show.category)}</span>
+        <div className="show-feature-title-row">
+          <h3>{show.title}</h3>
+          <span>{show.duration}</span>
+        </div>
+        <p>{show.description}</p>
+        <Link to="/shows/$showId" params={{ showId: show.id }} className="show-feature-link">
+          {t("View show details")}
+          <ArrowUpRight size={17} />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
 export function FilterBar<T extends string>({
   options,
   selected,
