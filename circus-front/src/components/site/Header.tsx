@@ -47,6 +47,12 @@ export function Header() {
   }, [open]);
   return (
     <header className="site-header">
+      <svg className="site-header-ear left" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M20 0V20C20 9 11 0 0 0Z" />
+      </svg>
+      <svg className="site-header-ear right" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M20 0V20C20 9 11 0 0 0Z" />
+      </svg>
       <div className="container header-inner">
         <nav className="desktop-nav" aria-label={t("Main navigation")}>
           {NAV.map((item) => (

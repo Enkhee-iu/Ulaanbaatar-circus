@@ -3771,7 +3771,7 @@ button:active:not(:disabled) {
   position: relative;
   isolation: isolate;
   width: 100%;
-  height: clamp(450px, calc((100svh - 80px) * 0.864), 840px);
+  height: clamp(540px, calc((100svh - 80px) * 1.0368), 1008px);
   overflow: hidden;
   background: #171310;
 }
@@ -3802,7 +3802,7 @@ button:active:not(:disabled) {
 .hero-video-actions {
   position: absolute;
   z-index: 3;
-  bottom: 0;
+  bottom: 24px;
   left: 24px;
   right: 24px;
   display: flex;
@@ -3838,9 +3838,9 @@ button:active:not(:disabled) {
 }
 @media (max-width: 700px) {
   .hero-video-stage {
-    height: calc((100svh - 72px) * 0.864);
-    min-height: 432px;
-    max-height: 780px;
+    height: calc((100svh - 72px) * 1.0368);
+    min-height: 518px;
+    max-height: 936px;
   }
   .hero-background-video {
     object-position: 70% center;
@@ -3848,7 +3848,7 @@ button:active:not(:disabled) {
   .hero-video-actions {
     left: 20px;
     right: 20px;
-    bottom: 0;
+    bottom: 20px;
     gap: 12px;
   }
   .hero-video-actions .button {
@@ -4400,5 +4400,241 @@ button:active:not(:disabled) {
   :root {
     --card-grid-gap: 20px;
     --footer-section-gap: 40px;
+  }
+}
+
+/* Centered tab navbar with curved ears, adapted to the existing site navigation. */
+.site-shell {
+  padding-top: 0;
+}
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 100;
+  width: max-content;
+  max-width: calc(100vw - 40px);
+  height: 54px;
+  padding: 0 20px 0 18px;
+  overflow: visible;
+  transform: translateX(-50%);
+  border: 0;
+  border-radius: 0 0 20px 20px;
+  background: #000;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 24%);
+  animation: circus-navbar-drop 1600ms cubic-bezier(0.18, 0.9, 0.25, 1) both;
+}
+.site-header .header-inner {
+  display: flex;
+  width: auto;
+  max-width: none;
+  min-height: 54px;
+  margin: 0;
+  padding: 0;
+  gap: 32px;
+}
+.site-header .brand {
+  order: 1;
+  width: auto;
+  height: 36px;
+  max-width: 220px;
+  flex: 0 1 auto;
+  gap: 8px;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+.site-header .brand-logo {
+  flex-basis: 34px;
+  width: 34px;
+}
+.site-header .brand-name {
+  max-width: 160px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.site-header .desktop-nav {
+  display: flex;
+  order: 2;
+  gap: 2px;
+}
+.site-header .desktop-nav a {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 9px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 250ms ease, background-color 250ms ease;
+}
+.site-header .desktop-nav a:hover,
+.site-header .desktop-nav a:focus-visible,
+.site-header .desktop-nav a.nav-active {
+  color: #fff;
+  background: rgb(255 255 255 / 10%);
+}
+.site-header .desktop-nav a.nav-active::after {
+  display: none;
+}
+.site-header .header-actions {
+  display: flex;
+  order: 3;
+  gap: 9px;
+}
+.site-header .header-controls {
+  display: flex;
+  align-items: center;
+}
+.site-header .language-switcher {
+  padding: 2px;
+  border-color: rgb(255 255 255 / 15%);
+  background: transparent;
+}
+.site-header .language-switcher button {
+  min-width: 29px;
+  height: 29px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 10px;
+}
+.site-header .language-switcher button[aria-pressed="true"] {
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+}
+.site-header .header-booking {
+  min-height: 34px;
+  padding: 0 14px;
+  gap: 7px;
+  border: 0;
+  border-radius: 9px;
+  background: #fff;
+  color: #111;
+  font-size: 12px;
+  font-weight: 500;
+}
+.site-header .header-booking:hover {
+  transform: translateY(-1px);
+  background: #f4f4f5;
+  color: #111;
+  box-shadow: 0 4px 14px rgb(255 255 255 / 18%);
+}
+.site-header-ear {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  overflow: visible;
+  fill: #000;
+  pointer-events: none;
+}
+.site-header-ear.left {
+  right: calc(100% - 0.5px);
+}
+.site-header-ear.right {
+  left: calc(100% - 0.5px);
+  transform: scaleX(-1);
+}
+.site-header .mobile-toggle {
+  display: none;
+}
+@keyframes circus-navbar-drop {
+  from {
+    transform: translate(-50%, -100%);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+@media (max-width: 900px) {
+  .site-header {
+    width: min(100% - 24px, 620px);
+    max-width: none;
+    height: auto;
+    min-height: 54px;
+    padding: 0 10px;
+  }
+  .site-header .header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    min-height: 54px;
+    gap: 10px;
+  }
+  .site-header .brand {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    max-width: 48vw;
+  }
+  .site-header .brand-name {
+    max-width: 32vw;
+  }
+  .site-header .desktop-nav {
+    display: none;
+  }
+  .site-header .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .site-header .header-booking {
+    display: none;
+  }
+  .site-header .mobile-toggle {
+    display: grid;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    width: 36px;
+    height: 36px;
+    border-color: rgb(255 255 255 / 18%);
+    color: #fff;
+  }
+  .site-header .mobile-nav {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 0;
+    display: flex;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 10px 16px 18px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-top: 0;
+    border-radius: 0 0 20px 20px;
+    background: #000;
+    box-shadow: 0 16px 26px rgb(0 0 0 / 32%);
+  }
+  .site-header .mobile-nav > a:not(.button) {
+    padding-block: 13px;
+    border-color: rgb(255 255 255 / 12%);
+    color: rgb(255 255 255 / 78%);
+    font-size: 15px;
+  }
+  .site-header .mobile-nav .button-lime {
+    margin-top: 12px;
+    background: #fff;
+    color: #111;
+  }
+}
+@media (max-width: 420px) {
+  .site-header {
+    width: calc(100% - 20px);
+  }
+  .site-header .header-inner {
+    gap: 6px;
+  }
+  .site-header .brand-logo {
+    flex-basis: 29px;
+    width: 29px;
+  }
+  .site-header .brand-name {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    animation: none;
   }
 }
