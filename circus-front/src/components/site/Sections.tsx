@@ -121,6 +121,33 @@ export function ShowFeatureCard({ show }: { show: Show }) {
   );
 }
 
+export function ShowBentoCard({ show }: { show: Show }) {
+  const { t } = useLanguage();
+  return (
+    <Link
+      to="/shows/$showId"
+      params={{ showId: show.id }}
+      className="home-show-bento-card"
+    >
+      <SmartImage
+        src={show.image}
+        alt={`${show.title} — ${t("Circus performance")}`}
+        loading="lazy"
+        width={1200}
+        height={900}
+      />
+      <span className="home-show-bento-shade" />
+      <span className="home-show-bento-category">{t(show.category)}</span>
+      <span className="home-show-bento-arrow"><ArrowUpRight size={20} /></span>
+      <span className="home-show-bento-copy">
+        <span className="home-show-bento-meta">{show.duration}</span>
+        <strong>{show.title}</strong>
+        <span className="home-show-bento-description">{show.description}</span>
+      </span>
+    </Link>
+  );
+}
+
 export function FilterBar<T extends string>({
   options,
   selected,

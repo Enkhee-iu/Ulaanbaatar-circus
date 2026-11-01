@@ -1,9 +1,8 @@
 import { useLanguage } from "@/components/site/Language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
-import { BookingCTA, FilterBar, PageIntro, ShowFeatureCard } from "@/components/site/Sections";
+import { BookingCTA, FilterBar, PageIntro, ShowBentoCard } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 
 export const Route = createFileRoute("/shows")({
@@ -54,24 +53,14 @@ function ShowsPage() {
             {t(" to discover")}
           </span>
         </div>
-        <div className="show-feature-list">
+        <div className="show-grid home-show-bento catalogue-grid">
           {shows.length === 0 && (
             <p className="results-count">
               {t("No shows in this category yet. Get in touch for availability.")}
             </p>
           )}
           {shows.map((show) => (
-            <div key={show.id} className="show-feature-item">
-              <ShowFeatureCard show={show} />
-              <div className="show-tags">
-                {show.tags.map((tag) => (
-                  <span key={tag}>
-                    <Check size={13} />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <ShowBentoCard key={show.id} show={show} />
           ))}
         </div>
       </section>

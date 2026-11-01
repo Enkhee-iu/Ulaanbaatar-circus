@@ -4,10 +4,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Asterisk } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/site/PageShell";
-import { SectionHeading } from "@/components/site/Sections";
+import { SectionHeading, ShowBentoCard } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
 import { HeroPlaybackButton } from "@/components/site/HeroPlaybackButton";
+import { TextReveal } from "@/components/ui/text-reveal";
 
 export const Route = createFileRoute("/")({ component: HomePage });
 
@@ -16,6 +17,22 @@ function HomePage() {
   const { shows: SHOWS, settings } = useSiteContent();
   const aerial = settings.aboutImage;
   const youtubeId = youtubeVideoId(settings.heroVideoUrl || "");
+  useEffect(() => {
+    const sections = document.querySelectorAll<HTMLElement>(".home-scroll-reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   return (
     <PageShell>
       <section className="hero-video-stage" aria-label={t("Welcome to UB Circus")}>
@@ -40,10 +57,11 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="container welcome-section" aria-labelledby="welcome-heading">
+      <section className="container welcome-section home-scroll-reveal" aria-labelledby="welcome-heading">
         <div className="welcome-copy">
           <h2 id="welcome-heading">
-            {settings.heroTitle} <span>{settings.heroAccent}</span>
+            <TextReveal>{settings.heroTitle}</TextReveal>{" "}
+            <span><TextReveal>{settings.heroAccent}</TextReveal></span>
           </h2>
           <p>{settings.heroDescription}</p>
         </div>
@@ -58,47 +76,26 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="container section-space">
+      <section className="container section-space home-scroll-reveal">
         <SectionHeading
           eyebrow={t("The spotlight is yours")}
           title={
             <>
-              {t("Not just a show.")}
+              <TextReveal>{t("Not just a show.")}</TextReveal>
               <br />
-              <span className="muted-heading">{t("A whole new feeling.")}</span>
+              <span className="muted-heading"><TextReveal>{t("A whole new feeling.")}</TextReveal></span>
             </>
           }
           link={{ to: "/shows", label: "Discover all shows" }}
         />
         <div className="home-show-bento">
-          {SHOWS.slice(0, 3).map((show, index) => (
-            <Link
-              key={show.id}
-              to="/shows/$showId"
-              params={{ showId: show.id }}
-              className={`home-show-bento-card${index === 0 ? " featured" : ""}`}
-            >
-              <SmartImage
-                src={show.image}
-                alt={`${show.title} — ${t("Circus performance")}`}
-                loading="lazy"
-                width={1200}
-                height={900}
-              />
-              <span className="home-show-bento-shade" />
-              <span className="home-show-bento-category">{t(show.category)}</span>
-              <span className="home-show-bento-arrow"><ArrowUpRight size={20} /></span>
-              <span className="home-show-bento-copy">
-                <span className="home-show-bento-meta">{show.duration}</span>
-                <strong>{show.title}</strong>
-                <span className="home-show-bento-description">{show.description}</span>
-              </span>
-            </Link>
+          {SHOWS.slice(0, 3).map((show) => (
+            <ShowBentoCard key={show.id} show={show} />
           ))}
         </div>
       </section>
 
-      <section className="container experience-section">
+      <section className="container experience-section home-scroll-reveal">
         <div className="experience-image">
           <SmartImage
             src={aerial}
@@ -119,12 +116,12 @@ function HomePage() {
         <div className="experience-copy">
           <span className="eyebrow">{t("The people behind the impossible")}</span>
           <h2>
-            {t("Human talent.")}
+            <TextReveal>{t("Human talent.")}</TextReveal>
             <br />
             <span className="muted-heading">
-              {t("Otherworldly")}
+              <TextReveal>{t("Otherworldly")}</TextReveal>
               <br />
-              {t("energy.")}
+              <TextReveal>{t("energy.")}</TextReveal>
             </span>
           </h2>
           <p>
