@@ -41,7 +41,11 @@ function HomePage() {
           <YouTubeHero key={youtubeId} videoId={youtubeId} />
         ) : (
           settings.heroVideoUrl && (
-            <HeroBackgroundVideo key={settings.heroVideoUrl} src={settings.heroVideoUrl} />
+            <HeroBackgroundVideo
+              key={settings.heroVideoUrl}
+              src={settings.heroVideoUrl}
+              poster={settings.heroImage}
+            />
           )
         )}
         <div className="hero-video-shade" aria-hidden="true" />
@@ -151,7 +155,7 @@ function HomePage() {
   );
 }
 
-function HeroBackgroundVideo({ src }: { src: string }) {
+function HeroBackgroundVideo({ src, poster }: { src: string; poster: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [hasFrame, setHasFrame] = useState(false);
@@ -195,11 +199,12 @@ function HeroBackgroundVideo({ src }: { src: string }) {
         ref={videoRef}
         className={"hero-background-video" + (hasFrame ? " is-playing" : "")}
         src={src}
+        poster={poster}
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         aria-hidden="true"
         disablePictureInPicture
         onCanPlay={() => setReady(true)}
