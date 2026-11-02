@@ -12,13 +12,13 @@ export const Route = createFileRoute("/shows")({
       {
         name: "description",
         content:
-          "Discover aerial shows, physical theatre and illusions from UB Circus. Made for your stage.",
+          "Discover aerial shows and physical theatre from UB Circus. Made for your stage.",
       },
     ],
   }),
   component: ShowsPage,
 });
-const CATEGORIES = ["All shows", "Aerial", "Theatre", "Illusion", "Touring"] as const;
+const CATEGORIES = ["All shows", "Aerial", "Theatre", "Touring"] as const;
 
 function ShowsPage() {
   const { t } = useLanguage();
@@ -37,7 +37,7 @@ function ShowsPage() {
           </>
         }
         description={t(
-          "Aerial artistry, playful theatre, impossible illusions. Discover a show that feels right for your audience.",
+          "Aerial artistry and playful theatre. Discover a show that feels right for your audience.",
         )}
       />
       <section className="container catalogue-section">

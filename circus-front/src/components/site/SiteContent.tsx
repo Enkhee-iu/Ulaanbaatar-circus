@@ -5,7 +5,16 @@ import { getPublicContent } from "@/lib/content";
 import { DEFAULT_CONTENT } from "@/lib/content-types";
 import type { SiteContent } from "@/lib/content-types";
 import { imageSrc } from "@/lib/site-images";
+import heroAltaraImage from "@/assets/hero-altara.webp";
 import { useLanguage } from "./Language";
+
+// The database still holds the previous default headline, so it counts as unset and shows the new
+// default. Anything else saved from the admin panel wins.
+const PREVIOUS_HERO_TEXT: Record<string, string> = {
+  "Beyond the": "This is",
+  "ordinary.": "Altara",
+};
+const currentHeroText = (text: string) => PREVIOUS_HERO_TEXT[text] ?? text;
 
 const ContentContext = createContext<SiteContent>(DEFAULT_CONTENT);
 const ContentStatusContext = createContext({
@@ -46,11 +55,11 @@ export function SiteContentProvider({
         heroTitle:
           language === "mn" && data.settings.heroTitleMn
             ? data.settings.heroTitleMn
-            : t(data.settings.heroTitle),
+            : t(currentHeroText(data.settings.heroTitle)),
         heroAccent:
           language === "mn" && data.settings.heroAccentMn
             ? data.settings.heroAccentMn
-            : t(data.settings.heroAccent),
+            : t(currentHeroText(data.settings.heroAccent)),
         heroDescription:
           language === "mn" && data.settings.heroDescriptionMn
             ? data.settings.heroDescriptionMn
@@ -59,7 +68,11 @@ export function SiteContentProvider({
           language === "mn" && data.settings.addressMn
             ? data.settings.addressMn
             : t(data.settings.address),
-        heroImage: imageSrc(data.settings.heroImage),
+        // Projects also use builtin:hero, so only the home page's default moves to the new photo.
+        heroImage:
+          data.settings.heroImage === "builtin:hero"
+            ? heroAltaraImage
+            : imageSrc(data.settings.heroImage),
         aboutImage: imageSrc(data.settings.aboutImage),
       },
       shows: data.shows.map((show) => ({

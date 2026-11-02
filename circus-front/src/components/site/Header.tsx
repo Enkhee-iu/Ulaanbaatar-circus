@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSiteContent } from "./SiteContent";
 import { LanguageSwitcher } from "./Language";
 
-const NAV = [
+export const NAV = [
   { to: "/shows", label: "Shows" },
   { to: "/events", label: "Events" },
   { to: "/projects", label: "Our work" },

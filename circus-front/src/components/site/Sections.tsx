@@ -40,7 +40,7 @@ export function SectionHeading({
   description,
   link,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: ReactNode;
   description?: string;
   link?: { to: "/shows" | "/projects" | "/events"; label: string };
@@ -49,7 +49,7 @@ export function SectionHeading({
   return (
     <div className="section-heading">
       <div>
-        <span className="eyebrow">{eyebrow}</span>
+        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h2>{title}</h2>
       </div>
       <div className="section-heading-aside">

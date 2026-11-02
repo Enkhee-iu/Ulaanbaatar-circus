@@ -1,13 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Clock3, Expand, Play, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Clock3, Expand, Play } from "lucide-react";
 import { getPublicContent } from "@/lib/content";
 import { PageShell } from "@/components/site/PageShell";
 import { useLanguage } from "@/components/site/Language";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { SmartImage, Spinner } from "@/components/site/Loading";
 import { SectionHeading, ShowCard } from "@/components/site/Sections";
+import { ShowLightbox } from "@/components/site/ShowLightbox";
 
 export const Route = createFileRoute("/shows_/$showId")({
   loader: async ({ params }) => {
@@ -160,77 +160,12 @@ function ShowDetailPage() {
           ))}
         </div>
       </section>
-      <Dialog.Root
-        open={selectedIndex >= 0}
-        onOpenChange={(open) => {
-          if (!open) setSelectedImage(null);
-        }}
-      >
-        <Dialog.Portal>
-          <Dialog.Overlay className="film-overlay" />
-          <Dialog.Content
-            className="show-lightbox"
-            onKeyDown={(event) => {
-              if (images.length < 2) return;
-              if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-                event.preventDefault();
-                setSelectedImage(
-                  (index) =>
-                    images[
-                      (images.indexOf(index ?? "") +
-                        (event.key === "ArrowRight" ? 1 : -1) +
-                        images.length) %
-                        images.length
-                    ],
-                );
-              }
-            }}
-          >
-            <div className="show-lightbox-heading">
-              <Dialog.Title>{show.title}</Dialog.Title>
-              <Dialog.Close className="icon-button" aria-label={t("Close photo")}>
-                <X size={23} />
-              </Dialog.Close>
-            </div>
-            <Dialog.Description className="sr-only">{t("Show photo gallery")}</Dialog.Description>
-            {selectedImage !== null && (
-              <SmartImage src={selectedImage} alt={`${show.title} · ${selectedIndex + 1}`} />
-            )}
-            <div className="show-lightbox-controls">
-              {images.length > 1 && (
-                <button
-                  className="icon-button"
-                  aria-label={t("Previous photo")}
-                  onClick={() =>
-                    setSelectedImage(
-                      (index) =>
-                        images[(images.indexOf(index ?? "") - 1 + images.length) % images.length],
-                    )
-                  }
-                >
-                  <ArrowLeft size={20} />
-                </button>
-              )}
-              <span aria-live="polite">
-                {selectedIndex + 1} / {images.length}
-              </span>
-              {images.length > 1 && (
-                <button
-                  className="icon-button"
-                  aria-label={t("Next photo")}
-                  onClick={() =>
-                    setSelectedImage(
-                      (index) => images[(images.indexOf(index ?? "") + 1) % images.length],
-                    )
-                  }
-                >
-                  <ArrowRight size={20} />
-                </button>
-              )}
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <ShowLightbox
+        images={images}
+        selected={selectedIndex >= 0 ? selectedImage : null}
+        onSelect={setSelectedImage}
+        titleOf={() => show.title}
+      />
       {show.videoUrl && (
         <section className="container show-detail-video">
           <SectionHeading eyebrow={t("Artistry in motion.")} title={t("Watch the performance")} />

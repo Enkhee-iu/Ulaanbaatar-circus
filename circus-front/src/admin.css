@@ -1293,3 +1293,78 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+.ad-gallery-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ad-gallery-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px 14px 7px 7px;
+  border: 1px solid var(--ad-line);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+.ad-gallery-tabs button[aria-pressed="true"] {
+  border-color: #b96548;
+  box-shadow: inset 0 0 0 1px #b96548;
+}
+.ad-gallery-tabs img {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.ad-gallery-tabs small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ad-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+.ad-gallery-form .ad-image-picker {
+  margin: 0;
+}
+.ad-gallery-form .ad-gallery-selected > div {
+  width: 170px;
+}
+.ad-gallery-form .ad-gallery-selected img {
+  height: 130px;
+}
+/* The file input covers this area, so files can be dropped straight onto it. */
+.ad-gallery-form .ad-image-picker .ad-upload {
+  display: flex;
+  justify-content: center;
+  min-height: 112px;
+  margin-block: 18px;
+  border: 1.5px dashed var(--ad-line);
+  border-radius: 10px;
+  font-size: 13px;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.ad-gallery-form .ad-image-picker .ad-upload:hover,
+.ad-gallery-form .ad-image-picker .ad-upload:focus-within {
+  border-color: #b96548;
+  background: #b965480d;
+}
+.ad-gallery-form .ad-image-picker > small {
+  display: block;
+  margin-bottom: 8px;
+}
+.ad-gallery-form .ad-image-picker > .ad-muted {
+  margin-bottom: 14px;
+  font-size: 12px;
+}

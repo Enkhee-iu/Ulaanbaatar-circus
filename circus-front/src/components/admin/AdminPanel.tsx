@@ -23,6 +23,7 @@ import {
   Eye,
   Film,
   ImagePlus,
+  Images,
   LayoutDashboard,
   LogOut,
   Pencil,
@@ -44,13 +45,14 @@ import { EnquiriesPanel } from "./EnquiriesPanel";
 import { apiUrl } from "@/lib/content";
 
 type Auth = { configured: boolean; authenticated: boolean; email?: string };
-type Section = "overview" | CollectionName | "media" | "settings" | "hero-video" | "enquiries";
+type Section = "overview" | CollectionName | "gallery" | "media" | "settings" | "hero-video" | "enquiries";
 const SECTIONS = [
   { id: "overview", label: "Хяналтын самбар", icon: LayoutDashboard },
   { id: "enquiries", label: "Захиалгын хүсэлт", icon: CalendarDays },
   { id: "shows", label: "Тоглолтууд", icon: Sparkles },
   { id: "events", label: "Эвентүүд", icon: CalendarDays },
   { id: "projects", label: "Төслүүд", icon: Film },
+  { id: "gallery", label: "Галерей", icon: Images },
   { id: "media", label: "Зургийн сан", icon: ImagePlus },
   { id: "hero-video", label: "Hero видео", icon: Film },
   { id: "settings", label: "Тохиргоо", icon: Settings },
@@ -288,6 +290,9 @@ export function AdminPanel() {
           {section === "enquiries" && <EnquiriesPanel api={adminApi} />}
           {(section === "shows" || section === "events" || section === "projects") && (
             <Collection key={section} name={section} content={content} save={save} busy={busy} />
+          )}
+          {section === "gallery" && (
+            <GalleryEditor content={content} save={save} busy={busy} open={setSection} />
           )}
           {section === "media" && <MediaLibrary />}
           {section === "hero-video" && (
@@ -570,7 +575,7 @@ const CONFIG = {
   shows: {
     title: "Тоглолтууд",
     singular: "Тоглолт",
-    categories: ["Aerial", "Theatre", "Illusion", "Touring"],
+    categories: ["Aerial", "Theatre", "Touring"],
   },
   events: {
     title: "Эвентүүд",
@@ -1199,6 +1204,20 @@ function useMedia() {
       uploadFinished();
     }
   }
+  async function uploadMany(files: File[]) {
+    const items: MediaItem[] = [];
+    const failed: string[] = [];
+    for (const file of files) {
+      const item = await upload(file);
+      if (item) items.push(item);
+      else failed.push(file.name);
+    }
+    if (failed.length)
+      setUploadError(
+        `Дараах зураг орсонгүй: ${failed.join(", ")}. 5 MB-аас бага эсэхийг шалгаад дахин оруулна уу.`,
+      );
+    return items;
+  }
   async function deleteMedia(id: string) {
     if (deletingId || !window.confirm("Delete this uploaded image permanently?")) return;
     setUploadError("");
@@ -1225,6 +1244,7 @@ function useMedia() {
       return query.refetch();
     },
     upload,
+    uploadMany,
     deleteMedia,
   };
 }
@@ -1300,7 +1320,8 @@ function GalleryPicker({
   onChange: React.Dispatch<React.SetStateAction<string[]>>;
   disabled: boolean;
 }) {
-  const { media, error, uploading, loading, retry, upload } = useMedia();
+  const { media, error, uploading, loading, retry, uploadMany } = useMedia();
+  const [skipped, setSkipped] = useState(0);
   const all = [...BUILTIN_IMAGES, ...media];
   function add(src: string) {
     onChange((current) =>
@@ -1315,7 +1336,10 @@ function GalleryPicker({
   return (
     <fieldset className="ad-image-picker" disabled={disabled || uploading}>
       <legend>Тоглолтын галерей · {value.length}/8</legend>
-      <small>Үндсэн зураг автоматаар орно. Нэмэлт зургуудаа сонгоод дарааллыг тохируулна уу.</small>
+      <small>
+        Үндсэн зураг зөвхөн тоглолтын хуудсанд автоматаар орно. Нүүр хуудасны галерейд эдгээр зураг
+        л гарна.
+      </small>
       <div className="ad-gallery-selected">
         {value.map((src, index) => (
           <div key={src}>
@@ -1351,6 +1375,33 @@ function GalleryPicker({
           </div>
         ))}
       </div>
+      <label className="ad-upload">
+        {uploading && <Spinner />}
+        {uploading
+          ? "Оруулж байна…"
+          : value.length >= 8
+            ? "Галерей дүүрсэн · 8/8"
+            : "+ Галерейн зураг оруулах"}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          disabled={uploading || value.length >= 8}
+          onChange={async (event) => {
+            const files = [...(event.target.files ?? [])];
+            event.target.value = "";
+            const room = 8 - value.length;
+            setSkipped(Math.max(files.length - room, 0));
+            for (const item of await uploadMany(files.slice(0, room))) add(item.src);
+          }}
+        />
+      </label>
+      {skipped > 0 && (
+        <p className="ad-muted" role="status">
+          8 зургийн хязгаарт багтаагүй тул {skipped} зураг оруулаагүй.
+        </p>
+      )}
+      <small>Зургийн сангаас сонгох</small>
       <div className="ad-image-options" aria-busy={loading}>
         {all.map((item) => {
           const src = item.id.startsWith("builtin:") ? item.id : item.src;
@@ -1378,22 +1429,6 @@ function GalleryPicker({
           );
         })}
       </div>
-      <label className="ad-upload">
-        {uploading ? "Оруулж байна…" : "+ Галерейн зураг оруулах"}
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          disabled={uploading || value.length >= 8}
-          onChange={async (event) => {
-            const file = event.target.files?.[0];
-            if (file) {
-              const result = await upload(file);
-              if (result) add(result.src);
-            }
-            event.target.value = "";
-          }}
-        />
-      </label>
       {error && (
         <p className="ad-alert" role="alert">
           {error}
@@ -1403,6 +1438,119 @@ function GalleryPicker({
         </p>
       )}
     </fieldset>
+  );
+}
+function GalleryEditor({
+  content,
+  save,
+  busy,
+  open,
+}: {
+  content: SiteContent;
+  save: (c: SiteContent) => Promise<void>;
+  busy: boolean;
+  open: (s: Section) => void;
+}) {
+  const [showId, setShowId] = useState(content.shows[0]?.id);
+  const show = content.shows.find((item) => item.id === showId) ?? content.shows[0];
+  return (
+    <>
+      <Heading
+        eyebrow="SHOW GALLERY"
+        title="Галерей"
+        description="Тоглолтоо сонгоод зургаа нэмнэ үү. Нийтлэгдсэн тоглолтын зургууд нүүр хуудас болон тоглолтын хуудсанд гарна."
+      />
+      {!show ? (
+        <div className="ad-card ad-empty">
+          <Images size={28} />
+          <h2>Тоглолт алга</h2>
+          <p>Галерейд зураг нэмэхийн тулд эхлээд тоглолт үүсгэнэ үү.</p>
+          <button className="ad-button ad-primary" onClick={() => open("shows")}>
+            Тоглолт нэмэх
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="ad-gallery-tabs" role="group" aria-label="Тоглолт сонгох">
+            {content.shows.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={item.id === show.id}
+                disabled={busy}
+                onClick={() => {
+                  if (item.id !== show.id && confirmLeave()) setShowId(item.id);
+                }}
+              >
+                <SmartImage src={imageSrc(item.image)} alt="" />
+                <span>
+                  {item.title}
+                  <small>
+                    {item.gallery?.length ?? 0}/8{item.status === "draft" && " · Ноорог"}
+                  </small>
+                </span>
+              </button>
+            ))}
+          </div>
+          <ShowGalleryForm
+            key={show.id + content.revision}
+            show={show}
+            content={content}
+            save={save}
+            busy={busy}
+          />
+        </>
+      )}
+    </>
+  );
+}
+function ShowGalleryForm({
+  show,
+  content,
+  save,
+  busy,
+}: {
+  show: SiteContent["shows"][number];
+  content: SiteContent;
+  save: (c: SiteContent) => Promise<void>;
+  busy: boolean;
+}) {
+  const dirty = useDirtyEditor();
+  const uploading = useUploadPending();
+  const saved = show.gallery ?? [];
+  const [gallery, setGallery] = useState(saved);
+  const changed = JSON.stringify(gallery) !== JSON.stringify(saved);
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (hasUploads()) return;
+    try {
+      await save({
+        ...content,
+        shows: content.shows.map((item) => (item.id === show.id ? { ...item, gallery } : item)),
+      });
+      dirty.clean();
+    } catch {
+      /* parent displays error */
+    }
+  }
+  return (
+    <form className="ad-card ad-settings-form ad-gallery-form" onSubmit={submit}>
+      <GalleryPicker
+        value={gallery}
+        onChange={(value) => {
+          dirty.mark();
+          setGallery(value);
+        }}
+        disabled={busy || uploading}
+      />
+      <div className="ad-form-actions">
+        <button className="ad-button ad-primary" disabled={busy || uploading || !changed}>
+          {busy && <Spinner />}
+          {busy ? "Хадгалж байна…" : "Өөрчлөлт хадгалах"}
+          <Check size={17} />
+        </button>
+      </div>
+    </form>
   );
 }
 function MediaLibrary() {
@@ -1476,6 +1624,7 @@ function MediaLibrary() {
 const SETTINGS_FIELDS = [
   ["brandName", "Логоны нэр"],
   ["companyName", "Байгууллагын нэр"],
+  ["heroEyebrow", "Нүүр хуудасны жижиг гарчиг"],
   ["heroTitle", "Үндсэн гарчиг"],
   ["heroAccent", "Онцлох гарчиг"],
   ["email", "Холбоо барих имэйл"],
@@ -1485,6 +1634,7 @@ const SETTINGS_FIELDS = [
   ["since", "Үүсгэн байгуулагдсан он"],
 ] as const;
 const MONGOLIAN_SETTINGS = [
+  ["heroEyebrowMn", "Жижиг гарчиг (Монгол)", 140],
   ["heroTitleMn", "Үндсэн гарчиг (Монгол)", 70],
   ["heroAccentMn", "Онцлох гарчиг (Монгол)", 70],
   ["heroDescriptionMn", "Нүүр хуудасны тайлбар (Монгол)", 500],
@@ -1501,6 +1651,7 @@ function SettingsEditor({
 }) {
   const dirty = useDirtyEditor();
   const uploading = useUploadPending();
+  const [hero, setHero] = useState(content.settings.heroImage);
   const [about, setAbout] = useState(content.settings.aboutImage);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1582,6 +1733,14 @@ function SettingsEditor({
               ))}
             </div>
           </details>
+          <ImagePicker
+            label="Нүүр хуудасны зураг"
+            value={hero}
+            onChange={(src) => {
+              dirty.mark();
+              setHero(src);
+            }}
+          />
           <ImagePicker
             label="Танилцуулгын зураг"
             value={about}

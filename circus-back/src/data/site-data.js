@@ -1,5 +1,4 @@
 const aerial = "builtin:acrobatics";
-const magic = "builtin:illusions";
 const hero = "builtin:hero";
 const theatre = "builtin:theatre";
 
@@ -23,16 +22,6 @@ export const SHOWS = [
     description:
       "Big characters. Little surprises. A playful world of physical theatre, object play and laughter for every generation.",
     tags: ["Family friendly", "Low rig", "Daytime"],
-  },
-  {
-    id: "ink-smoke",
-    title: "Ink & Smoke",
-    category: "Illusion",
-    duration: "90 min",
-    image: magic,
-    description:
-      "Look a little closer. Grand illusions and intimate magic bring the impossible into the room.",
-    tags: ["Illusion", "Lighting plot", "Brand reveals"],
   },
   {
     id: "nomad-nights",
@@ -68,17 +57,6 @@ export const PROJECTS = [
     description:
       "A reveal that moves beyond the runway. Movement design and live performance created for a memorable brand moment.",
     scope: ["Movement design", "Brand reveal", "Show production"],
-  },
-  {
-    title: "Ink & Smoke",
-    type: "Stage production",
-    category: "Stage",
-    client: "UB Circus Hall",
-    year: "2024",
-    image: magic,
-    description:
-      "An immersive world of light, shadows and impossible moments, designed from the first sketch to the final curtain.",
-    scope: ["Illusion design", "Lighting", "Camera work"],
   },
   {
     title: "Nomad Nights",
@@ -120,15 +98,6 @@ export const EVENTS = [
     venue: "Hunnu Mall Rooftop",
     category: "Private",
     time: "20:00",
-  },
-  {
-    date: "2026-06-09",
-    day: "09",
-    month: "JUN",
-    title: "Ink & Smoke Premiere",
-    venue: "UB Circus Hall",
-    category: "Public",
-    time: "19:00",
   },
   {
     date: "2026-08-24",
