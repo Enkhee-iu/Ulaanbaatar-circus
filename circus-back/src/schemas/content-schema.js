@@ -22,7 +22,7 @@ export const showSchema = z.object({
     tagsMn: tags.optional(),
     details: z.string().trim().max(6000).optional(),
     detailsMn: z.string().trim().max(6000).optional(),
-    gallery: z.array(imageSchema).max(8).optional(),
+    gallery: z.array(imageSchema).max(30).optional(),
     videoUrl: z
         .string()
         .max(2000)

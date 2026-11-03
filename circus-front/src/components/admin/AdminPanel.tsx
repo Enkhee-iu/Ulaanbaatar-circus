@@ -1311,6 +1311,8 @@ function ImagePicker({
     </fieldset>
   );
 }
+// Matches the gallery limit in the API's content schema.
+const GALLERY_LIMIT = 30;
 function GalleryPicker({
   value,
   onChange,
@@ -1325,7 +1327,7 @@ function GalleryPicker({
   const all = [...BUILTIN_IMAGES, ...media];
   function add(src: string) {
     onChange((current) =>
-      !current.includes(src) && current.length < 8 ? [...current, src] : current,
+      !current.includes(src) && current.length < GALLERY_LIMIT ? [...current, src] : current,
     );
   }
   function move(index: number, offset: number) {
@@ -1335,10 +1337,10 @@ function GalleryPicker({
   }
   return (
     <fieldset className="ad-image-picker" disabled={disabled || uploading}>
-      <legend>Тоглолтын галерей · {value.length}/8</legend>
+      <legend>Тоглолтын галерей · {value.length}/{GALLERY_LIMIT}</legend>
       <small>
-        Үндсэн зураг зөвхөн тоглолтын хуудсанд автоматаар орно. Нүүр хуудасны галерейд эдгээр зураг
-        л гарна.
+        Үндсэн зураг тоглолтын хуудас болон нүүр хуудасны галерейд автоматаар орно. Эдгээр зураг ч
+        хоёуланд нь гарна.
       </small>
       <div className="ad-gallery-selected">
         {value.map((src, index) => (
@@ -1379,18 +1381,18 @@ function GalleryPicker({
         {uploading && <Spinner />}
         {uploading
           ? "Оруулж байна…"
-          : value.length >= 8
-            ? "Галерей дүүрсэн · 8/8"
+          : value.length >= GALLERY_LIMIT
+            ? `Галерей дүүрсэн · ${GALLERY_LIMIT}/${GALLERY_LIMIT}`
             : "+ Галерейн зураг оруулах"}
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
           multiple
-          disabled={uploading || value.length >= 8}
+          disabled={uploading || value.length >= GALLERY_LIMIT}
           onChange={async (event) => {
             const files = [...(event.target.files ?? [])];
             event.target.value = "";
-            const room = 8 - value.length;
+            const room = GALLERY_LIMIT - value.length;
             setSkipped(Math.max(files.length - room, 0));
             for (const item of await uploadMany(files.slice(0, room))) add(item.src);
           }}
@@ -1398,7 +1400,7 @@ function GalleryPicker({
       </label>
       {skipped > 0 && (
         <p className="ad-muted" role="status">
-          8 зургийн хязгаарт багтаагүй тул {skipped} зураг оруулаагүй.
+          {GALLERY_LIMIT} зургийн хязгаарт багтаагүй тул {skipped} зураг оруулаагүй.
         </p>
       )}
       <small>Зургийн сангаас сонгох</small>
@@ -1414,7 +1416,7 @@ function GalleryPicker({
               aria-label={item.name}
               aria-pressed={selected}
               className={selected ? "selected" : ""}
-              disabled={!selected && value.length >= 8}
+              disabled={!selected && value.length >= GALLERY_LIMIT}
               onClick={() =>
                 selected ? onChange(value.filter((entry) => entry !== src)) : add(src)
               }
@@ -1486,7 +1488,7 @@ function GalleryEditor({
                 <span>
                   {item.title}
                   <small>
-                    {item.gallery?.length ?? 0}/8{item.status === "draft" && " · Ноорог"}
+                    {item.gallery?.length ?? 0}/{GALLERY_LIMIT}{item.status === "draft" && " · Ноорог"}
                   </small>
                 </span>
               </button>
