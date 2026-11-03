@@ -106,8 +106,8 @@ export const DEFAULT_CONTENT = {
     revision: 0,
     updatedAt: "",
     settings: {
-        brandName: "ub.circus",
-        companyName: "UB Circus",
+        brandName: "Ulaanbaatar Circus",
+        companyName: "Ulaanbaatar Circus",
         heroEyebrow: "Live from Ulaanbaatar. Made for the world.",
         heroTitle: "This is",
         heroAccent: "Altara",

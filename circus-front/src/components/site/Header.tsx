@@ -17,7 +17,7 @@ export function Brand() {
   const { t } = useLanguage();
   const { settings } = useSiteContent();
   return (
-    <Link to="/" className="brand" aria-label={t("UB Circus home")}>
+    <Link to="/" className="brand" aria-label={t("Ulaanbaatar Circus home")}>
       <img className="brand-logo" src="/ubcircus-logo.png" alt="Ulaanbaatar Circus — Be different" />
       <span className="brand-name" title={settings.brandName}>
         {settings.brandName}

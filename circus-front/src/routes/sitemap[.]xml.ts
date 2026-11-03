@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-
-const BASE_URL = "";
+import { getPublicContent } from "@/lib/content";
 
 interface SitemapEntry {
   path: string;
@@ -12,7 +11,9 @@ interface SitemapEntry {
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        // A sitemap needs full addresses; the request says which domain is serving this one.
+        const baseUrl = new URL(request.url).origin;
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/shows", changefreq: "weekly", priority: "0.9" },
@@ -20,9 +21,20 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/projects", changefreq: "monthly", priority: "0.8" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
         ];
+        try {
+          const { shows } = await getPublicContent();
+          for (const show of shows)
+            entries.push({
+              path: "/shows/" + encodeURIComponent(show.id),
+              changefreq: "monthly",
+              priority: "0.8",
+            });
+        } catch {
+          /* The main pages are still worth listing when content is unavailable. */
+        }
         const urls = entries.map(
           (e) =>
-            `  <url><loc>${BASE_URL}${e.path}</loc><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`,
+            `  <url><loc>${baseUrl}${e.path}</loc><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`,
         );
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,

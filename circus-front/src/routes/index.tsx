@@ -1,10 +1,10 @@
 import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, Asterisk } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/site/PageShell";
-import { SectionHeading, ShowFeatureCard } from "@/components/site/Sections";
+import { BookingCTA, SectionHeading, ShowFeatureCard } from "@/components/site/Sections";
 import { ShowLightbox } from "@/components/site/ShowLightbox";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
@@ -50,116 +50,78 @@ function HomePage() {
   const youtubeId = youtubeVideoId(settings.heroVideoUrl || "");
   // Admin-edited titles can run far longer than the default; they get a smaller poster size.
   const longTitle = settings.heroTitle.length + settings.heroAccent.length > 24;
-  useEffect(() => {
-    const sections = document.querySelectorAll<HTMLElement>(".home-scroll-reveal");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" },
-    );
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
   return (
     <PageShell>
-      <div className="home-page">
-        <section className="home-hero" aria-labelledby="home-hero-title">
-          <div className="home-hero-media">
-            <SmartImage className="home-hero-poster" src={settings.heroImage} alt="" />
-            {youtubeId ? (
-              <YouTubeHero key={youtubeId} videoId={youtubeId} />
-            ) : (
-              settings.heroVideoUrl && (
-                <HeroBackgroundVideo
-                  key={settings.heroVideoUrl}
-                  src={settings.heroVideoUrl}
-                  poster={settings.heroImage}
-                />
-              )
-            )}
-            <div className="hero-video-shade" aria-hidden="true" />
-          </div>
-          <div className="container home-hero-copy">
-            <span className="eyebrow home-hero-rise">{settings.heroEyebrow}</span>
-            <h1 id="home-hero-title" className={longTitle ? "is-long" : undefined}>
-              <span className="home-hero-line">
-                <TextReveal>{settings.heroTitle}</TextReveal>
-              </span>{" "}
-              <span className="home-hero-line home-accent">
-                <TextReveal>{settings.heroAccent}</TextReveal>
-              </span>
-            </h1>
-            <div className="home-hero-footer home-hero-rise">
-              <p>{settings.heroDescription}</p>
-              <div className="home-hero-actions">
-                <Link to="/shows" className="button home-button-primary">
-                  {t("Explore our shows")}
-                  <ArrowUpRight size={18} />
-                </Link>
-                <Link to="/contact" className="button home-button-secondary">
-                  {t("Book a show")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div className="home-ticker" aria-hidden="true">
-          {[0, 1, 2, 3].map((group) => (
-            <div className="home-ticker-group" key={group}>
-              {[...DISCIPLINES, ...DISCIPLINES, ...DISCIPLINES].map((discipline, i) => (
-                <span key={i}>
-                  {t(discipline.name)}
-                  <Asterisk size={16} strokeWidth={1.6} />
-                </span>
-              ))}
-            </div>
-          ))}
+      <section className="home-hero" aria-labelledby="home-hero-title">
+        <div className="home-hero-media">
+          <SmartImage className="home-hero-poster" src={settings.heroImage} alt="" />
+          {youtubeId ? (
+            <YouTubeHero key={youtubeId} videoId={youtubeId} />
+          ) : (
+            settings.heroVideoUrl && (
+              <HeroBackgroundVideo
+                key={settings.heroVideoUrl}
+                src={settings.heroVideoUrl}
+                poster={settings.heroImage}
+              />
+            )
+          )}
+          <div className="hero-video-shade" aria-hidden="true" />
         </div>
-
-        <section className="container section-space home-scroll-reveal">
-          <SectionHeading
-            title={<TextReveal>{t("Our shows")}</TextReveal>}
-            link={{ to: "/shows", label: "Discover all shows" }}
-          />
-          <div className="show-feature-list">
-            {SHOWS.slice(0, 3).map((show) => (
-              <div className="show-feature-item" key={show.id}>
-                <ShowFeatureCard show={show} />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <ShowGallery />
-
-        <TeamSection />
-
-        <section className="booking-wrap home-scroll-reveal">
-          <div className="booking-cta">
-            <div>
-              <h2>
-                <TextReveal>{t("Planning an event?")}</TextReveal>
-              </h2>
-              <p className="home-cta-text">
-                {t(
-                  "Tell us the date, the city and how many people are coming, and we’ll get back to you.",
-                )}
-              </p>
-              <Link to="/contact" className="button home-button-primary">
-                {t("Book a show")}
+        <div className="container home-hero-copy">
+          <span className="eyebrow home-hero-rise">{settings.heroEyebrow}</span>
+          <h1 id="home-hero-title" className={longTitle ? "is-long" : undefined}>
+            <span className="home-hero-line">
+              <TextReveal>{settings.heroTitle}</TextReveal>
+            </span>{" "}
+            <span className="home-hero-line home-accent">
+              <TextReveal>{settings.heroAccent}</TextReveal>
+            </span>
+          </h1>
+          <div className="home-hero-footer home-hero-rise">
+            <p>{settings.heroDescription}</p>
+            <div className="home-hero-actions">
+              <Link to="/shows" className="button home-button-primary">
+                {t("Explore our shows")}
                 <ArrowUpRight size={18} />
+              </Link>
+              <Link to="/contact" className="button home-button-secondary">
+                {t("Book a show")}
               </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="home-ticker" aria-hidden="true">
+        {[0, 1, 2, 3].map((group) => (
+          <div className="home-ticker-group" key={group}>
+            {[...DISCIPLINES, ...DISCIPLINES, ...DISCIPLINES].map((discipline, i) => (
+              <span key={i}>{t(discipline.name)}</span>
+            ))}
+          </div>
+        ))}
       </div>
+
+      <section className="container section-space home-scroll-reveal">
+        <SectionHeading
+          title={<TextReveal>{t("Our shows")}</TextReveal>}
+          link={{ to: "/shows", label: "Discover all shows" }}
+        />
+        <div className="show-feature-list">
+          {SHOWS.slice(0, 3).map((show) => (
+            <div className="show-feature-item" key={show.id}>
+              <ShowFeatureCard show={show} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <ShowGallery />
+
+      <TeamSection />
+
+      <BookingCTA />
     </PageShell>
   );
 }

@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouterState } from "@tanstack/react-router";
+import { applyPageMeta, PAGE_META } from "@/lib/page-meta";
 import { translate } from "@/lib/translations";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronDown } from "lucide-react";
@@ -33,17 +34,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     document.documentElement.lang = pathname.startsWith("/admin") ? "mn" : language;
-    const titles: Record<string, [string, string]> = {
-      "/": [
-        "UB Circus — Тоглолт, эвент, бүтээлүүд",
-        "UB Circus — Live Shows, Events & Productions in Ulaanbaatar",
-      ],
-      "/shows": ["Тоглолтууд — UB Circus", "Our shows — UB Circus"],
-      "/events": ["Эвент, хуваарь — UB Circus", "Events & dates — UB Circus"],
-      "/projects": ["Онцлох төслүүд — UB Circus", "Selected work — UB Circus"],
-      "/contact": ["Хамтдаа бүтээе — UB Circus", "Let’s create — UB Circus"],
-    };
-    if (titles[pathname]) document.title = titles[pathname][language === "mn" ? 0 : 1];
+    const meta = PAGE_META[pathname]?.[language];
+    if (meta) applyPageMeta(meta.title, meta.description);
   }, [language, pathname]);
   const setLanguage = useCallback((value: Language) => {
     setLanguageState(value);

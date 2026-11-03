@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  Link,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
@@ -15,31 +14,12 @@ import { DEFAULT_CONTENT } from "../lib/content-types";
 import { SiteContentProvider } from "../components/site/SiteContent";
 import { LanguageProvider } from "../components/site/Language";
 import { BrandLoading } from "../components/site/Loading";
+import { NotFoundPage } from "../components/site/NotFoundPage";
 import adminCss from "../admin.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-
-function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="font-display text-8xl leading-none">404</h1>
-        <h2 className="mt-4 font-display text-2xl uppercase tracking-[0.2em]">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The act you're looking for has left the stage.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center border border-foreground px-5 py-2.5 font-display text-sm uppercase tracking-[0.2em] transition-colors hover:bg-foreground hover:text-background"
-          >
-            Back to the ring
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { BRAND_NAME, pageHead } from "../lib/page-meta";
+import { siteOrigin } from "../lib/site-origin";
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
@@ -78,26 +58,25 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  loader: ({ location }) =>
-    location.pathname.replace(/\/$/, "") === "/admin" ? DEFAULT_CONTENT : getPublicContent(),
-  head: () => ({
+  loader: async ({ location }) => ({
+    content:
+      location.pathname.replace(/\/$/, "") === "/admin" ? DEFAULT_CONTENT : await getPublicContent(),
+    origin: siteOrigin(),
+  }),
+  head: ({ loaderData }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "UB Circus — Live Shows, Events & Productions in Ulaanbaatar" },
-      {
-        name: "description",
-        content:
-          "UB Circus is an Ulaanbaatar-based show production house creating live performances, brand events and cinematic projects.",
-      },
-      { name: "author", content: "UB Circus" },
-      { property: "og:title", content: "UB Circus — Live Shows, Events & Productions" },
-      {
-        property: "og:description",
-        content: "Extraordinary circus, live shows and experiences. Made in Ulaanbaatar.",
-      },
+      ...pageHead("/").meta,
+      { name: "author", content: BRAND_NAME },
+      { property: "og:site_name", content: BRAND_NAME },
       { property: "og:type", content: "website" },
+      // Link previews only accept a full address, which depends on the domain serving the page.
+      { property: "og:image", content: `${loaderData?.origin ?? ""}/og-image.jpg` },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `${loaderData?.origin ?? ""}/og-image.jpg` },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -117,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundComponent,
+  notFoundComponent: NotFoundPage,
   errorComponent: ErrorComponent,
 });
 
@@ -137,7 +116,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const content = Route.useLoaderData();
+  const { content } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>

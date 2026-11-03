@@ -1,5 +1,5 @@
 import { useLanguage } from "@/components/site/Language";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { useRouterState } from "@tanstack/react-router";
@@ -9,6 +9,22 @@ export function PageShell({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
   const navigating = useRouterState({ select: (state) => state.isLoading });
   const { refreshing, error, retry } = useContentStatus();
+  useEffect(() => {
+    const sections = document.querySelectorAll<HTMLElement>(".home-scroll-reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   return (
     <div id="top" className="site-shell">
       <a href="#main-content" className="skip-link">
@@ -26,7 +42,7 @@ export function PageShell({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
-      <main id="main-content">{children}</main>
+      <main id="main-content" className="site-theme">{children}</main>
       <Footer />
     </div>
   );

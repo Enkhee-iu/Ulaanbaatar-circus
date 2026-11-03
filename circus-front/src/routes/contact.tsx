@@ -7,21 +7,13 @@ import { PageShell } from "@/components/site/PageShell";
 import { PageIntro } from "@/components/site/Sections";
 import { Spinner } from "@/components/site/Loading";
 import { apiUrl } from "@/lib/content";
+import { pageHead } from "@/lib/page-meta";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>): { show?: string } => ({
     show: typeof search.show === "string" ? search.show : undefined,
   }),
-  head: () => ({
-    meta: [
-      { title: "Let’s create — UB Circus" },
-      {
-        name: "description",
-        content:
-          "Start a conversation about your next show, brand event or creative production with UB Circus.",
-      },
-    ],
-  }),
+  head: () => pageHead("/contact"),
   component: ContactPage,
 });
 import { useSiteContent } from "@/components/site/SiteContent";

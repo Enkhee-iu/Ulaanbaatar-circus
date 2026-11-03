@@ -47,7 +47,7 @@ export function Footer() {
       </div>
       <div className="footer-bottom">
         <span>
-          © {new Date().getFullYear()} {settings.companyName}
+          © {new Date().getFullYear()} {settings.brandName}
         </span>
         <span>
           <span className="status-dot" />

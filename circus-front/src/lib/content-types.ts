@@ -27,7 +27,7 @@ export type ContentItem = Show | Project | CircusEvent;
 export type MediaItem = { id: string; name: string; src: string; size: number; createdAt: string };
 export const DEFAULT_CONTENT: SiteContent = {
   revision: 0, updatedAt: "", settings: {
-    brandName: "ub.circus", companyName: "UB Circus", heroEyebrow: "Live from Ulaanbaatar. Made for the world.",
+    brandName: "Ulaanbaatar Circus", companyName: "Ulaanbaatar Circus", heroEyebrow: "Live from Ulaanbaatar. Made for the world.",
     heroTitle: "This is", heroAccent: "Altara", heroDescription: "We turn moments into memories.\nExtraordinary circus, live shows and experiences that stay with you.",
     heroImage: "builtin:hero", aboutImage: "builtin:acrobatics", email: "hello@ubcircus.mn", phone: "+976 9900 0000",
     address: "Peace Ave 42, Sukhbaatar\nUlaanbaatar, Mongolia", statsShows: "420+", statsArtists: "38", since: "2014"
@@ -36,7 +36,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     { id: "paper-circus", status: "published", title: "The Paper Circus", category: "Theatre", duration: "60 min", image: "builtin:theatre", description: "Big characters. Little surprises. A playful world of physical theatre, object play and laughter for every generation.", tags: ["Family friendly", "Low rig", "Daytime"] }
   ], projects: [
     { id: "project-1", status: "published", title: "Gobi Wool Reveal", type: "Brand experience", category: "Brand", client: "Gobi Wool", year: "2025", image: "builtin:acrobatics", description: "An immersive launch experience.", scope: ["Creative direction", "Live performance"] },
-    { id: "project-2", status: "published", title: "Nomad Nights", type: "Live production", category: "Stage", client: "UB Circus", year: "2025", image: "builtin:theatre", description: "A touring performance inspired by Mongolia.", scope: ["Performance", "Production"] }
+    { id: "project-2", status: "published", title: "Nomad Nights", type: "Live production", category: "Stage", client: "Ulaanbaatar Circus", year: "2025", image: "builtin:theatre", description: "A touring performance inspired by Mongolia.", scope: ["Performance", "Production"] }
   ], events: [
     { id: "event-1", status: "published", title: "Weightless — Opening Night", date: "2026-03-12", venue: "State Opera, Ulaanbaatar", category: "Public", time: "19:30" },
     { id: "event-2", status: "published", title: "The Paper Circus", date: "2026-04-27", venue: "Corporate Palace", category: "Family", time: "14:00" },

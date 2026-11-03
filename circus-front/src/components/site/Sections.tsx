@@ -1,8 +1,9 @@
 import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, Asterisk } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { TextReveal } from "@/components/ui/text-reveal";
 import type { Show } from "@/lib/content-types";
 
 export function PageIntro({
@@ -19,10 +20,7 @@ export function PageIntro({
   const { t } = useLanguage();
   return (
     <section className="container page-intro">
-      <span className="eyebrow">
-        <span className="status-dot" />
-        {t(eyebrow)}
-      </span>
+      <span className="eyebrow">{t(eyebrow)}</span>
       <div className="intro-grid">
         <h1>{title}</h1>
         <div>
@@ -62,32 +60,6 @@ export function SectionHeading({
         )}
       </div>
     </div>
-  );
-}
-
-export function ShowCard({ show }: { show: Show }) {
-  const { t } = useLanguage();
-  return (
-    <Link to="/shows/$showId" params={{ showId: show.id }} className="show-card">
-      <div className="show-card-image">
-        <SmartImage
-          src={show.image}
-          alt={show.title + " — " + t("Circus performance")}
-          loading="lazy"
-          width={1200}
-          height={800}
-        />
-        <span className="image-tag">{t(show.category)}</span>
-        <span className="card-arrow">
-          <ArrowUpRight size={23} />
-        </span>
-      </div>
-      <div className="show-card-heading">
-        <h3>{show.title}</h3>
-        <span>{show.duration}</span>
-      </div>
-      <p>{show.description}</p>
-    </Link>
   );
 }
 
@@ -148,6 +120,13 @@ export function ShowBentoCard({ show }: { show: Show }) {
   );
 }
 
+/** The filters worth offering: one with no items would lead nowhere, and a single category has nothing to filter. */
+export function availableFilters<T extends string>(filters: readonly T[], used: readonly string[]) {
+  const [all, ...rest] = filters;
+  const present = rest.filter((filter) => used.includes(filter));
+  return present.length > 1 ? [all, ...present] : [];
+}
+
 export function FilterBar<T extends string>({
   options,
   selected,
@@ -160,6 +139,7 @@ export function FilterBar<T extends string>({
   label?: string;
 }) {
   const { t } = useLanguage();
+  if (options.length === 0) return null;
   return (
     <div className="filter-bar" role="group" aria-label={label}>
       {options.map((option) => (
@@ -180,26 +160,22 @@ export function FilterBar<T extends string>({
 export function BookingCTA() {
   const { t } = useLanguage();
   return (
-    <section className="container booking-wrap">
+    <section className="booking-wrap home-scroll-reveal">
       <div className="booking-cta">
         <div>
-          <span className="eyebrow">{t("Your stage. Our imagination.")}</span>
           <h2>
-            {t("Let’s make")}
-            <br />
-            {t("something ")}
-            <em>{t("extraordinary.")}</em>
+            <TextReveal>{t("Planning an event?")}</TextReveal>
           </h2>
-          <Link to="/contact" className="button button-dark">
-            {t("Tell us your idea")}
-            <ArrowUpRight size={19} />
+          <p className="home-cta-text">
+            {t(
+              "Tell us the date, the city and how many people are coming, and we’ll get back to you.",
+            )}
+          </p>
+          <Link to="/contact" className="button home-button-primary">
+            {t("Book a show")}
+            <ArrowUpRight size={18} />
           </Link>
         </div>
-        <Asterisk className="cta-asterisk" strokeWidth={1.1} aria-hidden="true" />
-        <span className="cta-note">
-          {t("Good things begin with a conversation ")}
-          <ArrowRight size={16} />
-        </span>
       </div>
     </section>
   );

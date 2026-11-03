@@ -4,20 +4,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
-import { BookingCTA, FilterBar, PageIntro } from "@/components/site/Sections";
+import { availableFilters, BookingCTA, FilterBar, PageIntro } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
+import { pageHead } from "@/lib/page-meta";
 
 export const Route = createFileRoute("/projects")({
-  head: () => ({
-    meta: [
-      { title: "Selected work — UB Circus" },
-      {
-        name: "description",
-        content:
-          "Live experiences, brand collaborations and film productions brought to life by UB Circus.",
-      },
-    ],
-  }),
+  head: () => pageHead("/projects"),
   component: ProjectsPage,
 });
 const CATEGORIES = ["All work", "Film", "Brand", "Stage"] as const;
@@ -26,8 +18,13 @@ function ProjectsPage() {
   const { t } = useLanguage();
   const { projects: PROJECTS } = useSiteContent();
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("All work");
+  const filters = availableFilters(
+    CATEGORIES,
+    PROJECTS.map((project) => project.category),
+  );
+  const active = filters.includes(category) ? category : "All work";
   const projects = PROJECTS.filter(
-    (project) => category === "All work" || project.category === category,
+    (project) => active === "All work" || project.category === active,
   );
   return (
     <PageShell>
@@ -47,8 +44,8 @@ function ProjectsPage() {
       <section className="container catalogue-section">
         <div className="catalogue-toolbar">
           <FilterBar
-            options={CATEGORIES}
-            selected={category}
+            options={filters}
+            selected={active}
             onChange={setCategory}
             label={t("Filter projects by discipline")}
           />

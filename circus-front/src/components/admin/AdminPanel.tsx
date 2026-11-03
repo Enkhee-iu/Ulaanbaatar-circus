@@ -245,7 +245,7 @@ export function AdminPanel() {
       <div className="ad-workspace">
         <header className="ad-topbar">
           <span>
-            UB Circus{" "}
+            Ulaanbaatar Circus{" "}
             <span className="ad-muted">/ {SECTIONS.find((s) => s.id === section)?.label}</span>
           </span>
           <div>
@@ -344,7 +344,7 @@ function AuthScreen({
       <div className="ad-auth-art">
         <a className="ad-brand" href="/">
           <Asterisk size={30} />
-          ub.circus
+          Ulaanbaatar Circus
         </a>
         <div>
           <span className="ad-kicker">BEHIND THE EXTRAORDINARY</span>
@@ -361,7 +361,7 @@ function AuthScreen({
         </div>
         <span className="ad-local">
           <span />
-          Local workspace · UB Circus
+          Local workspace · Ulaanbaatar Circus
         </span>
       </div>
       <div className="ad-auth-form">

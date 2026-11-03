@@ -3884,7 +3884,7 @@ button:active:not(:disabled) {
   pointer-events: none;
 }
 .brand-loader-art {
-  width: min(62vw, 240px);
+  width: min(46vw, 180px);
   height: auto;
   overflow: visible;
 }
@@ -4314,16 +4314,16 @@ button:active:not(:disabled) {
   }
 }
 
-/* Home page: a darkened theatre with one typographic voice. Cormorant carries the Mongolian
+/* Every public page: a darkened theatre with one typographic voice. Cormorant carries the Mongolian
    Ө and Ү that Bowlby One SC lacks, so titles no longer mix fonts mid-word. */
-.home-page {
+.site-theme {
   --home-display: "Cormorant", "Times New Roman", Georgia, serif;
   /* Taken from the logo's cream and gold, lifted just enough to stay legible over footage. */
   --home-cream: #f6ecd9;
   --home-gold: #e6b76f;
   --home-body: #ddd4c6;
 }
-.site-shell .home-page :is(h1, h2) {
+.site-shell .site-theme :is(h1, h2) {
   overflow-wrap: break-word;
   color: var(--home-cream);
   font-family: var(--home-display);
@@ -4331,28 +4331,28 @@ button:active:not(:disabled) {
   letter-spacing: -0.025em;
   line-height: 0.98;
 }
-.site-shell .home-page :is(h1, h2) :is(span, em) {
+.site-shell .site-theme :is(h1, h2) :is(span, em) {
   color: inherit;
   font: inherit;
   letter-spacing: inherit;
 }
-.site-shell .home-page :is(h1, h2) :is(.home-accent, em) {
+.site-shell .site-theme :is(h1, h2) :is(.home-accent, em, .accent-text) {
   color: var(--home-gold);
   font-style: italic;
 }
-.home-page .text-reveal-word {
+.site-theme .text-reveal-word {
   max-width: 100%;
 }
-.home-page .home-accent .text-reveal-word {
+.site-theme .home-accent .text-reveal-word {
   transition-delay: calc(var(--word-index, 0) * 55ms + 160ms);
 }
-.home-page .eyebrow {
+.site-theme .eyebrow {
   color: var(--home-gold);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.2em;
 }
-.home-page .eyebrow::before {
+.site-theme .eyebrow::before {
   flex: none;
   width: 34px;
   height: 1px;
@@ -4428,23 +4428,23 @@ button:active:not(:disabled) {
 .home-hero-copy > * {
   pointer-events: auto;
 }
-.site-shell .home-page .home-hero h1 {
+.site-shell .site-theme .home-hero h1 {
   margin-top: clamp(14px, 1.6vw, 24px);
   font-size: clamp(52px, 6.6vw, 108px);
   line-height: 0.95;
   letter-spacing: -0.03em;
   text-shadow: 0 4px 44px #00000080;
 }
-.site-shell .home-page .home-hero h1.is-long {
+.site-shell .site-theme .home-hero h1.is-long {
   font-size: clamp(36px, 4.6vw, 72px);
   line-height: 1;
 }
 /* Small text over footage: gold drops too low on bright frames, so only its rule stays gold. */
-.home-page .home-hero .eyebrow {
+.site-theme .home-hero .eyebrow {
   color: var(--home-cream);
   text-shadow: 0 1px 14px #000000b3;
 }
-.home-page .home-hero .eyebrow::before {
+.site-theme .home-hero .eyebrow::before {
   background: var(--home-gold);
 }
 .home-hero-line {
@@ -4504,8 +4504,7 @@ button:active:not(:disabled) {
 .home-ticker span {
   display: inline-flex;
   align-items: center;
-  gap: clamp(22px, 3vw, 44px);
-  padding-right: clamp(22px, 3vw, 44px);
+  padding-right: clamp(44px, 6vw, 88px);
   color: var(--home-cream);
   font-family: var(--font-sans);
   font-size: clamp(13px, 1.1vw, 15px);
@@ -4514,37 +4513,33 @@ button:active:not(:disabled) {
   text-transform: uppercase;
   white-space: nowrap;
 }
-.home-ticker svg {
-  flex: none;
-  color: var(--home-gold);
-}
 @keyframes home-ticker {
   to {
     transform: translateX(-100%);
   }
 }
 
-.home-page .section-space {
+.site-theme .section-space {
   padding-block: clamp(56px, 7vw, 104px) clamp(40px, 4.5vw, 72px);
 }
-.home-page .section-heading {
+.site-theme .section-heading {
   gap: 32px;
   margin-bottom: clamp(28px, 3.2vw, 44px);
 }
-.site-shell .home-page .section-heading h2 {
+.site-shell .site-theme .section-heading h2 {
   margin-top: 0;
-  font-size: clamp(40px, 5.4vw, 84px);
+  font-size: clamp(32px, 3.6vw, 52px);
 }
-.home-page .section-heading-aside {
+.site-theme .section-heading-aside {
   flex: none;
   max-width: none;
   padding-bottom: clamp(4px, 1vw, 14px);
 }
 /* Zig-zag rows: text and photo swap sides on every other show. */
-.home-page .show-feature-list {
+.site-theme .show-feature-list {
   gap: clamp(14px, 1.4vw, 20px);
 }
-.home-page .show-feature-card {
+.site-theme .show-feature-card {
   position: relative;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   min-height: clamp(240px, 21vw, 320px);
@@ -4552,15 +4547,15 @@ button:active:not(:disabled) {
   border-radius: 6px;
   background: #0f0d0b;
 }
-.home-page .show-feature-card:hover {
+.site-theme .show-feature-card:hover {
   border-color: #e6b76f99;
   background: #0f0d0b;
 }
-.home-page .show-feature-image {
+.site-theme .show-feature-image {
   min-height: 0;
   background: #15120f;
 }
-.home-page .show-feature-image img {
+.site-theme .show-feature-image img {
   position: absolute;
   inset: 0;
   min-height: 0;
@@ -4568,31 +4563,31 @@ button:active:not(:disabled) {
   object-position: 50% 38%;
   transition: transform 1100ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.home-page .show-feature-card:hover .show-feature-image img {
+.site-theme .show-feature-card:hover .show-feature-image img {
   transform: scale(1.03);
 }
 /* The category already sits beside the title, and nothing here needs darkening behind text. */
-.home-page .show-feature-image .image-tag,
-.home-page .show-feature-image::after {
+.site-theme .show-feature-image .image-tag,
+.site-theme .show-feature-image::after {
   display: none;
 }
-.home-page .show-feature-content {
+.site-theme .show-feature-content {
   padding: clamp(24px, 3vw, 44px);
 }
-.home-page .show-feature-category {
+.site-theme .show-feature-category {
   color: var(--home-gold);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.18em;
 }
 /* The duration sits right after the title, or under a title long enough to wrap. */
-.home-page .show-feature-title-row {
+.site-theme .show-feature-title-row {
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 4px 14px;
   margin-top: 10px;
 }
-.home-page .show-feature-title-row h3 {
+.site-theme .show-feature-title-row h3 {
   min-width: 0;
   color: var(--home-cream);
   font-family: var(--home-display);
@@ -4602,11 +4597,11 @@ button:active:not(:disabled) {
   line-height: 0.98;
   overflow-wrap: break-word;
 }
-.home-page .show-feature-title-row > span {
+.site-theme .show-feature-title-row > span {
   color: var(--home-body);
   font-size: 13px;
 }
-.home-page .show-feature-content > p {
+.site-theme .show-feature-content > p {
   display: -webkit-box;
   overflow: hidden;
   max-width: 52ch;
@@ -4618,24 +4613,24 @@ button:active:not(:disabled) {
   -webkit-line-clamp: 3;
   line-clamp: 3;
 }
-.home-page .show-feature-link {
+.site-theme .show-feature-link {
   margin-top: 20px;
 }
 /* The photo stays the narrower column on both sides of the zig-zag. */
 @media (min-width: 701px) {
-  .home-page .show-feature-item:nth-child(even) .show-feature-card {
+  .site-theme .show-feature-item:nth-child(even) .show-feature-card {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
 }
 /* The whole row opens the show. A stretched link needs no filter or transform on the link itself,
    since either would shrink the clickable area down to the button. */
-.site-shell .home-page .show-feature-card .show-feature-link {
+.site-shell .site-theme .show-feature-card .show-feature-link {
   backdrop-filter: none;
 }
-.site-shell .home-page .show-feature-card .show-feature-link:active {
+.site-shell .site-theme .show-feature-card .show-feature-link:active {
   transform: none;
 }
-.home-page .show-feature-link::after {
+.site-theme .show-feature-link::after {
   position: absolute;
   inset: 0;
   content: "";
@@ -4719,9 +4714,9 @@ button:active:not(:disabled) {
   gap: 20px clamp(28px, 4vw, 64px);
   margin-bottom: clamp(32px, 4vw, 56px);
 }
-.site-shell .home-page .home-team h2 {
+.site-shell .site-theme .home-team h2 {
   margin: 0;
-  font-size: clamp(40px, 5.4vw, 84px);
+  font-size: clamp(32px, 3.6vw, 52px);
 }
 .home-team-intro p {
   color: var(--home-body);
@@ -4814,7 +4809,7 @@ button:active:not(:disabled) {
   display: none;
 }
 
-.home-page .booking-wrap {
+.site-theme .booking-wrap {
   --spot-angle: 24deg;
   position: relative;
   padding-block: 0;
@@ -4822,7 +4817,7 @@ button:active:not(:disabled) {
 /* A stage spotlight falling from above, reaching down behind the footer. The background sets the
    colour, pale at the source and deepening with distance; the masks cut it to a soft-edged cone
    and hide the section's top edge. */
-.home-page .booking-wrap::before {
+.site-theme .booking-wrap::before {
   position: absolute;
   inset: 0 0 calc(var(--footer-section-gap) * -1);
   background: linear-gradient(
@@ -4856,10 +4851,10 @@ button:active:not(:disabled) {
     linear-gradient(180deg, transparent 0, #00000033 36px, #00000099 84px, #000000d9 124px, #000 170px);
   mask-composite: intersect;
 }
-.home-page .booking-wrap.is-visible::before {
+.site-theme .booking-wrap.is-visible::before {
   opacity: 1;
 }
-.site-shell .home-page .booking-cta {
+.site-shell .site-theme .booking-cta {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4870,17 +4865,17 @@ button:active:not(:disabled) {
   color: var(--home-cream);
   text-align: center;
 }
-.site-shell .home-page .booking-cta :is(h2, .home-cta-text) {
+.site-shell .site-theme .booking-cta :is(h2, .home-cta-text) {
   text-shadow:
     0 1px 3px #00000080,
     0 2px 24px #00000080;
 }
-.home-page .booking-cta > div {
+.site-theme .booking-cta > div {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.site-shell .home-page .booking-cta h2 {
+.site-shell .site-theme .booking-cta h2 {
   max-width: 14em;
   margin-block: 0 clamp(20px, 2.2vw, 30px);
   font-size: clamp(38px, 5vw, 80px);
@@ -4894,7 +4889,7 @@ button:active:not(:disabled) {
   line-height: 1.6;
 }
 /* Home buttons share the header CTA's squared-off shape: a solid primary, a glass secondary. */
-.home-page :is(.button, .section-heading .text-link, .show-feature-link) {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4914,42 +4909,42 @@ button:active:not(:disabled) {
     color 180ms ease,
     transform 120ms ease;
 }
-.home-page :is(.button, .section-heading .text-link, .show-feature-link):hover {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link):hover {
   transform: none;
 }
-.home-page :is(.button, .section-heading .text-link, .show-feature-link):active {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link):active {
   transform: scale(0.98);
 }
-.home-page :is(.button, .section-heading .text-link, .show-feature-link):focus-visible {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link):focus-visible {
   outline: 2px solid var(--home-cream);
   outline-offset: 3px;
 }
-.home-page :is(.button, .section-heading .text-link, .show-feature-link) svg {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link) svg {
   flex: none;
   transition: transform 180ms ease;
 }
-.home-page :is(.button, .section-heading .text-link, .show-feature-link):hover svg {
+.site-theme :is(.button, .section-heading .text-link, .show-feature-link):hover svg {
   transform: translate(2px, -2px);
 }
-.home-page .home-button-primary {
+.site-theme :is(.home-button-primary, .button-lime) {
   background: var(--home-cream);
   color: #15110c;
 }
-.home-page .home-button-primary:hover {
+.site-theme :is(.home-button-primary, .button-lime):hover {
   background: #fff;
 }
-.home-page :is(.home-button-secondary, .section-heading .text-link, .show-feature-link) {
+.site-theme :is(.home-button-secondary, .button-outline, .section-heading .text-link, .show-feature-link) {
   border-color: #ffffff2e;
   background: #ffffff14;
   color: var(--home-cream);
   backdrop-filter: blur(12px);
 }
-.home-page :is(.home-button-secondary, .section-heading .text-link, .show-feature-link):hover {
+.site-theme :is(.home-button-secondary, .button-outline, .section-heading .text-link, .show-feature-link):hover {
   border-color: #ffffff4d;
   background: #ffffff29;
   color: #fff;
 }
-.home-page :is(.section-heading .text-link, .show-feature-link) {
+.site-theme :is(.section-heading .text-link, .show-feature-link) {
   min-height: 44px;
   padding-inline: 16px;
   font-size: 14px;
@@ -4960,7 +4955,7 @@ button:active:not(:disabled) {
   }
 }
 @media (max-width: 800px) {
-  .home-page .booking-wrap {
+  .site-theme .booking-wrap {
     --spot-angle: 17deg;
   }
   /* Phones swipe instead of using the arrows. */
@@ -5004,36 +4999,36 @@ button:active:not(:disabled) {
   }
 }
 @media (max-width: 700px) {
-  .site-shell .home-page .home-hero h1 {
+  .site-shell .site-theme .home-hero h1 {
     font-size: 13vw;
   }
-  .site-shell .home-page .home-hero h1.is-long {
+  .site-shell .site-theme .home-hero h1.is-long {
     font-size: clamp(30px, 8.5vw, 48px);
   }
   .home-hero h1:not(.is-long) .home-accent {
     padding-left: 0.5em;
   }
-  .home-page .eyebrow {
+  .site-theme .eyebrow {
     font-size: 11px;
     letter-spacing: 0.16em;
   }
-  .home-page .eyebrow::before {
+  .site-theme .eyebrow::before {
     width: 22px;
   }
   .home-hero-actions .button {
     flex: 1 1 auto;
     padding-inline: 18px;
   }
-  .home-page .show-feature-card {
+  .site-theme .show-feature-card {
     grid-template-columns: minmax(0, 1fr);
   }
-  .home-page .show-feature-image {
+  .site-theme .show-feature-image {
     aspect-ratio: 16 / 9;
   }
-  .home-page .show-feature-content {
+  .site-theme .show-feature-content {
     padding: 18px 18px 20px;
   }
-  .home-page .show-feature-link {
+  .site-theme .show-feature-link {
     margin-top: 14px;
   }
 }
@@ -5219,6 +5214,433 @@ button:active:not(:disabled) {
   }
   .footer-bottom > span:nth-child(2) {
     order: 3;
+    width: 100%;
+  }
+}
+
+/* Inner pages, in the home page's voice: cream serif titles, squared controls, near-black panels. */
+.site-theme .page-intro {
+  padding-block: clamp(112px, 12vw, 168px) clamp(32px, 4vw, 56px);
+  border-bottom-color: #f6ecd92e;
+}
+.site-shell .site-theme .page-intro h1 {
+  font-size: clamp(44px, 6.2vw, 96px);
+}
+.site-theme .intro-grid {
+  margin-top: clamp(18px, 2vw, 28px);
+}
+.site-theme .intro-description {
+  max-width: 30em;
+  color: var(--home-body);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.6;
+}
+.site-theme .intro-note {
+  color: var(--home-gold);
+  font-size: 14px;
+}
+.site-theme .intro-note svg {
+  color: inherit;
+}
+.site-theme .catalogue-section {
+  padding-block: clamp(28px, 3vw, 44px) clamp(40px, 5vw, 72px);
+}
+.site-theme .catalogue-toolbar {
+  margin-bottom: clamp(20px, 2.4vw, 32px);
+}
+.site-theme .results-count {
+  color: var(--home-body);
+  font-size: 14px;
+}
+.site-theme :is(.filter-chip, .choice-chip) {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid #ffffff2e;
+  border-radius: 10px;
+  background: #ffffff14;
+  color: var(--home-cream);
+  font-size: 14px;
+  font-weight: 500;
+}
+.site-theme :is(.filter-chip, .choice-chip):hover {
+  border-color: #ffffff4d;
+  background: #ffffff29;
+  color: #fff;
+}
+.site-theme :is(.filter-chip, .choice-chip):focus-visible {
+  outline: 2px solid var(--home-cream);
+  outline-offset: 3px;
+}
+.site-theme :is(.filter-chip, .choice-chip).selected {
+  border-color: var(--home-cream);
+  background: var(--home-cream);
+  color: #15110c;
+}
+
+/* Show cards on the catalogue. */
+.site-theme .home-show-bento-card {
+  border-color: #f6ecd91f;
+  border-radius: 6px;
+}
+.site-theme .home-show-bento-card:hover {
+  border-color: #e6b76f99;
+}
+.site-theme .home-show-bento-category {
+  border-radius: 8px;
+  font-size: 13px;
+}
+.site-theme .home-show-bento-arrow {
+  border-radius: 10px;
+}
+.site-theme .home-show-bento-meta {
+  color: var(--home-body);
+  font-size: 13px;
+}
+.site-theme .home-show-bento-copy strong {
+  color: var(--home-cream);
+  font-family: var(--home-display);
+  font-size: clamp(30px, 3vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+.site-theme .home-show-bento-description {
+  color: var(--home-body);
+  font-size: 15px;
+}
+
+/* Project cards. */
+.site-theme .work-image {
+  border-radius: 6px;
+}
+.site-theme .image-tag {
+  border-radius: 8px;
+  font-size: 13px;
+}
+.site-theme .card-arrow {
+  border-radius: 10px;
+}
+.site-theme .project-meta {
+  color: var(--home-gold);
+  font-size: 13px;
+}
+.site-shell .site-theme .project-card h2 {
+  margin-block: 10px 8px;
+  font-size: clamp(30px, 3vw, 44px);
+}
+.site-theme .project-card > p {
+  color: var(--home-body);
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.6;
+}
+.site-theme .project-tags span {
+  border-color: #ffffff2e;
+  border-radius: 8px;
+  color: var(--home-body);
+  font-size: 13px;
+}
+
+/* Events. */
+.site-theme .event-row {
+  border-color: #f6ecd92e;
+}
+.site-theme .event-category {
+  color: var(--home-gold);
+  font-size: 13px;
+}
+.site-theme .event-date strong {
+  color: var(--home-cream);
+  font-family: var(--home-display);
+  font-weight: 500;
+}
+.site-shell .site-theme .event-detail h2 {
+  font-size: clamp(28px, 2.8vw, 40px);
+}
+.site-theme .event-meta {
+  color: var(--home-body);
+  font-size: 14px;
+}
+.site-theme .event-enquiry {
+  color: var(--home-cream);
+  font-size: 14px;
+}
+.site-theme .past-badge {
+  border-color: #f6ecd92e;
+  background: none;
+  color: var(--home-body);
+}
+.site-theme .event-list[hidden] {
+  display: none;
+}
+.site-theme .calendar-note {
+  border: 1px solid #f6ecd91f;
+  border-radius: 6px;
+  background: #0f0d0b;
+}
+.site-theme .calendar-note svg {
+  color: var(--home-gold);
+}
+.site-theme .calendar-note .button svg {
+  color: inherit;
+}
+.site-theme .calendar-note h3 {
+  color: var(--home-cream);
+  font-family: var(--home-display);
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.site-theme .calendar-note p {
+  color: var(--home-body);
+  font-size: 15px;
+}
+
+/* Contact page. */
+.site-theme :is(.contact-panel, .enquiry-panel) {
+  padding: clamp(24px, 2.8vw, 40px);
+  border: 1px solid #f6ecd91f;
+  border-radius: 6px;
+  background: #0f0d0b;
+}
+.site-theme .contact-layout {
+  gap: clamp(24px, 4vw, 56px);
+  padding-block: clamp(28px, 3.6vw, 54px) clamp(56px, 6vw, 96px);
+}
+.site-shell .site-theme :is(.contact-panel, .form-heading, .draft-ready) h2 {
+  margin-top: 12px;
+  font-size: clamp(30px, 3vw, 44px);
+}
+.site-theme .contact-panel > p,
+.site-theme .form-heading p,
+.site-theme .draft-ready p,
+.site-theme .form-bottom p {
+  max-width: none;
+  color: var(--home-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.site-theme .contact-detail {
+  color: var(--home-cream);
+  font-size: 15px;
+}
+.site-theme .contact-detail small {
+  color: var(--home-gold);
+  font-size: 13px;
+}
+.site-theme .contact-detail-icon {
+  border-color: #f6ecd92e;
+  border-radius: 10px;
+  background: none;
+  color: var(--home-gold);
+}
+.site-theme .contact-process {
+  padding-inline: clamp(24px, 2.8vw, 40px);
+}
+.site-theme .contact-process h3 {
+  color: var(--home-cream);
+  font-size: 16px;
+}
+.site-theme .contact-process p {
+  color: var(--home-body);
+  font-size: 14px;
+}
+.site-theme .contact-process > div > span {
+  border-radius: 8px;
+  background: #ffffff14;
+  color: var(--home-gold);
+  font-size: 13px;
+}
+.site-theme .form-field label,
+.site-theme .form-fieldset legend {
+  color: var(--home-cream);
+  font-size: 14px;
+}
+.site-theme .form-field label span {
+  color: var(--home-body);
+}
+.site-theme .form-field :is(input, textarea, select) {
+  border: 1px solid #ffffff2e;
+  border-radius: 10px;
+  background: #ffffff0a;
+  color: var(--home-cream);
+  font-size: 15px;
+}
+.site-theme .form-field :is(input, textarea)::placeholder {
+  color: #ddd4c699;
+}
+.site-theme .form-field :is(input, textarea, select):focus {
+  border-color: var(--home-gold);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--home-gold);
+}
+.site-theme .form-field select option {
+  background: #15120f;
+  color: var(--home-cream);
+}
+
+/* A show's page: its photo holds the right side at its own size instead of stretching across, so it
+   stays sharp. Phones keep it behind the copy, where it is close to its real width anyway. */
+.site-theme .show-detail-hero {
+  min-height: clamp(560px, 46vw, 720px);
+  background: #000;
+  color: var(--home-cream);
+}
+.site-theme .show-detail-shade {
+  background:
+    linear-gradient(0deg, #000 4%, #0000 75%),
+    linear-gradient(90deg, #000000b3, #00000033);
+}
+.site-theme .show-detail-hero-content {
+  padding-block: 112px clamp(36px, 4vw, 56px);
+}
+.site-theme .show-back {
+  min-height: 32px;
+  margin-bottom: clamp(28px, 4vw, 56px);
+  color: var(--home-body);
+  font-size: 14px;
+}
+.site-theme .show-detail-hero .eyebrow {
+  display: flex;
+}
+.site-shell .site-theme .show-detail-hero h1 {
+  margin-block: clamp(14px, 1.6vw, 22px);
+  font-size: clamp(56px, 7vw, 112px);
+}
+.site-theme .show-detail-hero p {
+  max-width: 34em;
+  color: var(--home-body);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.6;
+}
+.site-theme .show-detail-actions > span {
+  color: var(--home-body);
+  font-size: 15px;
+}
+@media (min-width: 901px) {
+  .site-theme .show-detail-cover {
+    right: 0;
+    left: auto;
+    width: min(52%, 760px);
+    object-position: 50% 22%;
+    mask-image:
+      linear-gradient(90deg, transparent, #000 34%),
+      linear-gradient(0deg, transparent, #000 16%),
+      linear-gradient(180deg, transparent, #000 10%);
+    mask-composite: intersect;
+  }
+  .site-theme .show-detail-shade {
+    display: none;
+  }
+}
+.site-theme .show-detail-layout {
+  gap: clamp(32px, 5vw, 80px);
+  padding-block: clamp(40px, 5vw, 72px);
+}
+.site-shell .site-theme .show-detail-story h2 {
+  margin-block: 14px 20px;
+  font-size: clamp(36px, 4vw, 60px);
+}
+.site-theme .show-detail-text {
+  color: var(--home-body);
+  font-size: clamp(16px, 1.25vw, 18px);
+  line-height: 1.65;
+}
+.site-theme .show-detail-tags li {
+  border-color: #ffffff2e;
+  border-radius: 8px;
+  color: var(--home-cream);
+  font-size: 14px;
+}
+.site-theme .show-detail-tags svg {
+  color: var(--home-gold);
+}
+.site-theme .show-booking-card {
+  padding: clamp(24px, 2.4vw, 32px);
+  border-color: #f6ecd91f;
+  border-radius: 6px;
+  background: #0f0d0b;
+}
+.site-shell .site-theme .show-booking-card h2 {
+  margin-block: 14px 18px;
+  font-size: clamp(28px, 2.6vw, 38px);
+}
+.site-theme .show-booking-card dl > div {
+  border-color: #f6ecd92e;
+  font-size: 15px;
+}
+.site-theme .show-booking-card dt {
+  color: var(--home-body);
+}
+.site-theme .show-booking-card p {
+  color: var(--home-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.site-theme .show-booking-card .button {
+  font-size: 15px;
+}
+.site-theme .show-detail-gallery {
+  padding-block: clamp(16px, 2vw, 28px) clamp(32px, 4vw, 56px);
+}
+/* Rows of one height that always fill the width, whatever the number of photos. */
+.site-theme .show-gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(12px, 1.4vw, 18px);
+}
+.site-theme .show-gallery-grid button {
+  flex: 1 1 min(100%, 340px);
+  height: clamp(220px, 24vw, 340px);
+  border-radius: 6px;
+  background: #15120f;
+  aspect-ratio: auto;
+}
+.site-theme .show-missing {
+  padding-block: clamp(112px, 12vw, 168px) clamp(56px, 6vw, 96px);
+}
+.site-shell .site-theme .show-missing h1 {
+  font-size: clamp(40px, 5vw, 72px);
+}
+.site-theme .show-missing p {
+  margin-block: 16px 28px;
+  color: var(--home-body);
+  font-size: 17px;
+}
+
+/* 404. */
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(16px, 2vw, 24px);
+  min-height: 70svh;
+  justify-content: center;
+  padding-block: clamp(112px, 12vw, 168px) clamp(56px, 6vw, 96px);
+}
+.site-shell .site-theme .not-found-page h1 {
+  font-size: clamp(44px, 6.2vw, 96px);
+}
+.not-found-page p {
+  max-width: 34em;
+  color: var(--home-body);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.6;
+}
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+@media (max-width: 700px) {
+  .site-theme .intro-grid {
+    gap: 18px;
+  }
+  .site-theme .catalogue-toolbar {
+    align-items: flex-start;
+  }
+  .site-theme .form-bottom .button {
     width: 100%;
   }
 }

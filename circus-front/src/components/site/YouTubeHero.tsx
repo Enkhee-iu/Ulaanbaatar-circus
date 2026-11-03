@@ -128,7 +128,7 @@ export function YouTubeHero({ videoId }: { videoId: string }) {
               setAvailable(true);
               const iframe = element.querySelector("iframe");
               if (iframe) {
-                iframe.title = "UB Circus background video";
+                iframe.title = "Ulaanbaatar Circus background video";
                 iframe.tabIndex = -1;
                 iframe.setAttribute("aria-hidden", "true");
                 iframe.setAttribute("allow", "autoplay; encrypted-media");

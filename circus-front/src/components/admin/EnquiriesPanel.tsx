@@ -185,7 +185,7 @@ function EnquiryDetail({ item, api }: { item: Enquiry; api: Api }) {
           "mailto:" +
           item.email +
           "?subject=" +
-          encodeURIComponent("UB Circus · Хүсэлт #" + item.id.slice(0, 8).toUpperCase())
+          encodeURIComponent("Ulaanbaatar Circus · Хүсэлт #" + item.id.slice(0, 8).toUpperCase())
         }
       >
         <Mail size={16} />

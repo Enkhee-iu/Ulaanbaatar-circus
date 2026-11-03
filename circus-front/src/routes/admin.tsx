@@ -3,7 +3,7 @@ import { AdminPanel } from "@/components/admin/AdminPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [{ title: "Удирдлага — UB Circus" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: "Удирдлага — Ulaanbaatar Circus" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: AdminPanel,
 });

@@ -6,8 +6,10 @@ import { PageShell } from "@/components/site/PageShell";
 import { useLanguage } from "@/components/site/Language";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { SmartImage, Spinner } from "@/components/site/Loading";
-import { SectionHeading, ShowCard } from "@/components/site/Sections";
+import { SectionHeading, ShowFeatureCard } from "@/components/site/Sections";
 import { ShowLightbox } from "@/components/site/ShowLightbox";
+import { applyPageMeta, BRAND_NAME } from "@/lib/page-meta";
+import { translate } from "@/lib/translations";
 
 export const Route = createFileRoute("/shows_/$showId")({
   loader: async ({ params }) => {
@@ -18,8 +20,15 @@ export const Route = createFileRoute("/shows_/$showId")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData ? `${loaderData.title} — UB Circus` : "UB Circus" },
-      { name: "description", content: loaderData?.description || "" },
+      {
+        title: loaderData
+          ? `${loaderData.titleMn || translate(loaderData.title, "mn")} — ${BRAND_NAME}`
+          : BRAND_NAME,
+      },
+      {
+        name: "description",
+        content: loaderData?.descriptionMn || translate(loaderData?.description || "", "mn"),
+      },
     ],
   }),
   component: ShowDetailPage,
@@ -43,7 +52,7 @@ function ShowDetailPage() {
     if (selectedImage !== null && !images.includes(selectedImage)) setSelectedImage(null);
   }, [selectedImage, images]);
   useEffect(() => {
-    if (show) document.title = `${show.title} — UB Circus`;
+    if (show) applyPageMeta(`${show.title} — ${BRAND_NAME}`, show.description);
   }, [show]);
   useEffect(() => {
     setSelectedImage(null);
@@ -83,7 +92,7 @@ function ShowDetailPage() {
             <ArrowLeft size={16} />
             {t("All shows")}
           </Link>
-          <span className="eyebrow">{t(show.category)} · UB CIRCUS</span>
+          <span className="eyebrow">{t(show.category)}</span>
           <h1>{show.title}</h1>
           <p>{show.description}</p>
           <div className="show-detail-actions">
@@ -142,24 +151,26 @@ function ShowDetailPage() {
           </Link>
         </aside>
       </section>
-      <section className="container show-detail-gallery">
-        <SectionHeading eyebrow={t("A closer look")} title={t("Moments from the show")} />
-        <div className={"show-gallery-grid" + (images.length === 1 ? " single" : "")}>
-          {images.map((src, index) => (
-            <button
-              key={src}
-              type="button"
-              aria-label={`${t("View photo")} ${index + 1}: ${show.title}`}
-              onClick={() => setSelectedImage(src)}
-            >
-              <SmartImage src={src} alt={`${show.title} · ${index + 1}`} loading="lazy" />
-              <span>
-                <Expand size={20} />
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
+      {images.length > 1 && (
+        <section className="container show-detail-gallery">
+          <SectionHeading eyebrow={t("A closer look")} title={t("Moments from the show")} />
+          <div className="show-gallery-grid">
+            {images.map((src, index) => (
+              <button
+                key={src}
+                type="button"
+                aria-label={`${t("View photo")} ${index + 1}: ${show.title}`}
+                onClick={() => setSelectedImage(src)}
+              >
+                <SmartImage src={src} alt={`${show.title} · ${index + 1}`} loading="lazy" />
+                <span>
+                  <Expand size={20} />
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
       <ShowLightbox
         images={images}
         selected={selectedIndex >= 0 ? selectedImage : null}
@@ -221,9 +232,11 @@ function ShowDetailPage() {
             title={t("More worlds to discover")}
             link={{ to: "/shows", label: "All shows" }}
           />
-          <div className="show-grid">
+          <div className="show-feature-list">
             {related.map((item) => (
-              <ShowCard key={item.id} show={item} />
+              <div className="show-feature-item" key={item.id}>
+                <ShowFeatureCard show={item} />
+              </div>
             ))}
           </div>
         </section>

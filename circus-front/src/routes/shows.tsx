@@ -2,20 +2,18 @@ import { useLanguage } from "@/components/site/Language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageShell } from "@/components/site/PageShell";
-import { BookingCTA, FilterBar, PageIntro, ShowBentoCard } from "@/components/site/Sections";
+import {
+  availableFilters,
+  BookingCTA,
+  FilterBar,
+  PageIntro,
+  ShowBentoCard,
+} from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
+import { pageHead } from "@/lib/page-meta";
 
 export const Route = createFileRoute("/shows")({
-  head: () => ({
-    meta: [
-      { title: "Our shows — UB Circus" },
-      {
-        name: "description",
-        content:
-          "Discover aerial shows and physical theatre from UB Circus. Made for your stage.",
-      },
-    ],
-  }),
+  head: () => pageHead("/shows"),
   component: ShowsPage,
 });
 const CATEGORIES = ["All shows", "Aerial", "Theatre", "Touring"] as const;
@@ -24,7 +22,12 @@ function ShowsPage() {
   const { t } = useLanguage();
   const { shows: SHOWS } = useSiteContent();
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("All shows");
-  const shows = SHOWS.filter((show) => category === "All shows" || show.category === category);
+  const filters = availableFilters(
+    CATEGORIES,
+    SHOWS.map((show) => show.category),
+  );
+  const active = filters.includes(category) ? category : "All shows";
+  const shows = SHOWS.filter((show) => active === "All shows" || show.category === active);
   return (
     <PageShell>
       <PageIntro
@@ -43,8 +46,8 @@ function ShowsPage() {
       <section className="container catalogue-section">
         <div className="catalogue-toolbar">
           <FilterBar
-            options={CATEGORIES}
-            selected={category}
+            options={filters}
+            selected={active}
             onChange={setCategory}
             label={t("Filter shows by genre")}
           />
