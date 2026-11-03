@@ -21,6 +21,10 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BRAND_NAME, pageHead } from "../lib/page-meta";
 import { siteOrigin } from "../lib/site-origin";
 
+// A refresh starts at the top of the page. This has to run before the first paint and before the router
+// reads its saved positions, or the page shows at the old spot and jumps. Back and forward keep theirs.
+const START_AT_TOP_ON_RELOAD = `try{if(performance.getEntriesByType("navigation")[0]?.type==="reload"){history.scrollRestoration="manual";for(const k of Object.keys(sessionStorage))if(k.startsWith("tsr-scroll-restoration")){const s=JSON.parse(sessionStorage.getItem(k)||"{}");delete s[history.state?.__TSR_key];delete s[location.pathname+location.search+location.hash];sessionStorage.setItem(k,JSON.stringify(s))}}}catch{}`;
+
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
@@ -64,6 +68,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     origin: siteOrigin(),
   }),
   head: ({ loaderData }) => ({
+    scripts: [{ children: START_AT_TOP_ON_RELOAD }],
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },

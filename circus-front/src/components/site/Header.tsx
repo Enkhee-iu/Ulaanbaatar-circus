@@ -93,7 +93,7 @@ export function Header() {
             <Link
               key={item.to}
               to={item.to}
-              onClick={() => setOpen(false)}
+              onClickCapture={() => setOpen(false)}
               activeProps={{ className: "nav-active" }}
             >
               <span className="nav-number">0{i + 1}</span>
@@ -101,7 +101,7 @@ export function Header() {
               <ArrowUpRight size={22} />
             </Link>
           ))}
-          <Link to="/contact" onClick={() => setOpen(false)} className="button button-lime">
+          <Link to="/contact" onClickCapture={() => setOpen(false)} className="button button-lime">
             {t("Let's make a show")}
             <ArrowUpRight size={18} />
           </Link>
