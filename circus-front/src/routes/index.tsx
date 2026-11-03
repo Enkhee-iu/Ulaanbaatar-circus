@@ -9,6 +9,12 @@ import { ShowLightbox } from "@/components/site/ShowLightbox";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
 import { HeroPlaybackButton } from "@/components/site/HeroPlaybackButton";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { imageSrc, sizedImage } from "@/lib/site-images";
 import spotlightImage from "@/assets/spotlight-firebird.webp";
@@ -123,10 +129,18 @@ function HomePage() {
   );
 }
 
+const GALLERY_INTERVAL_MS = 2000;
+// Enough slides to overfill the widest row, or a loop has nowhere to go.
+const GALLERY_MIN_SLIDES = 12;
+
 function ShowGallery() {
   const { t } = useLanguage();
   const { shows } = useSiteContent();
   const [selected, setSelected] = useState<string | null>(null);
+  const [api, setApi] = useState<CarouselApi>();
+  const [hovering, setHovering] = useState(false);
+  const [keyboardFocus, setKeyboardFocus] = useState(false);
+  const [dragging, setDragging] = useState(false);
   // Photos are keyed by address, so one used twice appears once: under the show it's the cover of,
   // otherwise under the first show whose gallery holds it.
   const titles = useMemo(() => {
@@ -137,24 +151,66 @@ function ShowGallery() {
     return map;
   }, [shows]);
   const images = useMemo(() => [...titles.keys()], [titles]);
+  const moves = images.length > 1;
+  const copies = moves ? Math.ceil(GALLERY_MIN_SLIDES / images.length) : 1;
+  const paused = hovering || keyboardFocus || dragging || selected !== null;
+  useEffect(() => {
+    if (!api) return;
+    const down = () => setDragging(true);
+    const up = () => setDragging(false);
+    api.on("pointerDown", down);
+    api.on("pointerUp", up);
+    return () => {
+      api.off("pointerDown", down);
+      api.off("pointerUp", up);
+    };
+  }, [api]);
+  useEffect(() => {
+    if (!api || !moves || paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      if (!document.hidden) api.scrollNext();
+    }, GALLERY_INTERVAL_MS);
+    return () => window.clearInterval(timer);
+  }, [api, moves, paused]);
   if (images.length === 0) return null;
   return (
     <section className="container home-gallery">
       <SectionHeading title={<TextReveal>{t("Our Gallery")}</TextReveal>} />
-      <div className="home-gallery-grid">
-        {images.map((src, index) => (
-          <button
-            type="button"
-            className="home-gallery-item"
-            key={src}
-            aria-label={`${t("View photo")} ${index + 1}: ${titles.get(src)}`}
-            onClick={() => setSelected(src)}
-          >
-            <SmartImage src={sizedImage(src, 800)} alt="" loading="lazy" decoding="async" />
-            <span className="home-gallery-caption">{titles.get(src)}</span>
-          </button>
-        ))}
-      </div>
+      <Carousel
+        opts={{ align: "start", loop: moves, duration: 30 }}
+        setApi={setApi}
+        aria-label={t("Show photo gallery")}
+        onPointerEnter={(event) => event.pointerType === "mouse" && setHovering(true)}
+        onPointerLeave={(event) => event.pointerType === "mouse" && setHovering(false)}
+        // Tab, not focus: closing the lightbox also returns focus here, and that shouldn't stop the row.
+        onKeyUp={(event) => event.key === "Tab" && setKeyboardFocus(true)}
+        onBlur={() => setKeyboardFocus(false)}
+      >
+        <CarouselContent className="home-gallery-track">
+          {Array.from({ length: copies }, (_, copy) =>
+            images.map((src, index) => (
+              <CarouselItem
+                className="home-gallery-slide"
+                key={`${src}-${copy}`}
+                aria-hidden={copy > 0 || undefined}
+              >
+                <button
+                  type="button"
+                  className="home-gallery-item"
+                  tabIndex={copy > 0 ? -1 : undefined}
+                  aria-label={`${t("View photo")} ${index + 1}: ${titles.get(src)}`}
+                  onClick={() => setSelected(src)}
+                >
+                  <SmartImage src={sizedImage(src, 800)} alt="" loading="lazy" decoding="async" />
+                  <span className="home-gallery-caption">{titles.get(src)}</span>
+                </button>
+              </CarouselItem>
+            )),
+          )}
+        </CarouselContent>
+      </Carousel>
+      {/* Outside the Carousel: its key handler would otherwise also catch the lightbox's arrows. */}
       <ShowLightbox
         images={images}
         selected={selected}

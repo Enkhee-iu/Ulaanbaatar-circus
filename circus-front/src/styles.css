@@ -4655,28 +4655,26 @@ button:active:not(:disabled) {
   }
 }
 
-/* Masonry through CSS columns: no script, so it works before hydration, and photos keep their own shape. */
-.home-gallery-grid {
-  column-gap: 12px;
-  columns: 5;
+/* One size throughout, matching the show posters' shape and corners. The track's negative margin cancels
+   the first slide's gutter, so tiles line up with the page edges. */
+.home-gallery-track {
+  --gallery-columns: 5;
+  margin-left: -12px;
 }
-/* Photos can't be cropped, so only narrower columns make them shorter. */
-@media (min-width: 1280px) {
-  .home-gallery-grid {
-    columns: 6;
-  }
+.home-gallery-slide {
+  flex-basis: calc(100% / var(--gallery-columns));
+  padding-left: 12px;
 }
 .home-gallery-item {
   position: relative;
   display: block;
   overflow: hidden;
   width: 100%;
-  margin: 0 0 12px;
+  aspect-ratio: 3 / 4;
   padding: 0;
-  border: 0;
-  border-radius: 12px;
+  border: 1px solid #f6ecd91f;
+  border-radius: 4px;
   background: #15120f;
-  break-inside: avoid;
   cursor: zoom-in;
 }
 .home-gallery-item:focus-visible {
@@ -4686,12 +4684,11 @@ button:active:not(:disabled) {
 .home-gallery-item img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  /* Performers' heads and lifts sit in the upper part of stage photos. */
+  object-position: 50% 30%;
   transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-/* Holds a place until the real shape is known. */
-.home-gallery-item img.image-loading {
-  aspect-ratio: 4 / 5;
 }
 .home-gallery-item:hover img {
   transform: scale(1.04);
@@ -4717,19 +4714,24 @@ button:active:not(:disabled) {
     opacity: 1;
   }
 }
+@media (min-width: 1280px) {
+  .home-gallery-track {
+    --gallery-columns: 6;
+  }
+}
 @media (max-width: 1023px) {
-  .home-gallery-grid {
-    columns: 4;
+  .home-gallery-track {
+    --gallery-columns: 4;
   }
 }
 @media (max-width: 639px) {
-  .home-gallery-grid {
-    columns: 3;
+  .home-gallery-track {
+    --gallery-columns: 3;
   }
 }
 @media (max-width: 479px) {
-  .home-gallery-grid {
-    columns: 2;
+  .home-gallery-track {
+    --gallery-columns: 2;
   }
 }
 
