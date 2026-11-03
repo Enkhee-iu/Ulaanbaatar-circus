@@ -122,6 +122,15 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { content } = Route.useLoaderData();
+  // The router hands scrolling back to the browser on the way out, which would glide a refreshed page
+  // toward the old spot before anything else runs. Its own saved positions cover back and forward.
+  useEffect(() => {
+    const keepManualScroll = () => {
+      history.scrollRestoration = "manual";
+    };
+    addEventListener("pagehide", keepManualScroll);
+    return () => removeEventListener("pagehide", keepManualScroll);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
