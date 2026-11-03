@@ -11,6 +11,7 @@ import {
 } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { pageHead } from "@/lib/page-meta";
+import { imageSrc } from "@/lib/site-images";
 
 export const Route = createFileRoute("/projects")({
   head: () => pageHead("/projects"),
@@ -20,7 +21,7 @@ const CATEGORIES = ["All work", "Film", "Brand", "Stage"] as const;
 
 function ProjectsPage() {
   const { t } = useLanguage();
-  const { projects: PROJECTS } = useSiteContent();
+  const { projects: PROJECTS, shows } = useSiteContent();
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("All work");
   const filters = availableFilters(
     CATEGORIES,
@@ -30,6 +31,11 @@ function ProjectsPage() {
   const projects = PROJECTS.filter(
     (project) => active === "All work" || project.category === active,
   );
+  // A project still on the default photo shows its namesake show's poster. One picked in the admin panel wins.
+  const posterOf = (project: (typeof PROJECTS)[number]) =>
+    project.image === imageSrc("builtin:hero")
+      ? (shows.find((show) => show.title === project.title)?.image ?? project.image)
+      : project.image;
   return (
     <PageShell>
       <PageIntro
@@ -66,7 +72,7 @@ function ProjectsPage() {
           {projects.map((project) => (
             <div className="show-feature-item" key={project.id}>
               <PosterCard
-                image={project.image}
+                image={posterOf(project)}
                 alt={project.title + " — " + project.type}
                 heading="h2"
                 title={
