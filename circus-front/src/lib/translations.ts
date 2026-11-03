@@ -104,6 +104,10 @@ export const MONGOLIAN: Record<string, string> = {
   "Page not found": "Хуудас олдсонгүй",
   "The page you’re looking for has left the stage.": "Таны хайсан хуудас тайзнаас гарсан байна.",
   "Back to home": "Нүүр хуудас руу буцах",
+  "Step into the world of Ulaanbaatar Circus": "Улаанбаатар циркийн ертөнцөд тавтай морил",
+  "Stories, masks and movement that stay with you long after the curtain falls.":
+    "Хөшиг хаагдсны дараа ч сэтгэлд үлдэх түүх, баг, хөдөлгөөн.",
+  "Performer in a firebird mask": "Галт шувууны багтай уран бүтээлч",
   "We turn moments into memories. Extraordinary circus, live shows and experiences that stay with you.":
     "Акробат, агаарын үзүүлбэр, театртай тоглолтуудаа Улаанбаатарт тавьж, аялан тоглодог.\nАрга хэмжээндээ ч захиалж болно.",
   "A little wonder awaits": "Гайхамшиг таныг хүлээж байна",

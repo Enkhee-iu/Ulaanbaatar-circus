@@ -9,17 +9,9 @@ import { ShowLightbox } from "@/components/site/ShowLightbox";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { YouTubeHero, youtubeVideoId } from "@/components/site/YouTubeHero";
 import { HeroPlaybackButton } from "@/components/site/HeroPlaybackButton";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 import { TextReveal } from "@/components/ui/text-reveal";
-import { imageSrc } from "@/lib/site-images";
+import { imageSrc, sizedImage } from "@/lib/site-images";
+import spotlightImage from "@/assets/spotlight-firebird.webp";
 import teamAcrobaticsImage from "@/assets/team-acrobatics.webp";
 import teamContortionImage from "@/assets/team-contortion.webp";
 import teamTheatreImage from "@/assets/team-theatre.webp";
@@ -93,15 +85,20 @@ function HomePage() {
         </div>
       </section>
 
-      <div className="home-ticker" aria-hidden="true">
-        {[0, 1, 2, 3].map((group) => (
-          <div className="home-ticker-group" key={group}>
-            {[...DISCIPLINES, ...DISCIPLINES, ...DISCIPLINES].map((discipline, i) => (
-              <span key={i}>{t(discipline.name)}</span>
-            ))}
-          </div>
-        ))}
-      </div>
+      <section className="container home-spotlight home-scroll-reveal">
+        <div>
+          <h2>{t("Step into the world of Ulaanbaatar Circus")}</h2>
+          <p>{t("Stories, masks and movement that stay with you long after the curtain falls.")}</p>
+        </div>
+        <img
+          src={spotlightImage}
+          alt={t("Performer in a firebird mask")}
+          width={800}
+          height={1045}
+          loading="lazy"
+          decoding="async"
+        />
+      </section>
 
       <section className="container section-space home-scroll-reveal">
         <SectionHeading
@@ -109,7 +106,7 @@ function HomePage() {
           link={{ to: "/shows", label: "Discover all shows" }}
         />
         <div className="show-feature-list">
-          {SHOWS.slice(0, 3).map((show) => (
+          {SHOWS.slice(0, 4).map((show) => (
             <div className="show-feature-item" key={show.id}>
               <ShowFeatureCard show={show} />
             </div>
@@ -129,62 +126,38 @@ function HomePage() {
 function ShowGallery() {
   const { t } = useLanguage();
   const { shows } = useSiteContent();
-  const [api, setApi] = useState<CarouselApi>();
-  const [scrollable, setScrollable] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
-  // Photos are keyed by address, so one used by two shows appears once, under the first show.
+  // Photos are keyed by address, so one used twice appears once: under the show it's the cover of,
+  // otherwise under the first show whose gallery holds it.
   const titles = useMemo(() => {
     const map = new Map<string, string>();
+    for (const show of shows) map.set(show.image, show.title);
     for (const show of shows)
       for (const src of show.gallery || []) if (!map.has(src)) map.set(src, show.title);
     return map;
   }, [shows]);
   const images = useMemo(() => [...titles.keys()], [titles]);
-  useEffect(() => {
-    if (!api) return;
-    const update = () => setScrollable(api.canScrollPrev() || api.canScrollNext());
-    update();
-    api.on("reInit", update);
-    return () => {
-      api.off("reInit", update);
-    };
-  }, [api]);
   if (images.length === 0) return null;
   return (
     <section className="container home-gallery">
       <SectionHeading title={<TextReveal>{t("Our Gallery")}</TextReveal>} />
-      <Carousel opts={{ align: "start" }} setApi={setApi} aria-label={t("Show photo gallery")}>
-        <CarouselContent>
-          {images.map((src, index) => (
-            <CarouselItem
-              key={src}
-              className="home-gallery-item basis-[86%] sm:basis-1/2 lg:basis-1/3"
-            >
-              <Card className="home-gallery-card">
-                <CardContent className="p-0">
-                  <button
-                    type="button"
-                    aria-label={`${t("View photo")} ${index + 1}: ${titles.get(src)}`}
-                    onClick={() => setSelected(src)}
-                  >
-                    <SmartImage src={src} alt="" width={800} height={800} loading="lazy" />
-                  </button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        {scrollable && (
-          <>
-            <CarouselPrevious className="home-gallery-nav back" aria-label={t("Previous photo")} />
-            <CarouselNext className="home-gallery-nav forward" aria-label={t("Next photo")} />
-          </>
-        )}
-      </Carousel>
-      {/* Outside the Carousel: its key handler would otherwise also catch the lightbox's arrows. */}
+      <div className="home-gallery-grid">
+        {images.map((src, index) => (
+          <button
+            type="button"
+            className="home-gallery-item"
+            key={src}
+            aria-label={`${t("View photo")} ${index + 1}: ${titles.get(src)}`}
+            onClick={() => setSelected(src)}
+          >
+            <SmartImage src={sizedImage(src, 800)} alt="" loading="lazy" decoding="async" />
+            <span className="home-gallery-caption">{titles.get(src)}</span>
+          </button>
+        ))}
+      </div>
       <ShowLightbox
         images={images}
-        selected={selected !== null && titles.has(selected) ? selected : null}
+        selected={selected}
         onSelect={setSelected}
         titleOf={(src) => titles.get(src) ?? ""}
       />

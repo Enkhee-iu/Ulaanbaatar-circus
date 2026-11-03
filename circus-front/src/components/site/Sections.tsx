@@ -75,19 +75,17 @@ export function ShowFeatureCard({ show }: { show: Show }) {
           width={1200}
           height={900}
         />
-        <span className="image-tag">{t(show.category)}</span>
       </div>
       <div className="show-feature-content">
-        <span className="show-feature-category">{t(show.category)}</span>
-        <div className="show-feature-title-row">
-          <h3>{show.title}</h3>
-          <span>{show.duration}</span>
-        </div>
+        <h3>
+          <Link to="/shows/$showId" params={{ showId: show.id }} className="show-feature-link">
+            {show.title}
+          </Link>
+        </h3>
+        <span className="show-feature-category">
+          {t(show.category)} · {show.duration}
+        </span>
         <p>{show.description}</p>
-        <Link to="/shows/$showId" params={{ showId: show.id }} className="show-feature-link">
-          {t("View show details")}
-          <ArrowUpRight size={17} />
-        </Link>
       </div>
     </article>
   );

@@ -1273,7 +1273,7 @@ function ImagePicker({
             title={i.name}
             onClick={() => onChange(i.id.startsWith("builtin:") ? i.id : i.src)}
           >
-            <SmartImage src={i.src} alt={i.name} />
+            <SmartImage src={imageSrc(i.src)} alt={i.name} />
             {(value === i.id || value === i.src) && (
               <span>
                 <Check size={15} />
@@ -1419,7 +1419,7 @@ function GalleryPicker({
                 selected ? onChange(value.filter((entry) => entry !== src)) : add(src)
               }
             >
-              <SmartImage src={item.src} alt={item.name} />
+              <SmartImage src={imageSrc(item.src)} alt={item.name} />
               {selected && (
                 <span>
                   <Check size={15} />
@@ -1593,7 +1593,7 @@ function MediaLibrary() {
         {loading && [1, 2, 3].map((i) => <div key={i} className="skeleton ad-media-placeholder" />)}
         {[...media, ...BUILTIN_IMAGES].map((item) => (
           <article className="ad-card ad-media-card" key={item.id}>
-            <SmartImage src={item.src} alt={item.name} />
+            <SmartImage src={imageSrc(item.src)} alt={item.name} />
             <div>
               <h2>{item.name}</h2>
               <small>

@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useRef } from "react";
+import { sizedImage } from "@/lib/site-images";
 import { useLanguage } from "./Language";
 import { SmartImage } from "./Loading";
 
@@ -55,7 +56,7 @@ export function ShowLightbox({
           </div>
           <Dialog.Description className="sr-only">{t("Show photo gallery")}</Dialog.Description>
           {selected !== null && (
-            <SmartImage src={selected} alt={`${titleOf(selected)} · ${index + 1}`} />
+            <SmartImage src={sizedImage(selected, 2000)} alt={`${titleOf(selected)} · ${index + 1}`} />
           )}
           <div className="show-lightbox-controls">
             {images.length > 1 && (
