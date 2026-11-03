@@ -7,7 +7,7 @@ import {
   BookingCTA,
   FilterBar,
   PageIntro,
-  ShowBentoCard,
+  ShowFeatureCard,
 } from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { pageHead } from "@/lib/page-meta";
@@ -56,14 +56,16 @@ function ShowsPage() {
             {t(" to discover")}
           </span>
         </div>
-        <div className="show-grid home-show-bento catalogue-grid">
+        <div className="show-feature-list">
           {shows.length === 0 && (
             <p className="results-count">
               {t("No shows in this category yet. Get in touch for availability.")}
             </p>
           )}
           {shows.map((show) => (
-            <ShowBentoCard key={show.id} show={show} />
+            <div className="show-feature-item" key={show.id}>
+              <ShowFeatureCard show={show} heading="h2" />
+            </div>
           ))}
         </div>
       </section>

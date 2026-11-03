@@ -63,58 +63,51 @@ export function SectionHeading({
   );
 }
 
-export function ShowFeatureCard({ show }: { show: Show }) {
-  const { t } = useLanguage();
+/** A poster above a dark panel. The link inside `title` opens from anywhere on the card. */
+export function PosterCard({
+  image,
+  alt,
+  title,
+  meta,
+  description,
+  heading: Heading = "h3",
+}: {
+  image: string;
+  alt: string;
+  title: ReactNode;
+  meta: string;
+  description: string;
+  heading?: "h2" | "h3";
+}) {
   return (
     <article className="show-feature-card">
       <div className="show-feature-image">
-        <SmartImage
-          src={show.image}
-          alt={`${show.title} — ${t("Circus performance")}`}
-          loading="lazy"
-          width={1200}
-          height={900}
-        />
+        <SmartImage src={image} alt={alt} loading="lazy" width={1200} height={900} />
       </div>
       <div className="show-feature-content">
-        <h3>
-          <Link to="/shows/$showId" params={{ showId: show.id }} className="show-feature-link">
-            {show.title}
-          </Link>
-        </h3>
-        <span className="show-feature-category">
-          {t(show.category)} · {show.duration}
-        </span>
-        <p>{show.description}</p>
+        <Heading>{title}</Heading>
+        <span className="show-feature-category">{meta}</span>
+        <p>{description}</p>
       </div>
     </article>
   );
 }
 
-export function ShowBentoCard({ show }: { show: Show }) {
+export function ShowFeatureCard({ show, heading }: { show: Show; heading?: "h2" | "h3" }) {
   const { t } = useLanguage();
   return (
-    <Link
-      to="/shows/$showId"
-      params={{ showId: show.id }}
-      className="home-show-bento-card"
-    >
-      <SmartImage
-        src={show.image}
-        alt={`${show.title} — ${t("Circus performance")}`}
-        loading="lazy"
-        width={1200}
-        height={900}
-      />
-      <span className="home-show-bento-shade" />
-      <span className="home-show-bento-category">{t(show.category)}</span>
-      <span className="home-show-bento-arrow"><ArrowUpRight size={20} /></span>
-      <span className="home-show-bento-copy">
-        <span className="home-show-bento-meta">{show.duration}</span>
-        <strong>{show.title}</strong>
-        <span className="home-show-bento-description">{show.description}</span>
-      </span>
-    </Link>
+    <PosterCard
+      image={show.image}
+      alt={`${show.title} — ${t("Circus performance")}`}
+      heading={heading}
+      title={
+        <Link to="/shows/$showId" params={{ showId: show.id }} className="show-feature-link">
+          {show.title}
+        </Link>
+      }
+      meta={`${t(show.category)} · ${show.duration}`}
+      description={show.description}
+    />
   );
 }
 

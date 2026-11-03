@@ -1,10 +1,14 @@
-import { SmartImage } from "@/components/site/Loading";
 import { useLanguage } from "@/components/site/Language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
-import { availableFilters, BookingCTA, FilterBar, PageIntro } from "@/components/site/Sections";
+import {
+  availableFilters,
+  BookingCTA,
+  FilterBar,
+  PageIntro,
+  PosterCard,
+} from "@/components/site/Sections";
 import { useSiteContent } from "@/components/site/SiteContent";
 import { pageHead } from "@/lib/page-meta";
 
@@ -53,46 +57,32 @@ function ProjectsPage() {
             {projects.length} {t(projects.length === 1 ? "project" : "projects")}
           </span>
         </div>
-        <div className="project-grid">
+        <div className="show-feature-list">
           {projects.length === 0 && (
             <p className="results-count">
               {t("New work is on its way. Get in touch to discuss your project.")}
             </p>
           )}
           {projects.map((project) => (
-            <article className="project-card" key={project.title}>
-              <Link
-                to="/contact"
-                search={{ show: project.title }}
-                className="project-image-link"
-                aria-label={"Discuss a project like " + project.title}
-              >
-                <div className="work-image">
-                  <SmartImage
-                    src={project.image}
-                    alt={project.title + " — " + project.type}
-                    loading="lazy"
-                    width={1200}
-                    height={800}
-                  />
-                  <span className="image-tag">{project.type}</span>
-                  <span className="card-arrow">
-                    <ArrowUpRight size={23} />
-                  </span>
-                </div>
-              </Link>
-              <div className="project-meta">
-                <span>{project.client}</span>
-                <span>{project.year}</span>
-              </div>
-              <h2>{project.title}</h2>
-              <p>{project.description}</p>
-              <div className="project-tags">
-                {project.scope.map((item) => (
-                  <span key={item}>{item}</span>
-                ))}
-              </div>
-            </article>
+            <div className="show-feature-item" key={project.id}>
+              <PosterCard
+                image={project.image}
+                alt={project.title + " — " + project.type}
+                heading="h2"
+                title={
+                  <Link
+                    to="/contact"
+                    search={{ show: project.title }}
+                    className="show-feature-link"
+                    aria-label={"Discuss a project like " + project.title}
+                  >
+                    {project.title}
+                  </Link>
+                }
+                meta={`${project.type} · ${project.client} · ${project.year}`}
+                description={project.description}
+              />
+            </div>
           ))}
         </div>
       </section>

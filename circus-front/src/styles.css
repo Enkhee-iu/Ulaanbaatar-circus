@@ -4308,7 +4308,7 @@ button:active:not(:disabled) {
   /* Source Sans has a small x-height, so this keeps existing text sizes reading at their intended size. */
   font-size-adjust: 0.52;
 }
-.site-shell :is(h1, h2, h3, h4, .home-show-bento-copy strong, .home-team-list strong, .event-date strong) {
+.site-shell :is(h1, h2, h3, h4, .home-team-list strong, .event-date strong) {
   font-size-adjust: none;
 }
 .site-theme {
@@ -4328,7 +4328,7 @@ button:active:not(:disabled) {
   line-height: 1.1;
   text-transform: uppercase;
 }
-.site-shell .site-theme :is(.project-card, .event-detail, .contact-panel, .form-heading, .draft-ready, .show-booking-card) h2 {
+.site-shell .site-theme :is(.event-detail, .contact-panel, .form-heading, .draft-ready, .show-booking-card) h2 {
   font-weight: 500;
   letter-spacing: 0.01em;
   line-height: 1.15;
@@ -4558,6 +4558,10 @@ button:active:not(:disabled) {
 .site-theme .show-feature-item {
   display: flex;
 }
+.site-theme .show-feature-list > .results-count {
+  grid-column: 1 / -1;
+  white-space: normal;
+}
 .site-theme .show-feature-card {
   position: relative;
   display: flex;
@@ -4597,10 +4601,12 @@ button:active:not(:disabled) {
   justify-content: flex-start;
   padding: clamp(16px, 1.3vw, 20px);
 }
-.site-theme .show-feature-content h3 {
+/* An h2 on the catalogue pages, an h3 under a section title; they look the same either way. */
+.site-shell .site-theme .show-feature-content :is(h2, h3) {
   color: var(--home-gold);
   font-size: clamp(25px, 2vw, 30px);
   font-weight: 600;
+  letter-spacing: 0.01em;
   line-height: 1.1;
   overflow-wrap: anywhere;
 }
@@ -5292,70 +5298,6 @@ button:active:not(:disabled) {
   border-color: var(--home-cream);
   background: var(--home-cream);
   color: #15110c;
-}
-
-/* Show cards on the catalogue. */
-.site-theme .home-show-bento-card {
-  border-color: #f6ecd91f;
-  border-radius: 6px;
-}
-.site-theme .home-show-bento-card:hover {
-  border-color: #e6b76f99;
-}
-.site-theme .home-show-bento-category {
-  border-radius: 8px;
-  font-size: 13px;
-}
-.site-theme .home-show-bento-arrow {
-  border-radius: 10px;
-}
-.site-theme .home-show-bento-meta {
-  color: var(--home-body);
-  font-size: 13px;
-}
-.site-theme .home-show-bento-copy strong {
-  color: var(--home-title);
-  font-family: var(--home-display);
-  font-size: clamp(30px, 3vw, 42px);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.1;
-  text-transform: uppercase;
-}
-.site-theme .home-show-bento-description {
-  color: var(--home-body);
-  font-size: 15px;
-}
-
-/* Project cards. */
-.site-theme .work-image {
-  border-radius: 6px;
-}
-.site-theme .image-tag {
-  border-radius: 8px;
-  font-size: 13px;
-}
-.site-theme .card-arrow {
-  border-radius: 10px;
-}
-.site-theme .project-meta {
-  color: var(--home-gold);
-  font-size: 13px;
-}
-.site-shell .site-theme .project-card h2 {
-  margin-block: 10px 8px;
-  font-size: clamp(30px, 2.8vw, 40px);
-}
-.site-theme .project-card > p {
-  color: var(--home-body);
-  font-size: clamp(15px, 1.15vw, 17px);
-  line-height: 1.6;
-}
-.site-theme .project-tags span {
-  border-color: #ffffff2e;
-  border-radius: 8px;
-  color: var(--home-body);
-  font-size: 13px;
 }
 
 /* Events. */
