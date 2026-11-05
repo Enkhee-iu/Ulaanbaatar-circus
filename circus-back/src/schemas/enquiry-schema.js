@@ -1,10 +1,10 @@
 ﻿import { z } from "zod";
 export const ENQUIRY_STATUSES = {
-    new: "Ð¨Ð¸Ð½Ñ",
-    contacted: "Ð¥Ð¾Ð»Ð±Ð¾Ð³Ð´ÑÐ¾Ð½",
-    confirmed: "Ð‘Ð°Ñ‚Ð°Ð»Ð³Ð°Ð°Ð¶ÑÐ°Ð½",
-    completed: "Ð”ÑƒÑƒÑÑÐ°Ð½",
-    cancelled: "Ð¦ÑƒÑ†Ð»Ð°Ð³Ð´ÑÐ°Ð½",
+    new: "Шинэ",
+    contacted: "Холбогдсон",
+    confirmed: "Баталгаажсан",
+    completed: "Дууссан",
+    cancelled: "Цуцлагдсан",
 };
 export const enquiryStatusSchema = z.enum([
     "new",
@@ -26,7 +26,7 @@ export const enquiryInputSchema = z.object({
         .regex(/^$|^[1-9]\d{0,6}$/)
         .default(""),
     eventType: z.enum(["Gala", "Festival", "Brand launch", "Private event", "Film / media"]),
-    budget: z.enum(["Not sure yet", "Under $5k", "$5kâ€“$15k", "$15kâ€“$40k", "$40k+"]),
+    budget: z.enum(["Not sure yet", "Under $5k", "$5k–$15k", "$15k–$40k", "$40k+"]),
     brief: z.string().trim().min(1).max(2000),
     show: optionalText(150),
     language: z.enum(["mn", "en"]),

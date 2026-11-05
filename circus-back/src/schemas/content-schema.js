@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { EVENTS, PROJECTS, SHOWS } from "../data/site-data.js";
-const text = (max) => z.string().trim().min(1, "Ð­Ð½Ñ Ñ‚Ð°Ð»Ð±Ð°Ñ€Ñ‹Ð³ Ð±Ó©Ð³Ð»Ó©Ð½Ó© Ò¯Ò¯.").max(max);
+const text = (max) => z.string().trim().min(1, "Энэ талбарыг бөглөнө үү.").max(max);
 export const imageSchema = z
     .string()
     .regex(/^(builtin:(hero|acrobatics|theatre|illusions)|\/api\/media\/[a-f0-9-]+\.(jpg|png|webp)|https:\/\/res\.cloudinary\.com\/[a-zA-Z0-9_-]+\/image\/upload\/[a-zA-Z0-9_.,/-]+)$/, "Select an image from the media library.");
@@ -27,7 +27,7 @@ export const showSchema = z.object({
         .string()
         .max(2000)
         .url()
-        .refine((value) => value.startsWith("https://"), "HTTPS Ð²Ð¸Ð´ÐµÐ¾ Ñ…Ð¾Ð»Ð±Ð¾Ð¾Ñ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.")
+        .refine((value) => value.startsWith("https://"), "HTTPS видео холбоос оруулна уу.")
         .or(z.literal(""))
         .optional(),
 });
@@ -52,7 +52,7 @@ export const eventSchema = z.object({
         .refine((value) => {
         const date = new Date(value + "T00:00:00Z");
         return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-    }, "ÐžÐ³Ð½Ð¾Ð¾ Ð±ÑƒÑ€ÑƒÑƒ Ð±Ð°Ð¹Ð½Ð°."),
+    }, "Огноо буруу байна."),
     venue: text(200),
     venueMn: z.string().trim().max(200).optional(),
     category: z.enum(["Public", "Family", "Private", "Touring"]),
@@ -69,7 +69,7 @@ export const settingsSchema = z.object({
         .string()
         .max(2000)
         .url()
-        .refine((value) => value.startsWith("https://"), "HTTPS Ð²Ð¸Ð´ÐµÐ¾ Ñ…Ð¾Ð»Ð±Ð¾Ð¾Ñ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.")
+        .refine((value) => value.startsWith("https://"), "HTTPS видео холбоос оруулна уу.")
         .or(z.literal(""))
         .optional(),
     heroImage: imageSchema,
@@ -99,7 +99,7 @@ export const contentSchema = z
     for (const key of ["shows", "projects", "events"]) {
         const ids = content[key].map((item) => item.id);
         if (new Set(ids).size !== ids.length)
-            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Ð”Ð°Ð²Ñ…Ð°Ñ€Ð´ÑÐ°Ð½ ID Ð±Ð°Ð¹Ð½Ð°.", path: [key] });
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Давхардсан ID байна.", path: [key] });
     }
 });
 export const DEFAULT_CONTENT = {

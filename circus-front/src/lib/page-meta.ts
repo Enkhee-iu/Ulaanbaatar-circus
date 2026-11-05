@@ -7,51 +7,51 @@ export const PAGE_META: Record<string, { mn: PageText; en: PageText }> = {
   "/": {
     mn: {
       title: `${BRAND_NAME} — Тоглолт, эвент, бүтээлүүд`,
-      description: `${BRAND_NAME} бол амьд тоглолт, арга хэмжээ, кино төслүүд бүтээдэг Улаанбаатарын тайзны уран бүтээлчдийн баг.`,
+      description: `${BRAND_NAME} бол Улаанбаатарт ажилладаг циркийн баг. Тоглолтоо үзээрэй, эсвэл арга хэмжээндээ урьж болно.`,
     },
     en: {
       title: `${BRAND_NAME} — Live Shows, Events & Productions`,
-      description: `${BRAND_NAME} is an Ulaanbaatar-based team creating live performances, brand events and cinematic projects.`,
+      description: `${BRAND_NAME} is a circus team based in Ulaanbaatar. See a show, or book us for your event.`,
     },
   },
   "/shows": {
     mn: {
       title: `Тоглолтууд — ${BRAND_NAME}`,
-      description: `${BRAND_NAME}-ийн агаарын үзүүлбэр, акробат, театрын тоглолтуудтай танилцаж, арга хэмжээндээ захиалаарай.`,
+      description: `${BRAND_NAME}-ийн тоглолтууд: агаарын үзүүлбэр, акробат, театр. Төрөл, хугацааг хараад захиалаарай.`,
     },
     en: {
       title: `Our shows — ${BRAND_NAME}`,
-      description: `Discover aerial shows and physical theatre from ${BRAND_NAME}. Made for your stage.`,
+      description: `${BRAND_NAME} shows: aerial acts, acrobatics and theatre. See the details and book.`,
     },
   },
   "/events": {
     mn: {
       title: `Эвент, хуваарь — ${BRAND_NAME}`,
-      description: `${BRAND_NAME}-ийн тоглолтын хуваарь, олон нийтийн болон хувийн арга хэмжээнүүд.`,
+      description: `${BRAND_NAME}-ийн болох тоглолтуудын огноо, газар.`,
     },
     en: {
       title: `Events & dates — ${BRAND_NAME}`,
-      description: `Explore the ${BRAND_NAME} season calendar, public performances and private productions.`,
+      description: `Dates and venues for upcoming ${BRAND_NAME} shows.`,
     },
   },
   "/projects": {
     mn: {
       title: `Онцлох төслүүд — ${BRAND_NAME}`,
-      description: `${BRAND_NAME}-ийн бүтээсэн амьд тоглолт, брэндийн хамтын ажиллагаа, кино төслүүд.`,
+      description: `${BRAND_NAME}-ийн кино, брэнд, тайзны төслүүд.`,
     },
     en: {
       title: `Selected work — ${BRAND_NAME}`,
-      description: `Live experiences, brand collaborations and film productions brought to life by ${BRAND_NAME}.`,
+      description: `Film, brand and stage projects by ${BRAND_NAME}.`,
     },
   },
   "/contact": {
     mn: {
-      title: `Хамтдаа бүтээе — ${BRAND_NAME}`,
-      description: `Дараагийн тоглолт, брэндийн арга хэмжээ, бүтээлч төслийнхөө талаар ${BRAND_NAME}-тэй холбогдоорой.`,
+      title: `Холбоо барих — ${BRAND_NAME}`,
+      description: `Тоглолт захиалах, хуваарь асуух бол ${BRAND_NAME}-д бичээрэй.`,
     },
     en: {
-      title: `Let’s create — ${BRAND_NAME}`,
-      description: `Start a conversation about your next show, brand event or creative production with ${BRAND_NAME}.`,
+      title: `Contact — ${BRAND_NAME}`,
+      description: `Write to ${BRAND_NAME} to book a show or ask about dates.`,
     },
   },
 };

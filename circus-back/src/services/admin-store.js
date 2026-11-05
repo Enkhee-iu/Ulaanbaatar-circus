@@ -53,11 +53,11 @@ function rateLimit(request) {
     }
     attempt.count++;
     if (attempt.count > 10)
-        throw new AdminError(429, "ÐžÐ»Ð¾Ð½ ÑƒÐ´Ð°Ð° Ð¾Ñ€Ð¾Ð»Ð´ÑÐ¾Ð½ Ð±Ð°Ð¹Ð½Ð°. 15 Ð¼Ð¸Ð½ÑƒÑ‚Ñ‹Ð½ Ð´Ð°Ñ€Ð°Ð° Ð´Ð°Ñ…Ð¸Ð½ Ð¾Ñ€Ð¾Ð»Ð´Ð¾Ð½Ð¾ ÑƒÑƒ.");
+        throw new AdminError(429, "Олон удаа оролдсон байна. 15 минутын дараа дахин оролдоно уу.");
 }
 export function requireLocal(request) {
     if (!["localhost", "127.0.0.1", "[::1]"].includes(new URL(request.url).hostname))
-        throw new AdminError(403, "Ð­Ð½Ñ admin panel Ð¾Ð´Ð¾Ð¾Ð³Ð¾Ð¾Ñ€ Ð·Ó©Ð²Ñ…Ó©Ð½ local Ð¾Ñ€Ñ‡Ð¸Ð½Ð´ Ð°Ð¶Ð¸Ð»Ð»Ð°Ð½Ð°.");
+        throw new AdminError(403, "Энэ admin panel одоогоор зөвхөн local орчинд ажиллана.");
 }
 export function requireSameOrigin(request) {
     const origin = request.headers.get("origin");
@@ -72,7 +72,7 @@ export async function requireAdmin(request) {
     if (!user ||
         !token ||
         !user.sessions.some((session) => session.hash === tokenHash(token) && session.expires > Date.now()))
-        throw new AdminError(401, "ÐÑÐ²Ñ‚ÑÑ€Ð½Ñ Ò¯Ò¯.");
+        throw new AdminError(401, "Нэвтэрнэ үү.");
     return user;
 }
 export async function authStatus(request) {
@@ -98,7 +98,7 @@ export async function login(request, email, password, setup = false, setupCode =
         let user = await account();
         if (setup) {
             if (user)
-                throw new AdminError(409, "Admin Ð±Ò¯Ñ€Ñ‚Ð³ÑÐ» Ð°Ð»ÑŒ Ñ…ÑÐ´Ð¸Ð¹Ð½ Ò¯Ò¯ÑÑÑÐ½ Ð±Ð°Ð¹Ð½Ð°.");
+                throw new AdminError(409, "Admin бүртгэл аль хэдийн үүссэн байна.");
             const configuredCode = process.env.ADMIN_SETUP_CODE || "";
             const providedHash = createHash("sha256").update(setupCode).digest();
             const configuredHash = createHash("sha256").update(configuredCode).digest();
@@ -109,11 +109,11 @@ export async function login(request, email, password, setup = false, setupCode =
         }
         else {
             if (!user)
-                throw new AdminError(409, "Ð­Ñ…Ð»ÑÑÐ´ admin Ð±Ò¯Ñ€Ñ‚Ð³ÑÐ» Ò¯Ò¯ÑÐ³ÑÐ½Ñ Ò¯Ò¯.");
+                throw new AdminError(409, "Эхлээд admin бүртгэл үүсгэнэ үү.");
             const hash = await hashPassword(password, user.salt);
             if (email !== user.email ||
                 !timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(user.passwordHash, "hex")))
-                throw new AdminError(401, "Ð˜Ð¼ÑÐ¹Ð» ÑÑÐ²ÑÐ» Ð½ÑƒÑƒÑ† Ò¯Ð³ Ð±ÑƒÑ€ÑƒÑƒ Ð±Ð°Ð¹Ð½Ð°.");
+                throw new AdminError(401, "Имэйл эсвэл нууц үг буруу байна.");
         }
         const token = randomBytes(32).toString("hex");
         user.sessions = user.sessions.filter((session) => session.expires > Date.now()).slice(-9);
@@ -141,7 +141,7 @@ export async function changePassword(request, currentPassword, newPassword) {
         const user = await requireAdmin(request);
         const hash = await hashPassword(currentPassword, user.salt);
         if (!timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(user.passwordHash, "hex")))
-            throw new AdminError(401, "ÐžÐ´Ð¾Ð¾Ð³Ð¸Ð¹Ð½ Ð½ÑƒÑƒÑ† Ò¯Ð³ Ð±ÑƒÑ€ÑƒÑƒ Ð±Ð°Ð¹Ð½Ð°.");
+            throw new AdminError(401, "Одоогийн нууц үг буруу байна.");
         const salt = randomBytes(32).toString("hex");
         user.salt = salt;
         user.passwordHash = await hashPassword(newPassword, salt);
@@ -157,7 +157,7 @@ export async function readContent() {
         return content;
     }
     catch {
-        throw new AdminError(503, "ÐšÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð¸Ð¹Ð½ Ñ„Ð°Ð¹Ð» Ð³ÑÐ¼Ñ‚ÑÑÐ½ Ð±Ð°Ð¹Ð½Ð°. ÐÓ©Ó©Ñ† Ñ…ÑƒÑƒÐ»Ð±Ð°Ñ€Ñ‹Ð³ ÑÑÑ€Ð³ÑÑÐ½Ñ Ò¯Ò¯.");
+        throw new AdminError(503, "Контентийн файл гэмтсэн байна. Нөөц хуулбарыг сэргээнэ үү.");
     }
 }
 export async function contentHealth() {
@@ -196,13 +196,13 @@ export async function createEnquiry(input) {
         if (existing) {
             const fingerprint = (value) => tokenHash(JSON.stringify(enquiryInputSchema.parse(value)));
             if (fingerprint(existing) !== fingerprint(data))
-                throw new AdminError(409, "Ð­Ð½Ñ Ñ…Ò¯ÑÑÐ»Ñ‚ Ó©Ð¼Ð½Ó©Ñ… Ð°Ð³ÑƒÑƒÐ»Ð³Ð°Ð°Ñ€Ð°Ð° Ñ…Ð°Ð´Ð³Ð°Ð»Ð°Ð³Ð´ÑÐ°Ð½. Ó¨Ó©Ñ€Ñ‡Ð¸Ð»ÑÓ©Ð½ Ð°Ð³ÑƒÑƒÐ»Ð³Ñ‹Ð³ ÑˆÐ¸Ð½Ñ Ñ…Ò¯ÑÑÐ»Ñ‚ÑÑÑ€ Ð¸Ð»Ð³ÑÑÐ½Ñ Ò¯Ò¯.");
+                throw new AdminError(409, "Энэ хүсэлт өмнөх агуулгаараа хадгалагдсан. Өөрчилсөн агуулгыг шинэ хүсэлтээр илгээнэ үү.");
             return { id: existing.id };
         }
         const now = Date.now();
         const attempt = enquiryAttempts.get("local");
         if (attempt && now - attempt.start < 15 * 60 * 1000 && attempt.count >= 10)
-            throw new AdminError(429, "ÐžÐ»Ð¾Ð½ Ñ…Ò¯ÑÑÐ»Ñ‚ Ð¸Ð»Ð³ÑÑÑÑÐ½ Ð±Ð°Ð¹Ð½Ð°. 15 Ð¼Ð¸Ð½ÑƒÑ‚Ñ‹Ð½ Ð´Ð°Ñ€Ð°Ð° Ð´Ð°Ñ…Ð¸Ð½ Ð¾Ñ€Ð¾Ð»Ð´Ð¾Ð½Ð¾ ÑƒÑƒ.");
+            throw new AdminError(429, "Олон хүсэлт илгээсэн байна. 15 минутын дараа дахин оролдоно уу.");
         const timestamp = new Date(now).toISOString();
         const entry = {
             ...data,
@@ -226,9 +226,9 @@ export async function updateEnquiry(input) {
         const enquiries = await listEnquiries();
         const index = enquiries.findIndex((item) => item.id === update.id);
         if (index < 0)
-            throw new AdminError(404, "Ð¥Ò¯ÑÑÐ»Ñ‚ Ð¾Ð»Ð´ÑÐ¾Ð½Ð³Ò¯Ð¹.");
+            throw new AdminError(404, "Хүсэлт олдсонгүй.");
         if (enquiries[index].revision !== update.revision)
-            throw new AdminError(409, "Ð¥Ò¯ÑÑÐ»Ñ‚ Ó©Ó©Ñ€ Ñ†Ð¾Ð½Ñ…Ð½Ð¾Ð¾Ñ Ó©Ó©Ñ€Ñ‡Ð»Ó©Ð³Ð´ÑÓ©Ð½ Ð±Ð°Ð¹Ð½Ð°. Ð¨Ð¸Ð½ÑÑ‡Ð»ÑÑÐ´ Ð´Ð°Ñ…Ð¸Ð½ Ð¾Ñ€Ð¾Ð»Ð´Ð¾Ð½Ð¾ ÑƒÑƒ.");
+            throw new AdminError(409, "Хүсэлт өөр цонхноос өөрчлөгдсөн байна. Шинэчлээд дахин оролдоно уу.");
         enquiries[index] = {
             ...enquiries[index],
             status: update.status,
@@ -250,7 +250,7 @@ export async function readPublishedContent() {
             content = contentSchema.parse(await readJson("content.backup.json", null));
         }
         catch {
-            throw new AdminError(503, "ÐšÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ñ‹Ð³ ÑÑÑ€Ð³ÑÑÑ… ÑˆÐ°Ð°Ñ€Ð´Ð»Ð°Ð³Ð°Ñ‚Ð°Ð¹. Admin Ñ…ÑÑÐ³Ð¸Ð¹Ð³ Ð½ÑÑÐ½Ñ Ò¯Ò¯.");
+            throw new AdminError(503, "Контентыг сэргээх шаардлагатай. Admin хэсгийг нээнэ үү.");
         }
     }
     return {
@@ -265,7 +265,7 @@ export async function saveContent(input) {
     return serial("content", async () => {
         const current = await readContent();
         if (content.revision !== current.revision)
-            throw new AdminError(409, "Ó¨Ó©Ñ€ Ñ†Ð¾Ð½Ñ…Ð½Ð¾Ð¾Ñ Ð¼ÑÐ´ÑÑÐ»ÑÐ» Ó©Ó©Ñ€Ñ‡Ð¸Ð»ÑÓ©Ð½ Ð±Ð°Ð¹Ð½Ð°. Ð¥ÑƒÑƒÐ´ÑÑ‹Ð³ ÑˆÐ¸Ð½ÑÑ‡Ð»ÑÑÐ´ Ð´Ð°Ñ…Ð¸Ð½ Ð¾Ñ€Ð¾Ð»Ð´Ð¾Ð½Ð¾ ÑƒÑƒ.");
+            throw new AdminError(409, "Өөр цонхноос мэдээлэл өөрчилсөн байна. Хуудсыг шинэчлээд дахин оролдоно уу.");
         const saved = {
             ...content,
             revision: current.revision + 1,
@@ -291,7 +291,7 @@ function imageType(data) {
     if (Buffer.from(data.slice(0, 4)).toString() === "RIFF" &&
         Buffer.from(data.slice(8, 12)).toString() === "WEBP")
         return "webp";
-    throw new AdminError(400, "Ð—Ó©Ð²Ñ…Ó©Ð½ JPG, PNG, WebP Ð·ÑƒÑ€Ð°Ð³ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.");
+    throw new AdminError(400, "Зөвхөн JPG, PNG, WebP зураг оруулна уу.");
 }
 const mediaName = /^[a-f0-9-]+(?:\.(jpg|png|webp))?$/;
 function cloudinaryCredentials() {
@@ -340,7 +340,7 @@ async function cloudinaryRequest(action, params, file) {
 }
 export async function uploadImage(file) {
     if (!file.size || file.size > 5 * 1024 * 1024)
-        throw new AdminError(400, "Ð—ÑƒÑ€Ð³Ð¸Ð¹Ð½ Ñ…ÑÐ¼Ð¶ÑÑ 5 MB-Ð°Ð°Ñ Ð±Ð°Ð³Ð° Ð±Ð°Ð¹Ñ… Ñ‘ÑÑ‚Ð¾Ð¹.");
+        throw new AdminError(400, "Зургийн хэмжээ 5 MB-аас бага байх ёстой.");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const extension = imageType(bytes);
     try {
@@ -354,7 +354,7 @@ export async function uploadImage(file) {
         await decoder.raw().toBuffer();
     }
     catch {
-        throw new AdminError(400, "Ð—ÑƒÑ€Ð°Ð³ Ð³ÑÐ¼Ñ‚ÑÑÐ½ ÑÑÐ²ÑÐ» Ñ…ÑÑ‚ Ñ‚Ð¾Ð¼ Ð±Ð°Ð¹Ð½Ð°. Ð‘Ò¯Ñ€ÑÐ½ JPG, PNG, WebP Ð·ÑƒÑ€Ð°Ð³ ÑÐ¾Ð½Ð³Ð¾Ð½Ð¾ ÑƒÑƒ.");
+        throw new AdminError(400, "Зураг гэмтсэн эсвэл хэт том байна. Бүрэн JPG, PNG, WebP зураг сонгоно уу.");
     }
     const id = randomUUID();
     const contentType = `image/${extension === "jpg" ? "jpeg" : extension}`;

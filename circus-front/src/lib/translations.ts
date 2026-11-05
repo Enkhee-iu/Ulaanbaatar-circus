@@ -4,16 +4,16 @@ export const MONGOLIAN: Record<string, string> = {
     "Бусад тоглолтыг үзэх эсвэл бидэнтэй холбогдоорой.",
   "Back to all shows": "Бүх тоглолт руу буцах",
   "Book this show": "Энэ тоглолтыг захиалах",
-  "Inside the experience": "Тоглолтын ертөнцөд",
+  "Inside the experience": "Танилцуулга",
   "About the show": "Тоглолтын тухай",
-  "Made for your stage": "Таны тайзнаа",
-  "Bring this world to your audience.": "Энэ ертөнцийг үзэгчдэдээ хүргэе.",
+  "Made for your stage": "Захиалга",
+  "Bring this world to your audience.": "Энэ тоглолтыг захиалах.",
   Genre: "Төрөл",
   Duration: "Хугацаа",
   "Tell us your date, venue and audience. We’ll discuss availability and production with you.":
-    "Огноо, байршил, үзэгчдийнхээ талаар хуваалцаарай. Боломжит хуваарь, зохион байгуулалтыг хамтдаа ярилцъя.",
-  "A closer look": "Ойроос мэдрэх нь",
-  "Moments from the show": "Тоглолтын мөчүүд",
+    "Огноо, газар, хэдэн хүн ирэхийг бичээрэй. Завтай эсэх, яаж зохион байгуулахыг бид хариу бичнэ.",
+  "A closer look": "Зургууд",
+  "Moments from the show": "Тоглолтын зургууд",
   "View photo": "Зураг томруулах",
   "Close photo": "Зураг хаах",
   "Show photo gallery": "Тоглолтын зургийн галерей",
@@ -21,13 +21,13 @@ export const MONGOLIAN: Record<string, string> = {
   "Next photo": "Дараагийн зураг",
   "Watch the performance": "Үзүүлбэр үзэх",
   "The video is currently unavailable.": "Видео одоогоор тоглуулах боломжгүй байна.",
-  "Keep exploring": "Үргэлжлүүлэн танилцах",
-  "More worlds to discover": "Шинэ ертөнцүүд таныг хүлээнэ",
+  "Keep exploring": "Бусад",
+  "More worlds to discover": "Бусад тоглолтууд",
   "Request received": "Хүсэлт хүлээн авлаа",
   "Thank you.": "Баярлалаа.",
   "Let’s create together.": "Хамтдаа бүтээе.",
   "Your request has been saved. Our team can now review it and contact you by email.":
-    "Таны хүсэлт бүртгэгдлээ. Манай баг хүсэлтийг тань үзэж, имэйлээр холбогдох боломжтой боллоо.",
+    "Хүсэлтийг тань хүлээн авлаа. Бид имэйлээр хариу бичнэ.",
   "Reference:": "Бүртгэлийн дугаар:",
   "Send another request": "Шинэ хүсэлт илгээх",
   "We’ll use your details to respond to this enquiry.":
@@ -85,15 +85,15 @@ export const MONGOLIAN: Record<string, string> = {
   "Our Gallery": "Манай галерей",
   "Our team": "Манай баг",
   Contortion: "Уран нугараач",
-  "Flexibility, balance and strength on stage.": "Уян хатан байдал, тэнцвэр, хүч чадал.",
+  "Flexibility, balance and strength on stage.": "Биеэ нугалж, тэнцвэр барьж хийдэг үзүүлбэрүүд.",
   "We’re a team of performers based in Ulaanbaatar: acrobats, aerialists, contortionists and actors.":
     "Бид Улаанбаатарт ажилладаг тайзны уран бүтээлчдийн баг. Манайд акробат, агаарын үзүүлбэрчин, уран нугараач, жүжигчин бий.",
   "Aerial artistry and playful theatre. Discover a show that feels right for your audience.":
-    "Агаарын урлаг, хөгжилтэй театр. Үзэгчдэдээ тохирох тоглолтоо сонгоорой.",
+    "Тоглолт бүрийн төрөл, үргэлжлэх хугацааг эндээс хараад үзэгчдэдээ тохирохыг нь сонгоорой.",
   "Silks, straps and balance, high above the stage.":
-    "Торгон тууз, оосор, тэнцвэр. Тайзны дээгүүр хийдэг үзүүлбэрүүд.",
+    "Торго, оосор дээр тайзны дээгүүр хийдэг үзүүлбэрүүд.",
   "Physical theatre and big characters for all ages.":
-    "Биеийн хөдөлгөөний театр, тод дүрүүд. Бүх насныханд зориулсан.",
+    "Биеийн хөдөлгөөний театр. Том, жижиг хүн бүгд үзэж болно.",
   "We play big stages and company events, and shape each show to fit the venue and the audience.":
     "Том тайзнаас эхлээд компанийн арга хэмжээ хүртэл тоглодог. Тоглолт бүрээ тухайн газар, үзэгчдэд нь тааруулж бэлддэг.",
   "Planning an event?": "Арга хэмжээ төлөвлөж байна уу?",
@@ -102,23 +102,26 @@ export const MONGOLIAN: Record<string, string> = {
   "Live from Ulaanbaatar. Made for the world.": "Улаанбаатар цирк",
   "This is": "Энэ бол",
   "Page not found": "Хуудас олдсонгүй",
-  "The page you’re looking for has left the stage.": "Таны хайсан хуудас тайзнаас гарсан байна.",
+  "The page you’re looking for has left the stage.":
+    "Энэ хаягаар хуудас алга. Нүүр хуудаснаас дахин эхлээрэй.",
   "Back to home": "Нүүр хуудас руу буцах",
   "Step into the world of Ulaanbaatar Circus": "Улаанбаатар циркийн ертөнцөд тавтай морил",
   "Stories, masks and movement that stay with you long after the curtain falls.":
-    "Хөшиг хаагдсны дараа ч сэтгэлд үлдэх түүх, баг, хөдөлгөөн.",
+    "Бид акробат, театрыг нэг тайзан дээр хослуулдаг.",
   "Performer in a firebird mask": "Галт шувууны багтай уран бүтээлч",
   "We turn moments into memories. Extraordinary circus, live shows and experiences that stay with you.":
-    "Акробат, агаарын үзүүлбэр, театртай тоглолтуудаа Улаанбаатарт тавьж, аялан тоглодог.\nАрга хэмжээндээ ч захиалж болно.",
+    "Бид Улаанбаатарт болон аялан тоглолтоор тоглодог.\nТоглолтоо үзээрэй, эсвэл арга хэмжээндээ урьж болно.",
   "A little wonder awaits": "Гайхамшиг таныг хүлээж байна",
   "Step into our world": "Бидний ертөнцөд тавтай морил",
   "Watch the film": "Видео үзэх",
   "A glimpse of the extraordinary.": "Гайхамшгийн нэгхэн мөч.",
   "Close film": "Видео хаах",
-  "Watch a Ulaanbaatar Circus aerial performance film.": "Ulaanbaatar Circus-ийн агаарын үзүүлбэрийг үзээрэй.",
+  "Watch a Ulaanbaatar Circus aerial performance film.":
+    "Ulaanbaatar Circus-ийн агаарын үзүүлбэрийг үзээрэй.",
   "The film is currently unavailable.": "Видео одоогоор боломжгүй байна.",
   "Explore the shows": "Тоглолтууд үзэх",
-  "Ulaanbaatar Circus · A new perspective on live performance": "Ulaanbaatar Circus · Амьд тоглолтын шинэ өнгө төрх",
+  "Ulaanbaatar Circus · A new perspective on live performance":
+    "Ulaanbaatar Circus · Амьд тоглолтын шинэ өнгө төрх",
   "THE ART OF FEELING SOMETHING.": "МЭДРЭМЖИЙГ БҮТЭЭХ УРЛАГ.",
   "Ulaanbaatar Circus in numbers": "Ulaanbaatar Circus тоогоор",
   "Small beginnings.": "Жижигхэн эхлэл.",
@@ -137,8 +140,8 @@ export const MONGOLIAN: Record<string, string> = {
     "Анхны санаанаас эцсийн алга ташилт хүртэл. Бидний хамтдаа бүтээсэн ертөнцүүд.",
   "Explore our work": "Төслүүд үзэх",
   "Our repertoire": "Бидний тоглолтууд",
-  "Find your": "Өөрийн",
-  "kind of wonder.": "гайхамшгийг олоорой.",
+  "Find your": "Тоглолтоо",
+  "kind of wonder.": "сонгоорой.",
   "Filter shows by genre": "Тоглолтыг төрлөөр шүүх",
   "All shows": "Бүх тоглолт",
   Aerial: "Агаарын үзүүлбэр",
@@ -146,14 +149,14 @@ export const MONGOLIAN: Record<string, string> = {
   Touring: "Аялан тоглолт",
   show: "тоглолт",
   shows: "тоглолт",
-  "to discover": "тантай учрахад бэлэн",
+  "to discover": "байна",
   "No shows in this category yet. Get in touch for availability.":
     "Энэ ангилалд тоглолт хараахан алга. Дэлгэрэнгүй мэдээллийг биднээс аваарай.",
   "The season calendar": "Тоглолтын хуваарь",
-  "Good nights.": "Сайхан үдэш.",
-  "Great memories.": "Мартагдашгүй дурсамж.",
+  "Good nights.": "Болох",
+  "Great memories.": "тоглолтууд.",
   "From opening nights to open-air stages. Explore the places and moments that make up our season.":
-    "Нээлтийн үдшээс задгай тайз хүртэл. Бидний тоглолтын хуваарьтай танилцаарай.",
+    "Болох тоглолтуудын огноо, газрыг эндээс харна уу.",
   "Performances & dates": "Тоглолт, товлосон өдрүүд",
   "Filter events by type": "Эвентийг төрлөөр шүүх",
   "All events": "Бүх эвент",
@@ -169,13 +172,13 @@ export const MONGOLIAN: Record<string, string> = {
   "Enquire about this show": "Тоглолтын талаар лавлах",
   "Looking for the next date?": "Дараагийн тоглолтыг сонирхож байна уу?",
   "Get in touch for new performances, availability or a show at your venue.":
-    "Шинэ тоглолт, захиалгын боломж, өөрийн талбайд тоглолт хийх талаар бидэнтэй холбогдоорой.",
+    "Хуваарийн талаар асуух, эсвэл өөрийн газарт тоглолт захиалах бол бидэнд бичээрэй.",
   "Talk to the team": "Бидэнтэй холбогдох",
   "Selected work": "Онцлох төслүүд",
-  "Ideas that": "Тайзнаа амилсан",
-  "take the stage.": "шинэ санаанууд.",
+  "Ideas that": "Бидний",
+  "take the stage.": "хийсэн ажил.",
   "We bring creative direction, extraordinary performers and thoughtful production together. Here’s what that looks like.":
-    "Бүтээлч санаа, гайхалтай уран бүтээлчид, нарийн зохион байгуулалтыг нэгтгэсэн бидний төслүүд.",
+    "Кино, брэнд, тайзны төслүүдэд хийсэн ажлаасаа эндээс үзүүлж байна.",
   "Filter projects by discipline": "Төслийг төрлөөр шүүх",
   "All work": "Бүх төсөл",
   Film: "Кино",
@@ -185,29 +188,29 @@ export const MONGOLIAN: Record<string, string> = {
   projects: "төсөл",
   "New work is on its way. Get in touch to discuss your project.":
     "Шинэ төслүүд удахгүй нэмэгдэнэ. Өөрийн төслийн талаар бидэнтэй ярилцаарай.",
-  "Good things start here": "Сайхан бүхний эхлэл",
-  "Your idea.": "Таны санаа.",
-  "Our next act.": "Бидний дараагийн бүтээл.",
+  "Good things start here": "Холбоо барих",
+  "Your idea.": "Бидэнд",
+  "Our next act.": "бичээрэй.",
   "A big vision or a small spark — we’d love to hear it. Tell us a little about your event and let’s see what’s possible.":
-    "Том мөрөөдөл ч бай, жижигхэн санаа ч бай бид сонсохдоо баяртай. Арга хэмжээнийхээ талаар хуваалцаад хамтдаа боломжийг нээе.",
+    "Арга хэмжээнийхээ талаар товч бичээрэй. Бид тоглолт, хуваарь, төсвийн талаар хариу бичнэ.",
   "Let’s talk": "Ярилцъя",
-  "Real people.": "Авьяаслаг хүмүүс.",
-  "Fresh possibilities.": "Шинэ боломжууд.",
+  "Real people.": "Шууд",
+  "Fresh possibilities.": "холбогдох.",
   "We’ll help you find the right performers, production and feeling for your audience.":
-    "Үзэгчдэд тань тохирох уран бүтээлч, зохион байгуулалт, мэдрэмжийг хамтдаа олъё.",
+    "Имэйл бичих, утсаар ярих аль нь ч болно.",
   "Email us": "Имэйл бичих",
   "Give us a call": "Залгах",
   "Find the studio": "Манай хаяг",
-  "From spark to spotlight": "Санаанаас тайз хүртэл",
-  "Tell us the idea": "Санаагаа хуваалцаарай",
+  "From spark to spotlight": "Хэрхэн ажилладаг вэ",
+  "Tell us the idea": "Та бичнэ",
   "Your date, venue, audience and what you have in mind.":
-    "Огноо, газар, үзэгчид болон өөрийн санаагаа хэлээрэй.",
-  "Shape it together": "Хамтдаа төлөвлөе",
+    "Огноо, газар, хэдэн хүн ирэх, юу хүсэж байгаагаа бичнэ.",
+  "Shape it together": "Бид санал болгоно",
   "We suggest the acts, creative direction and production.":
-    "Бид үзүүлбэр, бүтээлч шийдэл, зохион байгуулалтыг санал болгоно.",
-  "Make it happen": "Бодит болгоё",
+    "Ямар үзүүлбэр тохирох, яаж зохион байгуулахыг бид санал болгоно.",
+  "Make it happen": "Бид тоглоно",
   "The artists, rehearsals and final show, brought together.":
-    "Уран бүтээлчид, бэлтгэл, эцсийн тоглолт — нэг зорилгын төлөө.",
+    "Уран бүтээлчид бэлтгэлээ хийж, тогтсон өдөр тоглоно.",
   "One last step": "Сүүлийн нэг алхам",
   "Your brief": "Таны хүсэлт",
   "is ready.": "бэлэн боллоо.",
@@ -217,7 +220,7 @@ export const MONGOLIAN: Record<string, string> = {
   "No email app? Email us directly at": "Имэйл апп байхгүй бол энэ хаягаар бичээрэй:",
   "Back to the form": "Форм руу буцах",
   "A little about your event": "Арга хэмжээний тухай",
-  "Let’s build the brief.": "Хүсэлтээ бэлдэе.",
+  "Let’s build the brief.": "Хүсэлтийн маягт.",
   "Fields marked * are required.": "* тэмдэгтэй талбаруудыг заавал бөглөнө.",
   "Interested in:": "Сонирхож буй:",
   Clear: "Арилгах",
@@ -246,18 +249,18 @@ export const MONGOLIAN: Record<string, string> = {
   "$40k+": "$40,000-аас дээш",
   "What do you have in mind?": "Та юу төсөөлж байна вэ?",
   "The feeling, the occasion, the big idea. Tell us what you’re imagining.":
-    "Хүсэж буй мэдрэмж, арга хэмжээ, санаагаа хуваалцаарай.",
+    "Ямар арга хэмжээ, ямар тоглолт сонирхож байгаагаа бичээрэй.",
   "We’ll prepare an email draft for you to review and send.":
     "Бид таны шалгаж илгээх имэйлийг бэлдэнэ.",
   "Prepare my enquiry": "Хүсэлт бэлдэх",
-  "A little wonder goes a long way.": "Гайхамшиг сэтгэлд үлддэг.",
-  "Live shows, extraordinary people.": "Амьд тоглолт, гайхалтай хүмүүс.",
-  "Made in Ulaanbaatar.": "Улаанбаатарт бүтээв.",
+  "A little wonder goes a long way.": "Улаанбаатарт ажилладаг циркийн баг.",
+  "Live shows, extraordinary people.": "Тоглолт, аялан тоглолт, арга хэмжээ.",
+  "Made in Ulaanbaatar.": "Тоглолт захиалах бол бидэнд бичээрэй.",
   Explore: "Танилцах",
   "Our shows": "Тоглолтууд",
   "Events & dates": "Эвент, хуваарь",
   "Say hello": "Бидэнтэй холбогдох",
-  "From Mongolia, with wonder.": "Монголоос гайхамшгийг бүтээе.",
+  "From Mongolia, with wonder.": "Улаанбаатар, Монгол.",
   "Back to top ↑": "Дээш очих ↑",
   "Your stage. Our imagination.": "Таны тайз. Бидний төсөөлөл.",
   "Let’s make": "Хамтдаа",
@@ -273,11 +276,11 @@ export const MONGOLIAN: Record<string, string> = {
   "Nomad Nights": "Нүүдэлчдийн үдэш",
   "Gobi Wool": "Говь ноолуур",
   "Silks, straps and breathtaking balance. A beautiful exploration of what happens when we leave the ground.":
-    "Торгон тууз, оосор, гайхалтай тэнцвэр. Газраас хөөрөх мөчийн гоо үзэсгэлэнг мэдрээрэй.",
+    "Торго, оосор дээрх агаарын үзүүлбэр, тэнцвэрийн номерууд.",
   "Big characters. Little surprises. A playful world of physical theatre, object play and laughter for every generation.":
-    "Содон дүрүүд, бяцхан сюрпризүүд. Хөдөлгөөний театр, хөгжилтэй үзүүлбэр, үе бүрт хүрэх инээд хөөр.",
+    "Биеийн хөдөлгөөний инээдмийн театр. Гэр бүлээрээ үзэхэд тохиромжтой.",
   "A travelling celebration of circus, made for city squares, festival stages and wherever the road takes us.":
-    "Хотын талбай, фестивалийн тайз, зам хүрэх газар бүрт циркийн баярыг авчрах аялан тоглолт.",
+    "Хотын талбай, фестивалийн тайзанд зориулсан аялан тоглолт.",
   "Aerial rig": "Агаарын тоноглол",
   "Live host": "Хөтлөгч",
   "Tour ready": "Аялан тоглолтод бэлэн",
@@ -292,13 +295,13 @@ export const MONGOLIAN: Record<string, string> = {
   "Stage production": "Тайзны бүтээл",
   "National tour": "Улс даяарх аялан тоглолт",
   "A new perspective on movement. Aerial performance, creative direction and cinematic storytelling come together.":
-    "Хөдөлгөөнийг шинээр харах өнцөг. Агаарын үзүүлбэр, бүтээлч найруулга, киноны өгүүлэмжийн нэгдэл.",
+    "Агаарын үзүүлбэрийн кино. Найруулга, уран бүтээлчдийн сонголт, тоноглолыг бид хариуцсан.",
   "A reveal that moves beyond the runway. Movement design and live performance created for a memorable brand moment.":
-    "Загварын тайзнаас давсан танилцуулга. Брэндийн дурсамжтай мөчийг бүтээх хөдөлгөөн ба амьд тоглолт.",
+    "Брэндийн танилцуулгад зориулж хөдөлгөөн найруулж, амьд үзүүлбэр хийсэн.",
   "An immersive world of light, shadows and impossible moments, designed from the first sketch to the final curtain.":
-    "Анхны зураглалаас хаалтын хөшиг хүртэл бүтээсэн гэрэл, сүүдэр, гайхалтай мөчүүдийн ертөнц.",
+    "Тайзны тоглолтыг эхнээс нь дуустал бид бүтээсэн, гэрэлтүүлэг нь ч үүнд багтсан.",
   "Bringing the show to new audiences with an adaptable production for festivals and public squares across Mongolia.":
-    "Монголын фестиваль, олон нийтийн талбайд тохирсон тоглолтыг шинэ үзэгчдэд хүргэж байна.",
+    "Монголын фестиваль, талбайд тоглохоор тохируулсан аялан тоглолт.",
   "Creative direction": "Бүтээлч найруулга",
   "Aerial casting": "Агаарын уран бүтээлч сонголт",
   "Safety rigging": "Аюулгүй тоноглол",
@@ -322,10 +325,91 @@ export const MONGOLIAN: Record<string, string> = {
     "Энхтайваны өргөн чөлөө 42, Сүхбаатар\nУлаанбаатар, Монгол",
 };
 
+// The same keys as above, where the English shown differs from the key. Some keys are the database's
+// default text, so anything edited in the admin panel no longer matches and shows as written.
+const ENGLISH: Record<string, string> = {
+  "Find your": "Choose",
+  "kind of wonder.": "a show.",
+  "Good nights.": "Upcoming",
+  "Great memories.": "shows.",
+  "Ideas that": "Work",
+  "take the stage.": "we’ve done.",
+  "Good things start here": "Contact",
+  "Your idea.": "Write",
+  "Our next act.": "to us.",
+  "Real people.": "Reach us",
+  "Fresh possibilities.": "directly.",
+  "From spark to spotlight": "How it works",
+  "Tell us the idea": "You write to us",
+  "Shape it together": "We suggest a plan",
+  "Make it happen": "We perform",
+  "A little about your event": "About your event",
+  "Let’s build the brief.": "Enquiry form.",
+  "Inside the experience": "Overview",
+  "Made for your stage": "Booking",
+  "Bring this world to your audience.": "Book this show.",
+  "A closer look": "Photos",
+  "Moments from the show": "Photos from the show",
+  "Keep exploring": "More",
+  "More worlds to discover": "Other shows",
+  "We turn moments into memories. Extraordinary circus, live shows and experiences that stay with you.":
+    "We perform in Ulaanbaatar and on tour.\nCome and see a show, or book us for your event.",
+  "Stories, masks and movement that stay with you long after the curtain falls.":
+    "We put acrobatics and theatre on the same stage.",
+  "Silks, straps and balance, high above the stage.":
+    "Acts on silks and straps, high above the stage.",
+  "Flexibility, balance and strength on stage.": "Acts of bending and balance.",
+  "Physical theatre and big characters for all ages.": "Physical theatre that all ages can watch.",
+  "Aerial artistry and playful theatre. Discover a show that feels right for your audience.":
+    "See the type and length of each show, then pick the one that suits your audience.",
+  "Silks, straps and breathtaking balance. A beautiful exploration of what happens when we leave the ground.":
+    "Aerial acts on silks and straps, and balancing numbers.",
+  "Big characters. Little surprises. A playful world of physical theatre, object play and laughter for every generation.":
+    "Physical comedy theatre that works well for families.",
+  "A travelling celebration of circus, made for city squares, festival stages and wherever the road takes us.":
+    "A touring show made for city squares and festival stages.",
+  "Tell us your date, venue and audience. We’ll discuss availability and production with you.":
+    "Send us your date, venue and guest count. We’ll tell you if we’re free and how we’d stage it.",
+  "to discover": "available",
+  "From opening nights to open-air stages. Explore the places and moments that make up our season.":
+    "Dates and venues for our upcoming shows.",
+  "Get in touch for new performances, availability or a show at your venue.":
+    "Write to us about dates, or about bringing a show to your venue.",
+  "We bring creative direction, extraordinary performers and thoughtful production together. Here’s what that looks like.":
+    "Some of the work we’ve done for film, brands and the stage.",
+  "A new perspective on movement. Aerial performance, creative direction and cinematic storytelling come together.":
+    "An aerial performance film. We handled the direction, casting and rigging.",
+  "A reveal that moves beyond the runway. Movement design and live performance created for a memorable brand moment.":
+    "We choreographed and performed a live act for a brand launch.",
+  "An immersive world of light, shadows and impossible moments, designed from the first sketch to the final curtain.":
+    "We made this stage show from start to finish, including the lighting.",
+  "Bringing the show to new audiences with an adaptable production for festivals and public squares across Mongolia.":
+    "A touring version of the show, adapted for festivals and squares across Mongolia.",
+  "A big vision or a small spark — we’d love to hear it. Tell us a little about your event and let’s see what’s possible.":
+    "Tell us a bit about your event. We’ll write back about shows, dates and budget.",
+  "We’ll help you find the right performers, production and feeling for your audience.":
+    "Email or call, whichever is easier.",
+  "Your date, venue, audience and what you have in mind.":
+    "Your date, venue, guest count and what you’d like.",
+  "We suggest the acts, creative direction and production.":
+    "We suggest which acts fit and how to stage them.",
+  "The artists, rehearsals and final show, brought together.":
+    "The artists rehearse and perform on the day.",
+  "Your request has been saved. Our team can now review it and contact you by email.":
+    "We’ve got your request and will reply by email.",
+  "The feeling, the occasion, the big idea. Tell us what you’re imagining.":
+    "What’s the occasion, and what would you like to see?",
+  "A little wonder goes a long way.": "A circus team based in Ulaanbaatar.",
+  "Live shows, extraordinary people.": "Live shows, tours and events.",
+  "Made in Ulaanbaatar.": "Write to us to book a show.",
+  "From Mongolia, with wonder.": "Ulaanbaatar, Mongolia.",
+  "The page you’re looking for has left the stage.":
+    "There’s nothing at this address. Try the home page.",
+};
+
 export function translate(text: string, language: "mn" | "en"): string {
-  if (language === "en") return text;
   const key = text.replace(/\s+/g, " ").trim();
-  const translated = MONGOLIAN[key];
+  const translated = language === "en" ? ENGLISH[key] : MONGOLIAN[key];
   if (!translated) return text;
   return (text.startsWith(" ") ? " " : "") + translated + (text.endsWith(" ") ? " " : "");
 }
