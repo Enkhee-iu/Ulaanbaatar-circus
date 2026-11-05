@@ -17,7 +17,6 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpRight,
-  Asterisk,
   CalendarDays,
   Check,
   Eye,
@@ -45,7 +44,8 @@ import { EnquiriesPanel } from "./EnquiriesPanel";
 import { apiUrl } from "@/lib/content";
 
 type Auth = { configured: boolean; authenticated: boolean; email?: string };
-type Section = "overview" | CollectionName | "gallery" | "media" | "settings" | "hero-video" | "enquiries";
+type Section =
+  "overview" | CollectionName | "gallery" | "media" | "settings" | "hero-video" | "enquiries";
 const SECTIONS = [
   { id: "overview", label: "Хяналтын самбар", icon: LayoutDashboard },
   { id: "enquiries", label: "Захиалгын хүсэлт", icon: CalendarDays },
@@ -208,9 +208,8 @@ export function AdminPanel() {
   return (
     <div className="ad-root ad-layout">
       <aside className="ad-sidebar">
-        <a href="/" className="ad-brand">
-          <Asterisk size={30} />
-          {content.settings.brandName}
+        <a href="/" className="ad-brand" aria-label={content.settings.brandName}>
+          <img src="/ubcircus-logo.png" alt="" />
         </a>
         <span className="ad-sidebar-label">УДИРДЛАГА</span>
         <nav aria-label="Удирдлагын цэс">
@@ -232,11 +231,6 @@ export function AdminPanel() {
           ))}
         </nav>
         <div className="ad-sidebar-bottom">
-          <div className="ad-local">
-            <span />
-            Local workspace
-          </div>
-          <small>Энэ компьютерт хадгалагдана</small>
           <a href="/" target="_blank" rel="noreferrer">
             Сайт харах <ArrowUpRight size={16} />
           </a>
@@ -342,16 +336,16 @@ function AuthScreen({
   return (
     <div className="ad-root ad-auth">
       <div className="ad-auth-art">
-        <a className="ad-brand" href="/">
-          <Asterisk size={30} />
-          Ulaanbaatar Circus
+        <img className="ad-auth-photo" src={imageSrc("builtin:hero")} alt="" />
+        <a className="ad-brand" href="/" aria-label="Ulaanbaatar Circus">
+          <img src="/ubcircus-logo.png" alt="" />
         </a>
         <div>
-          <span className="ad-kicker">BEHIND THE EXTRAORDINARY</span>
+          <span className="ad-kicker">Ulaanbaatar Circus</span>
           <h1>
-            Тайзны арын
+            Сайтын
             <br />
-            <em>таны орон зай.</em>
+            <em>удирдлага.</em>
           </h1>
           <p>
             Тоглолт, эвент, зураг, мэдээллээ
@@ -359,17 +353,13 @@ function AuthScreen({
             нэг газраас удирдаарай.
           </p>
         </div>
-        <span className="ad-local">
-          <span />
-          Local workspace · Ulaanbaatar Circus
-        </span>
       </div>
       <div className="ad-auth-form">
         <a href="/" className="ad-back">
           ← Сайт руу буцах
         </a>
         <div>
-          <span className="ad-kicker">{configured ? "WELCOME BACK" : "LET’S GET STARTED"}</span>
+          <span className="ad-kicker">{configured ? "Нэвтрэх" : "Эхний тохиргоо"}</span>
           <h2>{configured ? "Тавтай морил." : "Админаа үүсгэе."}</h2>
           <p>
             {configured
@@ -438,7 +428,6 @@ function AuthScreen({
               <ArrowUpRight size={18} />
             </button>
           </form>
-          <p className="ad-auth-note">Өгөгдөл энэ компьютерийн серверт хадгалагдана.</p>
         </div>
       </div>
     </div>
@@ -472,9 +461,9 @@ function Overview({ content, open }: { content: SiteContent; open: (s: Section) 
   return (
     <>
       <Heading
-        eyebrow="YOUR CREATIVE WORKSPACE"
+        eyebrow="Хяналтын самбар"
         title="Бүх зүйл нэг дор."
-        description="Сайтынхаа агуулгыг шинэчилж, дараагийн гайхалтай мөчийг бүтээгээрэй."
+        description="Тоглолт, зураг, сайтын мэдээллээ эндээс засна."
       >
         <a href="/" target="_blank" rel="noreferrer" className="ad-button">
           <Eye size={17} />
@@ -505,7 +494,7 @@ function Overview({ content, open }: { content: SiteContent; open: (s: Section) 
         <section className="ad-card">
           <div className="ad-card-heading">
             <h2>Дараагийн алхам</h2>
-            <span className="ad-pill">Quick actions</span>
+            <span className="ad-pill">Товчлол</span>
           </div>
           {[
             {
@@ -540,12 +529,11 @@ function Overview({ content, open }: { content: SiteContent; open: (s: Section) 
           ))}
         </section>
         <section className="ad-feature">
-          <Asterisk size={58} />
-          <span className="ad-kicker">MADE TO BE SEEN</span>
+          <span className="ad-kicker">Нийтлэх</span>
           <h2>
-            Шинэ санаа.
+            Ноорог ба
             <br />
-            Шинэ тайз.
+            нийтлэл.
           </h2>
           <p>
             Нийтэлсэн мэдээлэл сайт дээр харагдана. Ноорог мэдээллийг бэлдэж байгаад хүссэн үедээ
@@ -557,10 +545,6 @@ function Overview({ content, open }: { content: SiteContent; open: (s: Section) 
         </section>
       </div>
       <div className="ad-save-info">
-        <span className="ad-local">
-          <span />
-          Файлд хадгалдаг
-        </span>
         <span>
           {content.updatedAt
             ? "Сүүлд шинэчилсэн: " + new Date(content.updatedAt).toLocaleString("mn-MN")
@@ -651,7 +635,7 @@ function Collection({
   return (
     <>
       <Heading
-        eyebrow="CONTENT COLLECTION"
+        eyebrow="Агуулга"
         title={CONFIG[name].title}
         description="Нэмэх, засах, нийтлэх болон харагдах дарааллыг өөрчлөх."
       >
@@ -1219,7 +1203,7 @@ function useMedia() {
     return items;
   }
   async function deleteMedia(id: string) {
-    if (deletingId || !window.confirm("Delete this uploaded image permanently?")) return;
+    if (deletingId || !window.confirm("Энэ зургийг бүр мөсөн устгах уу?")) return;
     setUploadError("");
     setDeletingId(id);
     try {
@@ -1337,7 +1321,9 @@ function GalleryPicker({
   }
   return (
     <fieldset className="ad-image-picker" disabled={disabled || uploading}>
-      <legend>Тоглолтын галерей · {value.length}/{GALLERY_LIMIT}</legend>
+      <legend>
+        Тоглолтын галерей · {value.length}/{GALLERY_LIMIT}
+      </legend>
       <small>
         Үндсэн зураг тоглолтын хуудас болон нүүр хуудасны галерейд автоматаар орно. Эдгээр зураг ч
         хоёуланд нь гарна.
@@ -1458,7 +1444,7 @@ function GalleryEditor({
   return (
     <>
       <Heading
-        eyebrow="SHOW GALLERY"
+        eyebrow="Галерей"
         title="Галерей"
         description="Тоглолтоо сонгоод зургаа нэмнэ үү. Нийтлэгдсэн тоглолтын зургууд нүүр хуудас болон тоглолтын хуудсанд гарна."
       />
@@ -1488,7 +1474,8 @@ function GalleryEditor({
                 <span>
                   {item.title}
                   <small>
-                    {item.gallery?.length ?? 0}/{GALLERY_LIMIT}{item.status === "draft" && " · Ноорог"}
+                    {item.gallery?.length ?? 0}/{GALLERY_LIMIT}
+                    {item.status === "draft" && " · Ноорог"}
                   </small>
                 </span>
               </button>
@@ -1560,7 +1547,7 @@ function MediaLibrary() {
   return (
     <>
       <Heading
-        eyebrow="VISUAL LIBRARY"
+        eyebrow="Зургийн сан"
         title="Зургийн сан"
         description="Өөрийн зургийг оруулаад тоглолт, төсөл болон нүүр хуудсандаа ашиглаарай."
       >
@@ -1608,11 +1595,11 @@ function MediaLibrary() {
                   type="button"
                   className="ad-button ad-delete"
                   disabled={Boolean(deletingId)}
-                  aria-label={`Delete ${item.name}`}
+                  aria-label={`Устгах: ${item.name}`}
                   onClick={() => void deleteMedia(item.id)}
                 >
                   {deletingId === item.id ? <Spinner size={14} /> : <Trash2 size={14} />}
-                  {deletingId === item.id ? "Deleting…" : "Delete"}
+                  {deletingId === item.id ? "Устгаж байна…" : "Устгах"}
                 </button>
               )}
             </div>
@@ -1677,7 +1664,7 @@ function SettingsEditor({
   return (
     <>
       <Heading
-        eyebrow="SITE SETTINGS"
+        eyebrow="Тохиргоо"
         title="Таны сайтын мэдээлэл"
         description="Нүүр хуудас болон холбоо барих мэдээллээ эндээс шинэчлээрэй."
       />
@@ -1783,7 +1770,10 @@ function HeroVideoEditor({
     try {
       await save({
         ...content,
-        settings: { ...content.settings, heroVideoUrl: String(data.get("heroVideoUrl") || "").trim() },
+        settings: {
+          ...content.settings,
+          heroVideoUrl: String(data.get("heroVideoUrl") || "").trim(),
+        },
       });
       dirty.clean();
     } catch (err) {
@@ -1793,7 +1783,7 @@ function HeroVideoEditor({
   return (
     <>
       <Heading
-        eyebrow="HERO SECTION"
+        eyebrow="Нүүр хуудас"
         title="Нүүр хуудасны видео"
         description="Нүүр хуудасны эхний хэсэгт харагдах видеоны холбоосыг эндээс солино."
       />
@@ -1813,7 +1803,11 @@ function HeroVideoEditor({
               placeholder="https://youtu.be/... эсвэл https://.../video.mp4"
             />
           </label>
-          {error && <p className="ad-alert" role="alert">{error}</p>}
+          {error && (
+            <p className="ad-alert" role="alert">
+              {error}
+            </p>
+          )}
           <div className="ad-form-actions">
             <button className="ad-button ad-primary" disabled={busy}>
               {busy && <Spinner />}
