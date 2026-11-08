@@ -10,10 +10,19 @@ import { SectionHeading, ShowFeatureCard } from "@/components/site/Sections";
 import { ShowLightbox } from "@/components/site/ShowLightbox";
 import { applyPageMeta, BRAND_NAME } from "@/lib/page-meta";
 import { translate } from "@/lib/translations";
+import type { SiteContent } from "@/lib/content-types";
 
 export const Route = createFileRoute("/shows_/$showId")({
-  loader: async ({ params }) => {
+  // The page itself reads the site content the browser already holds, so this only needs the show for
+  // the 404 check and the page title. Fetching every time kept the skeleton up for as long as the API
+  // took, which is up to a minute while the hosted server wakes. Only a show the browser hasn't heard
+  // of yet, or the first server render, goes to the API.
+  loader: async ({ params, context }) => {
+    const cached = context.queryClient.getQueryData<SiteContent>(["site-content"]);
+    const known = cached?.shows.find((item) => item.id === params.showId);
+    if (known) return known;
     const content = await getPublicContent();
+    if (cached) context.queryClient.setQueryData(["site-content"], content);
     const show = content.shows.find((item) => item.id === params.showId);
     if (!show) throw notFound();
     return show;

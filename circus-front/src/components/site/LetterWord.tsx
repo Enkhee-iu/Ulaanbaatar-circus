@@ -55,6 +55,8 @@ export function LetterWord({ word }: { word: string }) {
     const box = band.current;
     const text = box?.firstElementChild as HTMLElement | null;
     if (!box || !text) return;
+    let width = -1;
+    let frame = 0;
     const fit = () => {
       const style = getComputedStyle(box);
       const room = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
@@ -64,11 +66,22 @@ export function LetterWord({ word }: { word: string }) {
       if (natural > 0 && room > 0)
         box.style.setProperty("--word-size", `${(room / natural) * 100}px`);
     };
+    // Resizing the word changes the band's height, which would report straight back to the observer
+    // ("ResizeObserver loop completed with undelivered notifications"). So only a new width refits,
+    // and the refit waits for the next frame, outside the observer's callback.
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width === width) return;
+      width = entry.contentRect.width;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(fit);
+    });
     fit();
-    const observer = new ResizeObserver(fit);
     observer.observe(box);
     void document.fonts?.ready.then(fit);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [word]);
 
   return (
