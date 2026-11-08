@@ -18,6 +18,7 @@ import { NotFoundPage } from "../components/site/NotFoundPage";
 import adminCss from "../admin.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { installPressFeedback } from "../lib/press-feedback";
 import { BRAND_NAME, pageHead } from "../lib/page-meta";
 import { siteOrigin } from "../lib/site-origin";
 
@@ -64,7 +65,9 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async ({ location }) => ({
     content:
-      location.pathname.replace(/\/$/, "") === "/admin" ? DEFAULT_CONTENT : await getPublicContent(),
+      location.pathname.replace(/\/$/, "") === "/admin"
+        ? DEFAULT_CONTENT
+        : await getPublicContent(),
     origin: siteOrigin(),
   }),
   head: ({ loaderData }) => ({
@@ -131,6 +134,7 @@ function RootComponent() {
     addEventListener("pagehide", keepManualScroll);
     return () => removeEventListener("pagehide", keepManualScroll);
   }, []);
+  useEffect(installPressFeedback, []);
 
   return (
     <QueryClientProvider client={queryClient}>

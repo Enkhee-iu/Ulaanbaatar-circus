@@ -284,9 +284,6 @@
     transform 0.2s,
     border-color 0.2s;
 }
-.button:hover {
-  transform: translateY(-2px);
-}
 .button-lime {
   background: var(--lime);
   color: var(--background);
@@ -663,7 +660,10 @@
   border-radius: 50%;
   background: #ffffff20;
   color: white;
-  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+  transition:
+    background 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
 }
 .home-show-bento-card:hover .home-show-bento-arrow {
   transform: rotate(45deg);
@@ -978,7 +978,9 @@
   border-radius: 18px;
   background: rgb(24 24 27 / 50%);
   color: #f4f4f5;
-  transition: border-color 300ms ease, background-color 300ms ease;
+  transition:
+    border-color 300ms ease,
+    background-color 300ms ease;
 }
 .show-feature-card:hover {
   border-color: #71717a;
@@ -1038,7 +1040,9 @@
   margin-top: 28px;
   color: var(--foreground);
   font-size: 12px;
-  transition: color 200ms ease, gap 200ms ease;
+  transition:
+    color 200ms ease,
+    gap 200ms ease;
 }
 .show-feature-link:hover {
   gap: 13px;
@@ -2159,10 +2163,6 @@ a.contact-detail:hover {
     transform 0.2s,
     box-shadow 0.2s;
 }
-.button:active,
-button:active:not(:disabled) {
-  transform: translateY(1px);
-}
 .button-lime,
 .language-switcher button[aria-pressed="true"],
 .filter-chip.selected,
@@ -3273,7 +3273,9 @@ button:active:not(:disabled) {
 }
 .show-lightbox-heading h2 {
   color: #f0e4b8;
-  font: 500 clamp(20px, 1.8vw, 26px) / 1.2 "Oswald", var(--font-sans);
+  font:
+    500 clamp(20px, 1.8vw, 26px) / 1.2 "Oswald",
+    var(--font-sans);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
@@ -3299,7 +3301,7 @@ button:active:not(:disabled) {
   text-align: center;
 }
 .show-lightbox-controls .icon-button {
-  /* Not centred with a transform: the shared button:active rule replaces it and the press would miss. */
+  /* Not centred with a transform, so nothing that animates the button can knock it off centre. */
   position: absolute;
   top: calc(50% - 22px);
 }
@@ -4328,7 +4330,10 @@ button:active:not(:disabled) {
   line-height: 1.1;
   text-transform: uppercase;
 }
-.site-shell .site-theme :is(.event-detail, .contact-panel, .form-heading, .draft-ready, .show-booking-card) h2 {
+.site-shell
+  .site-theme
+  :is(.event-detail, .contact-panel, .form-heading, .draft-ready, .show-booking-card)
+  h2 {
   font-weight: 500;
   letter-spacing: 0.01em;
   line-height: 1.15;
@@ -4419,8 +4424,7 @@ button:active:not(:disabled) {
     object-position: 50% 15%;
     mask-image:
       linear-gradient(90deg, transparent, #000 28%, #000 72%, transparent),
-      linear-gradient(0deg, transparent, #000 26%),
-      linear-gradient(180deg, transparent, #000 6%);
+      linear-gradient(0deg, transparent, #000 26%), linear-gradient(180deg, transparent, #000 6%);
     mask-composite: intersect;
   }
   .home-hero-media:not(:has(.is-playing)) .hero-video-shade {
@@ -4886,7 +4890,14 @@ button:active:not(:disabled) {
       #00000026 calc(var(--spot-angle) * 1.8),
       transparent calc(var(--spot-angle) * 2)
     ),
-    linear-gradient(180deg, transparent 0, #00000033 36px, #00000099 84px, #000000d9 124px, #000 170px);
+    linear-gradient(
+      180deg,
+      transparent 0,
+      #00000033 36px,
+      #00000099 84px,
+      #000000d9 124px,
+      #000 170px
+    );
   mask-composite: intersect;
 }
 .site-theme .booking-wrap.is-visible::before {
@@ -4946,12 +4957,6 @@ button:active:not(:disabled) {
     border-color 180ms ease,
     color 180ms ease,
     transform 120ms ease;
-}
-.site-theme :is(.button, .section-heading .text-link):hover {
-  transform: none;
-}
-.site-theme :is(.button, .section-heading .text-link):active {
-  transform: scale(0.98);
 }
 .site-theme :is(.button, .section-heading .text-link):focus-visible {
   outline: 2px solid var(--home-cream);
@@ -5145,7 +5150,6 @@ button:active:not(:disabled) {
   font-weight: 500;
 }
 .site-footer .footer-booking:hover {
-  transform: translateY(-1px);
   background: #f4f4f5;
   box-shadow: 0 4px 14px rgb(255 255 255 / 18%);
 }
@@ -5443,8 +5447,7 @@ button:active:not(:disabled) {
 }
 .site-theme .show-detail-shade {
   background:
-    linear-gradient(0deg, #000 4%, #0000 75%),
-    linear-gradient(90deg, #000000b3, #00000033);
+    linear-gradient(0deg, #000 4%, #0000 75%), linear-gradient(90deg, #000000b3, #00000033);
 }
 .site-theme .show-detail-hero-content {
   padding-block: 112px clamp(36px, 4vw, 56px);
@@ -5479,8 +5482,7 @@ button:active:not(:disabled) {
     width: min(52%, 760px);
     object-position: 50% 22%;
     mask-image:
-      linear-gradient(90deg, transparent, #000 34%),
-      linear-gradient(0deg, transparent, #000 16%),
+      linear-gradient(90deg, transparent, #000 34%), linear-gradient(0deg, transparent, #000 16%),
       linear-gradient(180deg, transparent, #000 10%);
     mask-composite: intersect;
   }
@@ -5597,5 +5599,173 @@ button:active:not(:disabled) {
   }
   .site-theme .form-bottom .button {
     width: 100%;
+  }
+}
+
+/* Press feedback for every button on the site and in the admin.
+   It moves with the separate scale and translate properties, never transform, so it stacks on top of
+   anything a button already uses transform for. :root lifts these rules over each button's own
+   transition list, which is rewritten here in full. */
+:root {
+  --press-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+:root
+  :is(
+    button:not(:disabled),
+    .button:not(:disabled),
+    .ad-button:not(:disabled),
+    .icon-button,
+    .section-heading .text-link,
+    .site-header :is(.brand, .desktop-nav a, .mobile-nav a),
+    [role="button"]
+  ) {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 220ms ease,
+    opacity 220ms ease,
+    filter 180ms ease,
+    translate 220ms ease,
+    transform 180ms ease,
+    scale 380ms var(--press-spring);
+}
+/* How far a press sinks. The default carries no weight, so the two sizes below always win over it.
+   Small round controls sink further; big tiles and rows only a little, or they look like they fall away. */
+:where(
+  button,
+  .button,
+  .ad-button,
+  .icon-button,
+  .section-heading .text-link,
+  .site-header :is(.brand, .desktop-nav a, .mobile-nav a),
+  [role="button"]
+) {
+  --press-scale: 0.95;
+}
+/* Header links are small text pills: between a button and an icon. */
+:root .site-header :is(.brand, .desktop-nav a) {
+  --press-scale: 0.93;
+}
+:root
+  :is(
+    .icon-button,
+    .language-dropdown-trigger,
+    .filter-chip,
+    .choice-chip,
+    .ad-icon,
+    .hero-playback-toggle
+  ) {
+  --press-scale: 0.9;
+}
+:root
+  :is(
+    .ad-sidebar nav button,
+    .ad-action-row,
+    .ad-stat,
+    .ad-enquiry-row,
+    .ad-gallery-tabs button,
+    .ad-image-options button,
+    .home-gallery-item,
+    .show-gallery-grid button,
+    .site-header .mobile-nav > a:not(.button)
+  ) {
+  --press-scale: 0.985;
+}
+@media (hover: hover) {
+  :root :is(.button, .ad-button, .section-heading .text-link):not(:disabled):hover {
+    translate: 0 -2px;
+  }
+  /* Solid buttons glow in their own colour as they lift. */
+  :root
+    :is(.button-lime, .home-button-primary, .header-booking, .footer-booking, .ad-primary):not(
+      :disabled
+    ):hover {
+    box-shadow: 0 10px 24px -12px #e6b76fb3;
+  }
+}
+:root
+  :is(
+    button:not(:disabled),
+    .button:not(:disabled),
+    .ad-button:not(:disabled),
+    .icon-button,
+    .section-heading .text-link,
+    .site-header :is(.brand, .desktop-nav a, .mobile-nav a),
+    [role="button"]
+  ):is(:active, [data-pressing]) {
+  translate: 0 0;
+  scale: var(--press-scale);
+  /* Down fast, back up on the spring above. */
+  transition-duration: 180ms, 180ms, 180ms, 120ms, 220ms, 120ms, 90ms, 180ms, 90ms;
+  transition-timing-function: ease, ease, ease, ease, ease, ease, ease-out, ease, ease-out;
+}
+:root
+  :is(.button-lime, .home-button-primary, .header-booking, .footer-booking, .ad-primary):is(
+    :active,
+    [data-pressing]
+  ) {
+  box-shadow: 0 4px 12px -8px #e6b76fb3;
+}
+
+/* A ripple from the point of the press, on buttons with a label. lib/press-feedback.ts sets where. */
+:where(.button, .ad-button, .section-heading .text-link) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+:where(.button, .ad-button, .section-heading .text-link)::after {
+  position: absolute;
+  z-index: -1;
+  top: var(--press-y, 50%);
+  left: var(--press-x, 50%);
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  content: "";
+}
+:where(.button, .ad-button, .section-heading .text-link)[data-pressed]::after {
+  animation: press-ripple 560ms ease-out;
+}
+@keyframes press-ripple {
+  from {
+    opacity: 0.22;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(var(--press-size, 30));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing moves; a press still darkens, so it never feels dead. */
+  :root
+    :is(
+      button:not(:disabled),
+      .button:not(:disabled),
+      .ad-button:not(:disabled),
+      .icon-button,
+      .section-heading .text-link,
+      .site-header :is(.brand, .desktop-nav a, .mobile-nav a),
+      [role="button"]
+    ) {
+    translate: none !important;
+    scale: none !important;
+  }
+  :root
+    :is(
+      button:not(:disabled),
+      .button:not(:disabled),
+      .ad-button:not(:disabled),
+      .icon-button,
+      .section-heading .text-link,
+      .site-header :is(.brand, .desktop-nav a, .mobile-nav a),
+      [role="button"]
+    ):is(:active, [data-pressing]) {
+    filter: brightness(0.85);
   }
 }

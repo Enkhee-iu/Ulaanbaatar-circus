@@ -1079,9 +1079,6 @@
 .ad-media-grid[aria-busy="true"] {
   min-height: 120px;
 }
-.ad-root button:active:not(:disabled) {
-  transform: translateY(1px);
-}
 .ad-enquiry-toolbar {
   display: flex;
   gap: 15px;

@@ -42,8 +42,22 @@ export function Header() {
         menuButton.current?.focus();
       }
     }
+    // While the menu is open the page behind it holds still, and the menu closes once the window is
+    // wide enough for the desktop links.
+    const root = document.documentElement;
+    const previousOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 901px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
     document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      root.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
   }, [open]);
   return (
     <header className="site-header">
@@ -54,6 +68,7 @@ export function Header() {
         <path d="M20 0V20C20 9 11 0 0 0Z" />
       </svg>
       <div className="container header-inner">
+        <Brand />
         <nav className="desktop-nav" aria-label={t("Main navigation")}>
           {NAV.map((item) => (
             <Link key={item.to} to={item.to} activeProps={{ className: "nav-active" }}>
@@ -61,7 +76,6 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <Brand />
         <div className="header-actions">
           <div className="header-controls">
             <LanguageSwitcher />
