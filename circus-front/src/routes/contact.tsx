@@ -88,6 +88,7 @@ function ContactPage() {
   return (
     <PageShell>
       <PageIntro
+        word="CONTACT"
         eyebrow={t("Good things start here")}
         title={
           <>

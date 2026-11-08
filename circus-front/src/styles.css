@@ -5769,3 +5769,132 @@ a.contact-detail:hover {
     filter: brightness(0.85);
   }
 }
+
+/* SmoothCursor (components/ui/smooth-cursor.tsx) draws the pointer while this class is on <html>. Every
+   element's own cursor is hidden too, or links and buttons would show a second, native pointer. */
+html.smooth-cursor-active,
+html.smooth-cursor-active * {
+  cursor: none !important;
+}
+
+/* Instagram and Facebook, pinned to the middle of the right edge (components/site/SocialDock.tsx).
+   Under the header, the photo viewer and the loader; above the page. */
+.social-dock {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 60%);
+  backdrop-filter: blur(12px);
+  translate: 0 -50%;
+}
+.social-dock a {
+  display: block;
+  border-radius: 50%;
+  color: #f6ecd9;
+}
+.social-dock a:focus-visible {
+  outline: 2px solid #f6ecd9;
+  outline-offset: 3px;
+}
+.social-dock-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 8%);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+.social-dock a:is(:hover, :focus-visible) .social-dock-icon {
+  background: #e6b76f;
+  color: #15110c;
+}
+.social-dock-glyph {
+  display: flex;
+}
+.social-dock-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+.social-dock-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  padding: 4px 10px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 6px;
+  background: #161412;
+  color: #f3ede4;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  translate: 0 -50%;
+}
+@media (max-width: 600px) {
+  .social-dock {
+    right: 10px;
+    gap: 6px;
+    padding: 5px;
+  }
+}
+
+/* Page names in photo-filled letters, above each page's intro (components/site/LetterWord.tsx).
+   A grainy charcoal band like a printed poster, fading into the page's black at the bottom. */
+.letter-word {
+  /* An estimate that holds the space until the script measures the real width. */
+  --word-size: calc((100vw - 4vw) / (var(--letters) * 0.8));
+  position: relative;
+  padding: 76px 2vw 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, #0000 55%, #000),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E"),
+    #141414;
+}
+.letter-word-text {
+  display: flex;
+  width: max-content;
+  margin-inline: auto;
+  font-family: "Archivo Black", "Oswald", sans-serif;
+  font-size: var(--word-size);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  /* The font's line box leaves room above the capitals; this pulls the word up under the header. */
+  margin-top: -0.06em;
+}
+.letter-word-text span {
+  display: block;
+  color: transparent;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: letter-rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--letter-index) * 70ms + 120ms);
+}
+@keyframes letter-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.1em;
+  }
+}
+.site-theme .page-intro.has-word {
+  padding-top: clamp(24px, 3vw, 44px);
+}
+@media (max-width: 700px) {
+  .letter-word {
+    padding: 76px 12px 0;
+  }
+}

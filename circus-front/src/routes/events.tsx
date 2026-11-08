@@ -26,6 +26,7 @@ function EventsPage() {
   return (
     <PageShell>
       <PageIntro
+        word="EVENTS"
         eyebrow={t("The season calendar")}
         title={
           <>

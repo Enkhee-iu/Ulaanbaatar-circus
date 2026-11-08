@@ -39,6 +39,7 @@ function ProjectsPage() {
   return (
     <PageShell>
       <PageIntro
+        word="PROJECTS"
         eyebrow={t("Selected work")}
         title={
           <>

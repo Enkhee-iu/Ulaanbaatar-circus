@@ -74,6 +74,8 @@ export const MONGOLIAN: Record<string, string> = {
   "Main navigation": "Үндсэн цэс",
   "Footer navigation": "Хуудасны доод цэс",
   "Mobile navigation": "Гар утасны цэс",
+  "Social media": "Олон нийтийн сүлжээ",
+  "opens in a new tab": "шинэ цонхонд нээгдэнэ",
   "Open navigation": "Цэс нээх",
   "Close navigation": "Цэс хаах",
   "Ulaanbaatar Circus home": "Ulaanbaatar Circus нүүр хуудас",

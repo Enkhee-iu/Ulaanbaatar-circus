@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -15,6 +16,8 @@ import { SiteContentProvider } from "../components/site/SiteContent";
 import { LanguageProvider } from "../components/site/Language";
 import { BrandLoading } from "../components/site/Loading";
 import { NotFoundPage } from "../components/site/NotFoundPage";
+import { SmoothCursor } from "../components/ui/smooth-cursor";
+import { SocialDock } from "../components/site/SocialDock";
 import adminCss from "../admin.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -96,6 +99,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Oswald:wght@500..600&family=Source+Sans+3:wght@400..700&display=swap",
       },
+      // Only the capitals of the page names drawn in photo-filled letters (components/site/LetterWord.tsx).
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&text=SHOWEVNTPRJCA&display=swap",
+      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Niconne&family=Pacifico&family=Playfair+Display:ital,wght@1,800&family=Satisfy&display=swap",
@@ -135,6 +143,11 @@ function RootComponent() {
     return () => removeEventListener("pagehide", keepManualScroll);
   }, []);
   useEffect(installPressFeedback, []);
+  // The cursor and the social dock are mounted once here rather than in each page, so they keep their
+  // place across links. The admin is a working tool full of forms, so it gets neither.
+  const inAdmin = useRouterState({
+    select: (state) => state.location.pathname.startsWith("/admin"),
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -142,6 +155,8 @@ function RootComponent() {
         <SiteContentProvider initialContent={content}>
           <BrandLoading />
           <Outlet />
+          {!inAdmin && <SocialDock />}
+          {!inAdmin && <SmoothCursor />}
         </SiteContentProvider>
       </LanguageProvider>
     </QueryClientProvider>

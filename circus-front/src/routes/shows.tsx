@@ -31,6 +31,7 @@ function ShowsPage() {
   return (
     <PageShell>
       <PageIntro
+        word="SHOWS"
         eyebrow={t("Our repertoire")}
         title={
           <>

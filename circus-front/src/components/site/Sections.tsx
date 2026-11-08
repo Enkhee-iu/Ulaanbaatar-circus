@@ -5,30 +5,37 @@ import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { TextReveal } from "@/components/ui/text-reveal";
 import type { Show } from "@/lib/content-types";
+import { LetterWord } from "./LetterWord";
 
 export function PageIntro({
   eyebrow,
   title,
   description,
+  word,
   children,
 }: {
   eyebrow: string;
   title: ReactNode;
   description: string;
+  /** The page's English name, drawn above the intro in photo-filled letters. It stays in English. */
+  word?: string;
   children?: ReactNode;
 }) {
   const { t } = useLanguage();
   return (
-    <section className="container page-intro">
-      <span className="eyebrow">{t(eyebrow)}</span>
-      <div className="intro-grid">
-        <h1>{title}</h1>
-        <div>
-          <p className="intro-description">{t(description)}</p>
-          {children}
+    <>
+      {word && <LetterWord word={word} />}
+      <section className={word ? "container page-intro has-word" : "container page-intro"}>
+        <span className="eyebrow">{t(eyebrow)}</span>
+        <div className="intro-grid">
+          <h1>{title}</h1>
+          <div>
+            <p className="intro-description">{t(description)}</p>
+            {children}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
