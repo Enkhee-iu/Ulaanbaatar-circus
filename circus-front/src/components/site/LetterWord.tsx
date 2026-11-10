@@ -2,7 +2,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 
 import firebird from "@/assets/spotlight-firebird.webp";
 import altara from "@/assets/hero-altara.webp";
-import leap from "@/assets/circus-acrobatics.webp";
+import tower from "@/assets/team-acrobatics.webp";
 import smoke from "@/assets/team-contortion.webp";
 import stage from "@/assets/team-theatre.webp";
 import { imageSrc, sizedImage } from "@/lib/site-images";
@@ -14,7 +14,7 @@ import { imageSrc, sizedImage } from "@/lib/site-images";
 type Fill = [string, string, string];
 const FIRE: Fill = [firebird, "50% 30%", "#f2a0a0"];
 const PURPLE: Fill = [altara, "50% 20%", "#5b3fd6"];
-const LEAP: Fill = [leap, "50% 35%", "#2f6f6a"];
+const TOWER: Fill = [tower, "50% 35%", "#4a3ad0"];
 const BLUE: Fill = [smoke, "50% 50%", "#3f5fd8"];
 const PINK: Fill = [stage, "50% 60%", "#b0418f"];
 const NEON: Fill = [
@@ -38,12 +38,12 @@ const MASK: Fill = [
 
 // Neighbouring letters never share a colour, and warm and cool mostly take turns.
 const FILLS: Record<string, Fill[]> = {
-  SHOWS: [ORANGE, PURPLE, FIRE, LEAP, NEON],
-  EVENTS: [NEON, BLUE, FIRE, PURPLE, ORANGE, LEAP],
-  PROJECTS: [LEAP, NEON, BLUE, ORANGE, PURPLE, FIRE, MASK, PINK],
-  CONTACT: [FIRE, BLUE, ORANGE, PURPLE, NEON, LEAP, PINK],
+  SHOWS: [ORANGE, PURPLE, FIRE, MASK, NEON],
+  EVENTS: [NEON, BLUE, FIRE, PURPLE, ORANGE, MASK],
+  PROJECTS: [TOWER, NEON, BLUE, ORANGE, PURPLE, FIRE, MASK, PINK],
+  CONTACT: [FIRE, BLUE, ORANGE, PURPLE, NEON, MASK, PINK],
 };
-const FALLBACK = [ORANGE, PURPLE, FIRE, LEAP, NEON, BLUE, PINK, MASK];
+const FALLBACK = [ORANGE, PURPLE, FIRE, MASK, NEON, BLUE, PINK, TOWER];
 
 export function LetterWord({ word }: { word: string }) {
   const band = useRef<HTMLDivElement>(null);

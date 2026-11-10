@@ -1588,7 +1588,7 @@ function MediaLibrary() {
               <small>
                 {"size" in item
                   ? Math.ceil(Number(item.size) / 1024) + " KB · Оруулсан зураг"
-                  : "Суурь зураг · AI illustration"}
+                  : "Суурь зураг"}
               </small>
               {"size" in item && (
                 <button
