@@ -11,7 +11,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { applyPageMeta, PAGE_META } from "@/lib/page-meta";
 import { translate } from "@/lib/translations";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Globe } from "lucide-react";
 
 type Language = "mn" | "en";
 type LocaleContext = {
@@ -67,8 +67,9 @@ export function LanguageSwitcher() {
           aria-label={label}
           title={label}
         >
+          <Globe size={15} aria-hidden="true" />
           {language === "mn" ? "MN" : "EN"}
-          <ChevronDown size={14} aria-hidden="true" />
+          <ChevronDown size={14} className="language-dropdown-chevron" aria-hidden="true" />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
